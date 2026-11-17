@@ -7,32 +7,43 @@ import {
 } from "@workspace/api-zod";
 import { PlatformError } from "../lib/platform/access";
 import { isPublicFarm, isPublicTree, farmDTO, photos } from "../lib/platform/catalogue";
+import { currentApproval, treeOffers, offerFromApproval, capacityUsed } from "../lib/platform/adoption-eligibility";
+import { paymentAvailability } from "../lib/platform/razorpay";
 const router: IRouter = Router();
 
-router.get("/v1/readiness", (_req, res) => {
+router.get("/v1/readiness", async (_req, res): Promise<void> => {
+  const trees = await treeInventory(), payment = paymentAvailability();
+  const open = payment.acceptingPayments && trees.some(t => t.adoptionEligible);
   res.json(GetReadinessResponse.parse({
-    adoptionsOpen: false,
-    message: "Explore farms, trees and growing seasons. Payment is available only after tree verification, approved scheme terms and a connected checkout.",
+    adoptionsOpen: open,
+    message: open ? (payment.mode === "test" ? "Checkout is available in a non-live payment environment. No real funds are collected." : "Choose an available tree and approved scheme to continue to secure checkout.") : "Check each tree's current verification, scheme and payment availability.",
     gates: ["Real farm authority and verified tree evidence", "Approved scheme terms and harvest remedies", "Connected and verified payment gateway", "Complete commercial and fulfilment workflows"],
   }));
 });
 router.get("/v1/public/farms", async (_req, res): Promise<void> => {
   const farms = await db.select().from(workflowRecords).where(eq(workflowRecords.module, "farms"));
-  const listings = await Promise.all(farms.filter(isPublicFarm).map(farmDTO));
+  const listings = await Promise.all(farms.filter(isPublicFarm).map(async f => ({ ...(await farmDTO(f)), isSample: !(await currentApproval(f)) })));
   res.json(ListPublicFarmsResponse.parse(listings.map(f => ({ ...f, image: f.images[0]?.url }))));
 });
-async function treeInventory() {
+export async function treeInventory() {
   const farms = (await db.select().from(workflowRecords).where(eq(workflowRecords.module, "farms"))).filter(isPublicFarm);
   const trees = (await db.select().from(workflowRecords).where(eq(workflowRecords.module, "trees"))).filter(isPublicTree);
   const listings = await Promise.all(trees.map(async t => {
     const farm = farms.find(f => f.id === t.farmId);
     if (!farm) return null;
     const images = await photos(t.data.imageIds);
+    const approval = await currentApproval(t), offers = await treeOffers(t), used = await capacityUsed(t.id, paymentAvailability().mode);
+    const units = used.reduce((sum, o) => sum + o.capacityBps, 0);
+    const available = offers.some(a => {
+      const c = a.snapshot.configuration as { allocationType: string; maxAdopters: number; sharePercent: number };
+      const weight = c.allocationType === "fixed-quantity" ? Math.ceil(10000 / c.maxAdopters) : c.allocationType === "exclusive-harvest" ? 10000 : Math.ceil(c.sharePercent * 100);
+      return units + weight <= 10000 && used.filter(o => o.approvalId === a.id).length < c.maxAdopters;
+    });
     return { id: t.id, treeCode: t.data.treeCode, name: t.title, species: t.data.species, variety: t.data.variety,
       farmName: farm.title, zone: t.data.zone, status: t.status, description: t.data.description, age: t.data.age,
-      inspectedAt: t.data.inspectedAt, productiveAssessment: t.data.productiveAssessment,
-      images, image: images[0]?.url, farmId: farm.id, isSample: t.data.isSample === true || farm.data.isSample === true,
-      adoptionEligible: false };
+      inspectedAt: approval?.snapshot.inspectedOn ?? t.data.inspectedAt, productiveAssessment: t.data.productiveAssessment,
+      images, image: images[0]?.url, farmId: farm.id, isSample: !approval,
+      adoptionEligible: available };
   }));
   return listings.filter((t): t is NonNullable<typeof t> => t !== null);
 }
@@ -45,7 +56,10 @@ router.get("/v1/public/trees", async (req, res): Promise<void> => {
 router.get("/v1/public/trees/:id", async (req, res): Promise<void> => {
   const tree = (await treeInventory()).find(t => t.id === req.params.id || t.treeCode === req.params.id);
   if (!tree) throw new PlatformError(404, "This tree is not in the public directory.");
-  res.json(GetPublicTreeResponse.parse({ tree, schemes: [] }));
+  const [record] = await db.select().from(workflowRecords).where(eq(workflowRecords.id, tree.id));
+  const offers = (await treeOffers(record!)).map(offerFromApproval);
+  res.json(GetPublicTreeResponse.parse({ tree, schemes: offers.map(o => ({ id: o.id, name: o.name, version: o.version,
+    feePaise: o.feePaise, durationMonths: o.durationMonths, entitlement: o.benefit, disclosures: [o.risks, o.shortfallPolicy, o.cancellationPolicy].join("\n\n") })) }));
 });
 router.get("/v1/public/articles", async (_req, res): Promise<void> => {
   const articles = await db.select().from(workflowRecords).where(and(eq(workflowRecords.module, "articles"), eq(workflowRecords.status, "published")));

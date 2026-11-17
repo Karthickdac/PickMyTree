@@ -25,6 +25,13 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AdoptionApprovalInput,
+  AdoptionCheckout,
+  AdoptionOrder,
+  AdoptionPaymentProof,
+  AdoptionPaymentSession,
+  AdoptionReadiness,
+  AdoptionReservationInput,
   Article,
   CatalogueImage,
   Confirmation,
@@ -88,6 +95,606 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getGetAdoptionReadinessUrl = () => {
+
+
+
+
+  return `/api/v1/management/adoption-readiness`
+}
+
+export const getAdoptionReadiness = async ( options?: Parameters<typeof customFetch>[1]): Promise<AdoptionReadiness> => {
+
+  return customFetch<AdoptionReadiness>(getGetAdoptionReadinessUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAdoptionReadinessQueryKey = () => {
+    return [
+    `/api/v1/management/adoption-readiness`
+    ] as const;
+    }
+
+
+export const getGetAdoptionReadinessQueryOptions = <TData = Awaited<ReturnType<typeof getAdoptionReadiness>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionReadiness>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAdoptionReadinessQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdoptionReadiness>>> = ({ signal }) => getAdoptionReadiness({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdoptionReadiness>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetAdoptionReadinessQueryResult = NonNullable<Awaited<ReturnType<typeof getAdoptionReadiness>>>
+export type GetAdoptionReadinessQueryError = ErrorType<unknown>
+
+
+export function useGetAdoptionReadiness<TData = Awaited<ReturnType<typeof getAdoptionReadiness>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionReadiness>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdoptionReadiness>>,
+          TError,
+          Awaited<ReturnType<typeof getAdoptionReadiness>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdoptionReadiness<TData = Awaited<ReturnType<typeof getAdoptionReadiness>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionReadiness>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdoptionReadiness>>,
+          TError,
+          Awaited<ReturnType<typeof getAdoptionReadiness>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdoptionReadiness<TData = Awaited<ReturnType<typeof getAdoptionReadiness>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionReadiness>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetAdoptionReadiness<TData = Awaited<ReturnType<typeof getAdoptionReadiness>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionReadiness>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetAdoptionReadinessQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getRecordAdoptionApprovalUrl = () => {
+
+
+
+
+  return `/api/v1/management/adoption-approvals`
+}
+
+export const recordAdoptionApproval = async (adoptionApprovalInput: AdoptionApprovalInput, options?: Parameters<typeof customFetch>[1]): Promise<AdoptionReadiness> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<AdoptionReadiness>(getRecordAdoptionApprovalUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(adoptionApprovalInput)
+  }
+);}
+
+
+
+
+
+export const getRecordAdoptionApprovalMutationKey = () => ['recordAdoptionApproval'] as const;
+
+export const getRecordAdoptionApprovalMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof recordAdoptionApproval>>, TError,RecordAdoptionApprovalMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof recordAdoptionApproval>>, TError,RecordAdoptionApprovalMutationVariables, TContext> => {
+
+const mutationKey = getRecordAdoptionApprovalMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof recordAdoptionApproval>>, RecordAdoptionApprovalMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  recordAdoptionApproval(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RecordAdoptionApprovalMutationResult = NonNullable<Awaited<ReturnType<typeof recordAdoptionApproval>>>
+    export type RecordAdoptionApprovalMutationBody = BodyType<AdoptionApprovalInput>
+    export type RecordAdoptionApprovalMutationError = ErrorType<unknown>
+    export type RecordAdoptionApprovalMutationVariables = {data: BodyType<AdoptionApprovalInput>}
+
+    export const useRecordAdoptionApproval = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof recordAdoptionApproval>>, TError,RecordAdoptionApprovalMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof recordAdoptionApproval>>,
+        TError,
+        RecordAdoptionApprovalMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRecordAdoptionApprovalMutationOptions(options), queryClient);
+    }
+
+export const getGetAdoptionCheckoutUrl = (treeId: string,) => {
+
+
+
+
+  return `/api/v1/adoption-checkout/${treeId}`
+}
+
+export const getAdoptionCheckout = async (treeId: string, options?: Parameters<typeof customFetch>[1]): Promise<AdoptionCheckout> => {
+
+  return customFetch<AdoptionCheckout>(getGetAdoptionCheckoutUrl(treeId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAdoptionCheckoutQueryKey = (treeId: string,) => {
+    return [
+    `/api/v1/adoption-checkout/${treeId}`
+    ] as const;
+    }
+
+
+export const getGetAdoptionCheckoutQueryOptions = <TData = Awaited<ReturnType<typeof getAdoptionCheckout>>, TError = ErrorType<unknown>>(treeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionCheckout>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAdoptionCheckoutQueryKey(treeId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdoptionCheckout>>> = ({ signal }) => getAdoptionCheckout(treeId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: treeId !== null && treeId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdoptionCheckout>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetAdoptionCheckoutQueryResult = NonNullable<Awaited<ReturnType<typeof getAdoptionCheckout>>>
+export type GetAdoptionCheckoutQueryError = ErrorType<unknown>
+
+
+export function useGetAdoptionCheckout<TData = Awaited<ReturnType<typeof getAdoptionCheckout>>, TError = ErrorType<unknown>>(
+ treeId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionCheckout>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdoptionCheckout>>,
+          TError,
+          Awaited<ReturnType<typeof getAdoptionCheckout>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdoptionCheckout<TData = Awaited<ReturnType<typeof getAdoptionCheckout>>, TError = ErrorType<unknown>>(
+ treeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionCheckout>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdoptionCheckout>>,
+          TError,
+          Awaited<ReturnType<typeof getAdoptionCheckout>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdoptionCheckout<TData = Awaited<ReturnType<typeof getAdoptionCheckout>>, TError = ErrorType<unknown>>(
+ treeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionCheckout>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetAdoptionCheckout<TData = Awaited<ReturnType<typeof getAdoptionCheckout>>, TError = ErrorType<unknown>>(
+ treeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionCheckout>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetAdoptionCheckoutQueryOptions(treeId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getReserveAdoptionUrl = () => {
+
+
+
+
+  return `/api/v1/adoption-orders`
+}
+
+export const reserveAdoption = async (adoptionReservationInput: AdoptionReservationInput, options?: Parameters<typeof customFetch>[1]): Promise<AdoptionOrder> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<AdoptionOrder>(getReserveAdoptionUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(adoptionReservationInput)
+  }
+);}
+
+
+
+
+
+export const getReserveAdoptionMutationKey = () => ['reserveAdoption'] as const;
+
+export const getReserveAdoptionMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reserveAdoption>>, TError,ReserveAdoptionMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof reserveAdoption>>, TError,ReserveAdoptionMutationVariables, TContext> => {
+
+const mutationKey = getReserveAdoptionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof reserveAdoption>>, ReserveAdoptionMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  reserveAdoption(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ReserveAdoptionMutationResult = NonNullable<Awaited<ReturnType<typeof reserveAdoption>>>
+    export type ReserveAdoptionMutationBody = BodyType<AdoptionReservationInput>
+    export type ReserveAdoptionMutationError = ErrorType<unknown>
+    export type ReserveAdoptionMutationVariables = {data: BodyType<AdoptionReservationInput>}
+
+    export const useReserveAdoption = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reserveAdoption>>, TError,ReserveAdoptionMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof reserveAdoption>>,
+        TError,
+        ReserveAdoptionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getReserveAdoptionMutationOptions(options), queryClient);
+    }
+
+export const getGetAdoptionOrderUrl = (orderId: string,) => {
+
+
+
+
+  return `/api/v1/adoption-orders/${orderId}`
+}
+
+export const getAdoptionOrder = async (orderId: string, options?: Parameters<typeof customFetch>[1]): Promise<AdoptionOrder> => {
+
+  return customFetch<AdoptionOrder>(getGetAdoptionOrderUrl(orderId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAdoptionOrderQueryKey = (orderId: string,) => {
+    return [
+    `/api/v1/adoption-orders/${orderId}`
+    ] as const;
+    }
+
+
+export const getGetAdoptionOrderQueryOptions = <TData = Awaited<ReturnType<typeof getAdoptionOrder>>, TError = ErrorType<unknown>>(orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionOrder>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAdoptionOrderQueryKey(orderId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdoptionOrder>>> = ({ signal }) => getAdoptionOrder(orderId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: orderId !== null && orderId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdoptionOrder>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetAdoptionOrderQueryResult = NonNullable<Awaited<ReturnType<typeof getAdoptionOrder>>>
+export type GetAdoptionOrderQueryError = ErrorType<unknown>
+
+
+export function useGetAdoptionOrder<TData = Awaited<ReturnType<typeof getAdoptionOrder>>, TError = ErrorType<unknown>>(
+ orderId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionOrder>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdoptionOrder>>,
+          TError,
+          Awaited<ReturnType<typeof getAdoptionOrder>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdoptionOrder<TData = Awaited<ReturnType<typeof getAdoptionOrder>>, TError = ErrorType<unknown>>(
+ orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionOrder>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdoptionOrder>>,
+          TError,
+          Awaited<ReturnType<typeof getAdoptionOrder>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdoptionOrder<TData = Awaited<ReturnType<typeof getAdoptionOrder>>, TError = ErrorType<unknown>>(
+ orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionOrder>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetAdoptionOrder<TData = Awaited<ReturnType<typeof getAdoptionOrder>>, TError = ErrorType<unknown>>(
+ orderId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdoptionOrder>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetAdoptionOrderQueryOptions(orderId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getStartAdoptionPaymentUrl = (orderId: string,) => {
+
+
+
+
+  return `/api/v1/adoption-orders/${orderId}/payment`
+}
+
+export const startAdoptionPayment = async (orderId: string, options?: Parameters<typeof customFetch>[1]): Promise<AdoptionPaymentSession> => {
+
+  return customFetch<AdoptionPaymentSession>(getStartAdoptionPaymentUrl(orderId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getStartAdoptionPaymentMutationKey = () => ['startAdoptionPayment'] as const;
+
+export const getStartAdoptionPaymentMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof startAdoptionPayment>>, TError,StartAdoptionPaymentMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof startAdoptionPayment>>, TError,StartAdoptionPaymentMutationVariables, TContext> => {
+
+const mutationKey = getStartAdoptionPaymentMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof startAdoptionPayment>>, StartAdoptionPaymentMutationVariables> = (props) => {
+          const {orderId} = props ?? {};
+
+          return  startAdoptionPayment(orderId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type StartAdoptionPaymentMutationResult = NonNullable<Awaited<ReturnType<typeof startAdoptionPayment>>>
+
+    export type StartAdoptionPaymentMutationError = ErrorType<unknown>
+    export type StartAdoptionPaymentMutationVariables = {orderId: string}
+
+    export const useStartAdoptionPayment = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof startAdoptionPayment>>, TError,StartAdoptionPaymentMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof startAdoptionPayment>>,
+        TError,
+        StartAdoptionPaymentMutationVariables,
+        TContext
+      > => {
+      return useMutation(getStartAdoptionPaymentMutationOptions(options), queryClient);
+    }
+
+export const getVerifyAdoptionPaymentUrl = (orderId: string,) => {
+
+
+
+
+  return `/api/v1/adoption-orders/${orderId}/verify`
+}
+
+export const verifyAdoptionPayment = async (orderId: string,
+    adoptionPaymentProof: AdoptionPaymentProof, options?: Parameters<typeof customFetch>[1]): Promise<AdoptionOrder> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<AdoptionOrder>(getVerifyAdoptionPaymentUrl(orderId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(adoptionPaymentProof)
+  }
+);}
+
+
+
+
+
+export const getVerifyAdoptionPaymentMutationKey = () => ['verifyAdoptionPayment'] as const;
+
+export const getVerifyAdoptionPaymentMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof verifyAdoptionPayment>>, TError,VerifyAdoptionPaymentMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof verifyAdoptionPayment>>, TError,VerifyAdoptionPaymentMutationVariables, TContext> => {
+
+const mutationKey = getVerifyAdoptionPaymentMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof verifyAdoptionPayment>>, VerifyAdoptionPaymentMutationVariables> = (props) => {
+          const {orderId,data} = props ?? {};
+
+          return  verifyAdoptionPayment(orderId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type VerifyAdoptionPaymentMutationResult = NonNullable<Awaited<ReturnType<typeof verifyAdoptionPayment>>>
+    export type VerifyAdoptionPaymentMutationBody = BodyType<AdoptionPaymentProof>
+    export type VerifyAdoptionPaymentMutationError = ErrorType<unknown>
+    export type VerifyAdoptionPaymentMutationVariables = {orderId: string;data: BodyType<AdoptionPaymentProof>}
+
+    export const useVerifyAdoptionPayment = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof verifyAdoptionPayment>>, TError,VerifyAdoptionPaymentMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof verifyAdoptionPayment>>,
+        TError,
+        VerifyAdoptionPaymentMutationVariables,
+        TContext
+      > => {
+      return useMutation(getVerifyAdoptionPaymentMutationOptions(options), queryClient);
+    }
 
 export const getListManagedSchemesUrl = () => {
 

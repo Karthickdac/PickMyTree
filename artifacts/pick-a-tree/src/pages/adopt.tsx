@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams, useSearch } from 'wouter';
-import { ArrowLeft, ArrowRight, CalendarCheck, Leaf, MapPin, Search, Sprout, TreeDeciduous } from 'lucide-react';
-import { getGetPublicTreeQueryKey, useGetPublicTree, useGetReadiness, useListPublicTrees, type CatalogueImage } from '@workspace/api-client-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, CalendarCheck, Leaf, MapPin, Search, Sprout, TreeDeciduous } from 'lucide-react';
+import { getGetAdoptionCheckoutQueryKey, getGetPublicTreeQueryKey, useGetAdoptionCheckout, useGetPublicTree, useListPublicTrees, type CatalogueImage } from '@workspace/api-client-react';
 import { errorMessage, errorStatus, formatDate, formatPaise, IMAGES, SPECIES, useSeo } from '@/lib/brand';
 import { AvailabilityNote, EmptyState, ErrorState, Eyebrow, IllustrativeImage, PageHero, Reveal, SampleBadge, Section, StatusPill } from '@/components/site/bits';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -90,7 +90,7 @@ export function AdoptPage() {
 export function TreeDetailPage() {
   const { id = '' } = useParams<{ id: string }>();
   const { data, isLoading, isError, error, refetch } = useGetPublicTree(id, { query: { enabled: !!id, queryKey: getGetPublicTreeQueryKey(id) } });
-  const { data: readiness } = useGetReadiness();
+  const checkout = useGetAdoptionCheckout(id, { query: { enabled: !!id, retry: false, queryKey: getGetAdoptionCheckoutQueryKey(id) } });
   useSeo(data ? `${data.tree.name} (${data.tree.treeCode})` : 'Tree detail', data ? `${data.tree.species} · ${data.tree.variety} at ${data.tree.farmName}. Inspection, scheme and disclosures.` : 'Verified tree listing on Pick My Tree.');
 
   if (isLoading) return <Section><Skeleton className="h-6 w-32" /><div className="mt-6 grid items-start gap-6 md:grid-cols-[280px_minmax(0,1fr)]"><Skeleton className="h-52 w-full rounded-2xl" /><div className="space-y-4"><Skeleton className="h-10 w-3/4" /><Skeleton className="h-16 w-full" /><Skeleton className="h-32 w-full" /></div></div></Section>;
@@ -106,6 +106,14 @@ export function TreeDetailPage() {
     );
   }
   const { tree, schemes } = data;
+  const co = checkout.data;
+  const canAdopt = !!co && co.offers.length > 0 && !!co.tree.adoptionEligible && co.payment.acceptingPayments && co.blockers.length === 0;
+  const offerFor = (schemeId: string) => co?.offers.find((o) => o.schemeId === schemeId);
+  const blockers = co ? (co.blockers.length ? co.blockers : [
+    ...(co.offers.length ? [] : ['No approved scheme is attached to this tree yet.']),
+    ...(co.tree.adoptionEligible ? [] : ['This tree has not been approved for adoption yet.']),
+    ...(co.payment.acceptingPayments ? [] : ['Online payments are not being accepted yet.']),
+  ]) : [];
   const facts = [
     ['Species', tree.species], ['Variety', tree.variety], ['Farm', tree.farmName], ['Zone', tree.zone],
     ['Estimated age', tree.age ?? 'Not recorded'], ['Last inspected', formatDate(tree.inspectedAt)],
@@ -141,7 +149,7 @@ export function TreeDetailPage() {
         <Eyebrow>Adoption schemes</Eyebrow>
         <h2 className="mt-2 text-2xl font-light text-emerald md:text-3xl">Choose your harvest scheme</h2>
         {schemes.length === 0 ? (
-          <div className="mt-4 flex items-start gap-3 rounded-2xl border border-border bg-card p-4"><CalendarCheck className="mt-0.5 h-5 w-5 shrink-0 text-leaf" /><div><p className="font-medium text-emerald">Scheme terms awaiting approval</p><p className="mt-1 text-sm text-muted-foreground">Adoption opens after tree verification, scheme approval and payment setup.</p></div></div>
+          <div className="mt-4 flex items-start gap-3 rounded-2xl border border-border bg-card p-4"><CalendarCheck className="mt-0.5 h-5 w-5 shrink-0 text-leaf" /><div><p className="font-medium text-emerald">No schemes published for this tree</p><p className="mt-1 text-sm text-muted-foreground">Current status is shown below.</p></div></div>
         ) : (
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
             {schemes.map((s) => (
@@ -158,20 +166,18 @@ export function TreeDetailPage() {
                     <AccordionContent className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{s.disclosures}</AccordionContent>
                   </AccordionItem>
                 </Accordion>
+                {canAdopt && offerFor(s.id) && <Link href={`/checkout/${tree.id}?offer=${offerFor(s.id)!.id}`} className="mt-5 inline-flex items-center gap-2 rounded-full bg-harvest px-5 py-2.5 text-sm font-semibold text-ivory" data-testid={`link-adopt-${s.id}`}>Review & adopt <ArrowRight className="h-4 w-4" /></Link>}
               </div>
             ))}
           </div>
         )}
         <div className="mt-4">
           <AvailabilityNote>
-            <span data-testid="text-adoption-availability">{tree.isSample
-              ? <><strong>Adoption unavailable.</strong> Tree verification and approved scheme terms are required before purchase.</>
-              : schemes.length === 0
-                ? <><strong>Adoption terms not configured for this tree.</strong> Nothing can be reserved until approved terms are attached.</>
-                : tree.adoptionEligible && readiness?.adoptionsOpen
-                  ? <><strong>This tree can be adopted.</strong> Contact us to begin.</>
-                  : <><strong>Online reservation is not available for this tree yet.</strong> Payment for adoptions is not connected.</>}</span>
-            {!tree.isSample && <div className="mt-3"><Link href="/contact" className="font-semibold underline underline-offset-4" data-testid="link-register-interest">Ask about this tree</Link></div>}
+            <div data-testid="text-adoption-availability">{checkout.isLoading ? <span>Checking current adoption status.</span>
+              : checkout.isError ? <span>Adoption status could not be loaded. <button type="button" onClick={() => checkout.refetch()} className="font-semibold underline">Retry</button></span>
+              : canAdopt ? <span><strong>Open for adoption.</strong> Choose a scheme above to review the full agreement and total.{co!.payment.mode === 'test' && ' Payments currently run in a non-live environment; no real money is collected.'}</span>
+              : <><strong>Online adoption is not open for this tree.</strong><ul className="mt-2 space-y-1">{blockers.map((b) => <li key={b} className="flex items-start gap-2"><AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />{b}</li>)}</ul></>}</div>
+            {!canAdopt && <div className="mt-3"><Link href="/contact" className="font-semibold underline underline-offset-4" data-testid="link-register-interest">Ask about this tree</Link></div>}
           </AvailabilityNote>
         </div>
       </Section>

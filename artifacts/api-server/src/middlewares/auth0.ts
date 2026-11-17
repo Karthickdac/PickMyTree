@@ -32,6 +32,19 @@ function getSettings() {
 const settings = getSettings();
 export const phoneAuthConfigured = Boolean(settings);
 export const phoneAuthOrigin = settings?.baseURL;
+export function safeAuthReturnTo(raw: unknown) {
+  if (!settings || typeof raw !== "string") return "/portal";
+  try {
+    const url = new URL(raw, settings.baseURL);
+    if (url.origin !== settings.baseURL || url.hash) return "/portal";
+    if (url.pathname === "/manage/adoption-readiness") return url.pathname;
+    if (/^\/(?:checkout|adoption-orders)\/[a-f0-9-]{36}$/i.test(url.pathname)) {
+      const offer = url.searchParams.get("offer");
+      return url.pathname + (offer && /^[a-f0-9-]{36}$/i.test(offer) ? `?offer=${offer}` : "");
+    }
+  } catch { /* Untrusted return paths never leave this application. */ }
+  return "/portal";
+}
 
 export function createPhoneAuth(): IRouter {
   const router: IRouter = Router();
@@ -52,7 +65,7 @@ export function createPhoneAuth(): IRouter {
     idpLogout: true,
     routes: { login: false, logout: false, callback: "/api/auth/callback" },
     authorizationParams: { response_type: "code", response_mode: "query", scope: "openid profile phone", connection: "sms", prompt: "login" },
-    getLoginState: () => ({ returnTo: `${settings.baseURL}/portal` }),
+    getLoginState: (_req, options) => ({ returnTo: options.returnTo ?? `${settings.baseURL}/portal` }),
     session: { name: "patSession", rolling: true, rollingDuration: 86400, absoluteDuration: 604800,
       cookie: { httpOnly: true, secure: true, sameSite: "Lax", path: "/" } },
     legacySameSiteCookie: false,
@@ -62,8 +75,17 @@ export function createPhoneAuth(): IRouter {
       return { ...session, mobileIdentity };
     },
   }));
-  router.get("/api/auth/login", async (_req, res): Promise<void> => {
-    await res.oidc.login({ returnTo: `${settings.baseURL}/portal` });
+  router.get("/api/auth/login", async (req, res): Promise<void> => {
+    await res.oidc.login({ returnTo: `${settings.baseURL}${safeAuthReturnTo(req.query.returnTo)}` });
+  });
+  router.get("/api/auth/step-up", async (req, res): Promise<void> => {
+    // Auth0 must have a real second factor enrolled/enforced. The application
+    // still checks the signed token's MFA claim after this redirect; a repeated
+    // SMS passwordless login alone is not accepted as a second factor.
+    await res.oidc.login({
+      returnTo: `${settings.baseURL}${safeAuthReturnTo(req.query.returnTo ?? "/manage/adoption-readiness")}`,
+      authorizationParams: { prompt: "login", max_age: 0, acr_values: "http://schemas.openid.net/pape/policies/2007/06/multi-factor" },
+    });
   });
   // A cross-site GET must not be able to log a user out.
   router.post("/api/auth/logout", async (req, res): Promise<void> => {

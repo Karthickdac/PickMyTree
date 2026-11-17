@@ -1,9 +1,10 @@
 import { Router, type IRouter } from "express";
-import { eq } from "drizzle-orm";
-import { db, platformUsers, workflowRecords, auditEvents, consentEvents } from "@workspace/db";
+import { eq, desc } from "drizzle-orm";
+import { db, platformUsers, workflowRecords, auditEvents, consentEvents, adoptionOrders } from "@workspace/db";
 import { GetMeResponse, UpdateProfileBody, UpdateProfileResponse, GetCustomerDashboardResponse, GetPhoneAuthConfigResponse } from "@workspace/api-zod";
 import { identify, actor } from "../lib/platform/access";
 import { phoneAuthConfigured } from "../middlewares/auth0";
+import { orderDTO } from "../lib/platform/adoption-orders";
 const router: IRouter = Router();
 router.get("/v1/auth/config", (_req, res) => {
   res.setHeader("Cache-Control", "no-store");
@@ -33,6 +34,13 @@ router.get("/v1/me/dashboard", identify, async (req, res): Promise<void> => {
   const a = actor(req);
   const records = await db.select().from(workflowRecords).where(eq(workflowRecords.customerId, a.id));
   const list = (module: string) => records.filter(r => r.module === module).map(r => ({ id: r.id, title: r.title, status: r.status, version: r.version, createdAt: r.createdAt.toISOString(), data: r.data }));
-  res.json(GetCustomerDashboardResponse.parse({ adoptions: [], harvests: [], orders: [], notifications: list("notifications"), tickets: list("tickets") }));
+  const saved = await db.select().from(adoptionOrders).where(eq(adoptionOrders.customerId, a.id)).orderBy(desc(adoptionOrders.createdAt));
+  const orders = saved.map(o => { const d = orderDTO(o); return {
+    id: o.id, title: `${d.schemeName} · ${d.treeName}`, status: d.status, version: d.schemeVersion,
+    createdAt: d.createdAt, data: { treeId: o.treeId, treeCode: d.treeCode, schemeName: d.schemeName,
+      totalPaise: d.totalPaise, fulfilment: d.fulfilment, paymentMode: o.mode === "test" ? "Non-live" : "Live",
+      receipt: `/adoption-orders/${o.id}`, endsAt: d.endsAt, message: d.message },
+  }; });
+  res.json(GetCustomerDashboardResponse.parse({ adoptions: orders.filter(o => o.status === "active"), harvests: [], orders, notifications: list("notifications"), tickets: list("tickets") }));
 });
 export default router;

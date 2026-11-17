@@ -1,6 +1,7 @@
 import { and, eq, inArray, sql, count } from "drizzle-orm";
 import { db, catalogueImages, workflowRecords, type WorkflowRecord } from "@workspace/db";
 import { type Actor, can, isAdmin, PlatformError } from "./access";
+import { currentApproval } from "./adoption-eligibility";
 
 export const farmRoles = ["administrator", "super-administrator", "farm-manager"];
 export const storageAvailable = () => Boolean(process.env.PRIVATE_OBJECT_DIR);
@@ -37,7 +38,7 @@ export async function farmDTO(f: WorkflowRecord) {
     eq(workflowRecords.module, "trees"), eq(workflowRecords.farmId, f.id), sql`${workflowRecords.status} NOT IN ('archived', 'retired')`));
   return { id: f.id, name: f.title, version: f.version, district: String(f.data.district ?? ""),
     description: String(f.data.description ?? ""), location: String(f.data.location ?? ""), areaAcres: Number(f.data.areaAcres ?? 0),
-    status: f.status === "approved" ? "listed" : f.status, isSample: f.data.isSample === true, images,
+    status: f.status === "approved" ? "listed" : f.status, isSample: f.data.isSample === true && !(await currentApproval(f)), images,
     imageIds: images.map(i => i.id), treeCount: total?.n ?? 0 };
 }
 export async function treeDTO(t: WorkflowRecord) {
@@ -45,6 +46,6 @@ export async function treeDTO(t: WorkflowRecord) {
   return { id: t.id, farmId: t.farmId, name: t.title, version: t.version, treeCode: String(t.data.treeCode ?? ""),
     species: String(t.data.species ?? "Mango"), variety: String(t.data.variety ?? ""), zone: String(t.data.zone ?? ""),
     age: String(t.data.age ?? ""), description: String(t.data.description ?? ""), condition: String(t.data.condition ?? ""),
-    status: t.status === "available" ? "listed" : t.status, isSample: t.data.isSample === true,
+    status: t.status === "available" ? "listed" : t.status, isSample: t.data.isSample === true && !(await currentApproval(t)),
     images, imageIds: images.map(i => i.id) };
 }

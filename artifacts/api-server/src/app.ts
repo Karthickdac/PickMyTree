@@ -40,7 +40,8 @@ app.use((req, res, next) => {
     const host = req.get("x-forwarded-host")?.split(",")[0]?.trim() ?? req.get("host");
     let crossOrigin = false;
     try { crossOrigin = Boolean(origin && new URL(origin).host !== host); } catch { crossOrigin = true; }
-    if (req.get("sec-fetch-site") === "cross-site" || crossOrigin) {
+    const signedWebhook = req.path === "/api/v1/payments/razorpay/webhook";
+    if (!signedWebhook && (req.get("sec-fetch-site") === "cross-site" || crossOrigin)) {
       res.status(403).json({ error: "Cross-site requests are not permitted.", requestId: id }); return;
     }
   }
@@ -48,7 +49,9 @@ app.use((req, res, next) => {
 });
 app.use("/api/v1", rateLimit({ windowMs: 60_000, limit: 180, standardHeaders: "draft-8", legacyHeaders: false }));
 app.use("/api/v1/public/enquiries", rateLimit({ windowMs: 15 * 60_000, limit: 8, standardHeaders: "draft-8", legacyHeaders: false, message: { error: "Too many enquiries. Please try again later." } }));
-app.use(express.json({ limit: "256kb" }));
+app.use(express.json({ limit: "256kb", verify: (req, _res, buffer) => {
+  if (req.url?.split("?")[0] === "/api/v1/payments/razorpay/webhook") (req as express.Request).rawPaymentBody = Buffer.from(buffer);
+} }));
 app.use(express.urlencoded({ extended: true }));
 app.use(createPhoneAuth());
 

@@ -10,6 +10,8 @@ export default function SignInPage() {
   const { data: config, isLoading, isError } = useGetPhoneAuthConfig({ query: { retry: false } });
   const { data: me } = useGetMe({ query: { retry: false } });
   const error = new URLSearchParams(window.location.search).get('error');
+  const returnTo = new URLSearchParams(window.location.search).get('returnTo') ?? '/portal';
+  const continuation = /^\/(?:checkout|adoption-orders)\/[a-f0-9-]{36}(?:\?offer=[a-f0-9-]{36})?$/i.test(returnTo) ? returnTo : '/portal';
   const errorText = error === 'mobile-verification-required'
     ? 'Please verify your mobile number to continue.'
     : error ? 'Sign-in did not complete. Please try again or contact support.' : '';
@@ -31,10 +33,10 @@ export default function SignInPage() {
           <p className="mt-4 text-muted-foreground">Your mobile number. One OTP. You’re in.</p>
           {errorText && <p role="alert" className="mt-5 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">{errorText}</p>}
           {me ? (
-            <Link href="/portal" className="mt-7 inline-flex w-full justify-center rounded-full bg-emerald px-6 py-4 font-semibold text-ivory">Open my portal</Link>
+            <Link href={continuation} className="mt-7 inline-flex w-full justify-center rounded-full bg-emerald px-6 py-4 font-semibold text-ivory">{continuation === '/portal' ? 'Open my portal' : 'Continue to checkout'}</Link>
           ) : config?.configured ? (
             <>
-              <a href={config.loginPath} target="_blank" rel="noopener noreferrer" className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald px-6 py-4 font-semibold text-ivory" data-testid="button-mobile-signin"><Smartphone className="h-5 w-5" />Continue with mobile</a>
+              <a href={`${config.loginPath}?returnTo=${encodeURIComponent(continuation)}`} target="_blank" rel="noopener noreferrer" className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald px-6 py-4 font-semibold text-ivory" data-testid="button-mobile-signin"><Smartphone className="h-5 w-5" />Continue with mobile</a>
               <p className="mt-3 text-center text-xs text-muted-foreground">Secure verification opens in a new tab.</p>
             </>
           ) : (

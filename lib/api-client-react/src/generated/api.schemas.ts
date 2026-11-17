@@ -205,6 +205,220 @@ export interface Tree {
   adoptionEligible?: boolean;
 }
 
+export type PaymentAvailabilityMode = typeof PaymentAvailabilityMode[keyof typeof PaymentAvailabilityMode];
+
+
+export const PaymentAvailabilityMode = {
+  test: 'test',
+  live: 'live',
+  unconfigured: 'unconfigured',
+} as const;
+
+export interface PaymentAvailability {
+  configured: boolean;
+  mode: PaymentAvailabilityMode;
+  acceptingPayments: boolean;
+  webhookConfigured: boolean;
+}
+
+export type ApprovalReadinessItemKind = typeof ApprovalReadinessItemKind[keyof typeof ApprovalReadinessItemKind];
+
+
+export const ApprovalReadinessItemKind = {
+  farms: 'farms',
+  trees: 'trees',
+  schemes: 'schemes',
+} as const;
+
+export interface ApprovalReadinessItem {
+  id: string;
+  kind: ApprovalReadinessItemKind;
+  name: string;
+  version: number;
+  approved: boolean;
+  blockers: string[];
+}
+
+export interface AdoptionReadiness {
+  recentMfa: boolean;
+  payment: PaymentAvailability;
+  items: ApprovalReadinessItem[];
+}
+
+export type AdoptionApprovalInputDecision = typeof AdoptionApprovalInputDecision[keyof typeof AdoptionApprovalInputDecision];
+
+
+export const AdoptionApprovalInputDecision = {
+  approve: 'approve',
+  revoke: 'revoke',
+} as const;
+
+export interface AdoptionApprovalInput {
+  recordId: string;
+  /** @minimum 1 */
+  version: number;
+  decision: AdoptionApprovalInputDecision;
+  /**
+     * @minLength 20
+     * @maxLength 4000
+     */
+  reason: string;
+  attested: boolean;
+  /** @maxLength 500 */
+  evidenceReference?: string;
+  /**
+     * @nullable
+     * @pattern ^\d{4}-\d{2}-\d{2}$
+     */
+  validUntil?: string | null;
+  /**
+     * @nullable
+     * @pattern ^\d{4}-\d{2}-\d{2}$
+     */
+  inspectedOn?: string | null;
+  /** @maxLength 500 */
+  qualification?: string;
+  /** @maxLength 2000 */
+  ownerOverrideReason?: string;
+}
+
+export interface AdoptionOffer {
+  id: string;
+  schemeId: string;
+  name: string;
+  version: number;
+  feePaise: number;
+  taxBps: number;
+  deliveryFeePaise: number;
+  durationMonths: number;
+  benefit: string;
+  fulfilmentMethods: string[];
+  deliveryRegions: string;
+  fulfilmentPolicy: string;
+  risks: string;
+  shortfallPolicy: string;
+  cancellationPolicy: string;
+  terms: string;
+  agreementVersion: string;
+  inclusions: string;
+  exclusions: string;
+}
+
+export interface AdoptionCheckout {
+  tree: Tree;
+  offers: AdoptionOffer[];
+  payment: PaymentAvailability;
+  blockers: string[];
+}
+
+export type AdoptionReservationInputFulfilment = typeof AdoptionReservationInputFulfilment[keyof typeof AdoptionReservationInputFulfilment];
+
+
+export const AdoptionReservationInputFulfilment = {
+  pickup: 'pickup',
+  delivery: 'delivery',
+  'sale-settlement': 'sale-settlement',
+} as const;
+
+export interface AdoptionReservationInput {
+  treeId: string;
+  offerId: string;
+  idempotencyKey: string;
+  fulfilment: AdoptionReservationInputFulfilment;
+  /**
+     * @minLength 2
+     * @maxLength 120
+     */
+  name: string;
+  /** @maxLength 2000 */
+  deliveryAddress?: string;
+  acceptedTerms: boolean;
+}
+
+export type AdoptionOrderStatus = typeof AdoptionOrderStatus[keyof typeof AdoptionOrderStatus];
+
+
+export const AdoptionOrderStatus = {
+  reserved: 'reserved',
+  'creating-payment': 'creating-payment',
+  'payment-pending': 'payment-pending',
+  active: 'active',
+  expired: 'expired',
+  'payment-review': 'payment-review',
+} as const;
+
+export type AdoptionOrderPaymentMode = typeof AdoptionOrderPaymentMode[keyof typeof AdoptionOrderPaymentMode];
+
+
+export const AdoptionOrderPaymentMode = {
+  test: 'test',
+  live: 'live',
+} as const;
+
+export interface AdoptionOrder {
+  id: string;
+  treeId: string;
+  treeName: string;
+  treeCode: string;
+  schemeName: string;
+  schemeVersion: number;
+  status: AdoptionOrderStatus;
+  feePaise: number;
+  taxPaise: number;
+  deliveryFeePaise: number;
+  totalPaise: number;
+  fulfilment: string;
+  expiresAt: string;
+  createdAt: string;
+  /** @nullable */
+  activatedAt?: string | null;
+  /** @nullable */
+  endsAt?: string | null;
+  /** @nullable */
+  paymentId?: string | null;
+  paymentMode: AdoptionOrderPaymentMode;
+  agreement: AdoptionOffer;
+  message: string;
+}
+
+export type AdoptionPaymentSessionCurrency = typeof AdoptionPaymentSessionCurrency[keyof typeof AdoptionPaymentSessionCurrency];
+
+
+export const AdoptionPaymentSessionCurrency = {
+  INR: 'INR',
+} as const;
+
+export interface AdoptionPaymentSession {
+  keyId: string;
+  providerOrderId: string;
+  amount: number;
+  currency: AdoptionPaymentSessionCurrency;
+  name: string;
+  contact: string;
+  order: AdoptionOrder;
+}
+
+export interface AdoptionPaymentProof {
+  /**
+     * @minLength 5
+     * @maxLength 100
+     * @pattern ^pay_[A-Za-z0-9]+$
+     */
+  paymentId: string;
+  /**
+     * @minLength 5
+     * @maxLength 100
+     * @pattern ^order_[A-Za-z0-9]+$
+     */
+  providerOrderId: string;
+  /**
+     * @minLength 64
+     * @maxLength 64
+     * @pattern ^[a-fA-F0-9]+$
+     */
+  signature: string;
+}
+
 export type SchemeConfigurationSpecies = typeof SchemeConfigurationSpecies[keyof typeof SchemeConfigurationSpecies];
 
 
@@ -374,6 +588,7 @@ export type ManagedSchemeStatus = typeof ManagedSchemeStatus[keyof typeof Manage
 
 export const ManagedSchemeStatus = {
   draft: 'draft',
+  approved: 'approved',
   archived: 'archived',
 } as const;
 
@@ -391,6 +606,7 @@ export type SchemeRevisionStatus = typeof SchemeRevisionStatus[keyof typeof Sche
 
 export const SchemeRevisionStatus = {
   draft: 'draft',
+  approved: 'approved',
   archived: 'archived',
 } as const;
 

@@ -10,6 +10,7 @@ import {
 import { z } from "zod";
 import { actor, identify, PlatformError, can } from "../lib/platform/access";
 import { farmRoles, farmManagerScope, requireFarmManager, farmDTO, treeDTO, validatePhotos, storageAvailable } from "../lib/platform/catalogue";
+import { commerceLock } from "../lib/platform/adoption-orders";
 
 const router: IRouter = Router();
 const uuid = z.string().uuid();
@@ -47,6 +48,7 @@ router.patch("/v1/management/farms/:farmId", async (req, res) => {
   await validatePhotos(a, input.imageIds, before.data.imageIds);
   const { name, status, version, ...data } = input;
   const after = await db.transaction(async tx => {
+    await tx.execute(commerceLock);
     const [row] = await tx.update(workflowRecords).set({ title: name, status, data: { ...before.data, ...data, authorityReviewed: false },
       version: before.version + 1, updatedAt: new Date() }).where(and(eq(workflowRecords.id, before.id), eq(workflowRecords.version, version))).returning();
     if (!row) throw new PlatformError(409, "This farm changed in another session. Reload it before saving.");
@@ -85,6 +87,7 @@ router.patch("/v1/management/trees/:treeId", async (req, res) => {
   await validatePhotos(a, input.imageIds, before.data.imageIds);
   const { name, status, version, ...data } = input;
   const after = await db.transaction(async tx => {
+    await tx.execute(commerceLock);
     const [row] = await tx.update(workflowRecords).set({ title: name, status, version: before.version + 1, updatedAt: new Date(),
       data: { ...before.data, ...data, provenanceVerified: false } }).where(and(eq(workflowRecords.id, before.id), eq(workflowRecords.version, version))).returning();
     if (!row) throw new PlatformError(409, "This tree changed in another session. Reload it before saving.");

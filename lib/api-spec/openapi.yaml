@@ -6,6 +6,92 @@ info:
 servers:
   - url: /api
 paths:
+  /v1/management/adoption-readiness:
+    get:
+      operationId: getAdoptionReadiness
+      responses:
+        "200":
+          description: Actual verification, approval and gateway state
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdoptionReadiness" }
+  /v1/management/adoption-approvals:
+    post:
+      operationId: recordAdoptionApproval
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AdoptionApprovalInput" }
+      responses:
+        "200":
+          description: Recorded approval or revocation
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdoptionReadiness" }
+  /v1/adoption-checkout/{treeId}:
+    parameters:
+      - { name: treeId, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      operationId: getAdoptionCheckout
+      responses:
+        "200":
+          description: Approved versioned offers and actual availability
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdoptionCheckout" }
+  /v1/adoption-orders:
+    post:
+      operationId: reserveAdoption
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AdoptionReservationInput" }
+      responses:
+        "201":
+          description: Durable expiring reservation with accepted agreement
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdoptionOrder" }
+  /v1/adoption-orders/{orderId}:
+    parameters:
+      - { name: orderId, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      operationId: getAdoptionOrder
+      responses:
+        "200":
+          description: Own reservation, payment state and agreement
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdoptionOrder" }
+  /v1/adoption-orders/{orderId}/payment:
+    parameters:
+      - { name: orderId, in: path, required: true, schema: { type: string, format: uuid } }
+    post:
+      operationId: startAdoptionPayment
+      responses:
+        "200":
+          description: Server-created Razorpay order
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdoptionPaymentSession" }
+  /v1/adoption-orders/{orderId}/verify:
+    parameters:
+      - { name: orderId, in: path, required: true, schema: { type: string, format: uuid } }
+    post:
+      operationId: verifyAdoptionPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AdoptionPaymentProof" }
+      responses:
+        "200":
+          description: Payment checked against provider and server order
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdoptionOrder" }
   /v1/management/schemes:
     get:
       operationId: listManagedSchemes
@@ -564,6 +650,129 @@ components:
         images: { type: array, items: { $ref: "#/components/schemas/CatalogueImage" } }
         farmId: { type: string }
         adoptionEligible: { type: boolean }
+    PaymentAvailability:
+      type: object
+      required: [configured, mode, acceptingPayments, webhookConfigured]
+      properties:
+        configured: { type: boolean }
+        mode: { type: string, enum: [test, live, unconfigured] }
+        acceptingPayments: { type: boolean }
+        webhookConfigured: { type: boolean }
+    ApprovalReadinessItem:
+      type: object
+      required: [id, kind, name, version, approved, blockers]
+      properties:
+        id: { type: string, format: uuid }
+        kind: { type: string, enum: [farms, trees, schemes] }
+        name: { type: string }
+        version: { type: integer }
+        approved: { type: boolean }
+        blockers: { type: array, items: { type: string } }
+    AdoptionReadiness:
+      type: object
+      required: [recentMfa, payment, items]
+      properties:
+        recentMfa: { type: boolean }
+        payment: { $ref: "#/components/schemas/PaymentAvailability" }
+        items: { type: array, items: { $ref: "#/components/schemas/ApprovalReadinessItem" } }
+    AdoptionApprovalInput:
+      type: object
+      required: [recordId, version, decision, reason, attested]
+      properties:
+        recordId: { type: string, format: uuid }
+        version: { type: integer, minimum: 1 }
+        decision: { type: string, enum: [approve, revoke] }
+        reason: { type: string, minLength: 20, maxLength: 4000 }
+        attested: { type: boolean }
+        evidenceReference: { type: string, maxLength: 500 }
+        validUntil: { type: ["string", "null"], pattern: '^\d{4}-\d{2}-\d{2}$' }
+        inspectedOn: { type: ["string", "null"], pattern: '^\d{4}-\d{2}-\d{2}$' }
+        qualification: { type: string, maxLength: 500 }
+        ownerOverrideReason: { type: string, maxLength: 2000 }
+    AdoptionOffer:
+      type: object
+      required: [id, schemeId, name, version, feePaise, taxBps, deliveryFeePaise, durationMonths, benefit, fulfilmentMethods, deliveryRegions, fulfilmentPolicy, risks, shortfallPolicy, cancellationPolicy, terms, agreementVersion, inclusions, exclusions]
+      properties:
+        id: { type: string, format: uuid }
+        schemeId: { type: string, format: uuid }
+        name: { type: string }
+        version: { type: integer }
+        feePaise: { type: integer }
+        taxBps: { type: integer }
+        deliveryFeePaise: { type: integer }
+        durationMonths: { type: integer }
+        benefit: { type: string }
+        fulfilmentMethods: { type: array, items: { type: string } }
+        deliveryRegions: { type: string }
+        fulfilmentPolicy: { type: string }
+        risks: { type: string }
+        shortfallPolicy: { type: string }
+        cancellationPolicy: { type: string }
+        terms: { type: string }
+        agreementVersion: { type: string }
+        inclusions: { type: string }
+        exclusions: { type: string }
+    AdoptionCheckout:
+      type: object
+      required: [tree, offers, payment, blockers]
+      properties:
+        tree: { $ref: "#/components/schemas/Tree" }
+        offers: { type: array, items: { $ref: "#/components/schemas/AdoptionOffer" } }
+        payment: { $ref: "#/components/schemas/PaymentAvailability" }
+        blockers: { type: array, items: { type: string } }
+    AdoptionReservationInput:
+      type: object
+      required: [treeId, offerId, idempotencyKey, fulfilment, name, acceptedTerms]
+      properties:
+        treeId: { type: string, format: uuid }
+        offerId: { type: string, format: uuid }
+        idempotencyKey: { type: string, format: uuid }
+        fulfilment: { type: string, enum: [pickup, delivery, sale-settlement] }
+        name: { type: string, minLength: 2, maxLength: 120 }
+        deliveryAddress: { type: string, maxLength: 2000 }
+        acceptedTerms: { type: boolean }
+    AdoptionOrder:
+      type: object
+      required: [id, treeId, treeName, treeCode, schemeName, schemeVersion, status, feePaise, taxPaise, deliveryFeePaise, totalPaise, fulfilment, expiresAt, createdAt, agreement, message, paymentMode]
+      properties:
+        id: { type: string, format: uuid }
+        treeId: { type: string, format: uuid }
+        treeName: { type: string }
+        treeCode: { type: string }
+        schemeName: { type: string }
+        schemeVersion: { type: integer }
+        status: { type: string, enum: [reserved, creating-payment, payment-pending, active, expired, payment-review] }
+        feePaise: { type: integer }
+        taxPaise: { type: integer }
+        deliveryFeePaise: { type: integer }
+        totalPaise: { type: integer }
+        fulfilment: { type: string }
+        expiresAt: { type: string }
+        createdAt: { type: string }
+        activatedAt: { type: ["string", "null"] }
+        endsAt: { type: ["string", "null"] }
+        paymentId: { type: ["string", "null"] }
+        paymentMode: { type: string, enum: [test, live] }
+        agreement: { $ref: "#/components/schemas/AdoptionOffer" }
+        message: { type: string }
+    AdoptionPaymentSession:
+      type: object
+      required: [keyId, providerOrderId, amount, currency, name, contact, order]
+      properties:
+        keyId: { type: string }
+        providerOrderId: { type: string }
+        amount: { type: integer }
+        currency: { type: string, enum: [INR] }
+        name: { type: string }
+        contact: { type: string }
+        order: { $ref: "#/components/schemas/AdoptionOrder" }
+    AdoptionPaymentProof:
+      type: object
+      required: [paymentId, providerOrderId, signature]
+      properties:
+        paymentId: { type: string, minLength: 5, maxLength: 100, pattern: '^pay_[A-Za-z0-9]+$' }
+        providerOrderId: { type: string, minLength: 5, maxLength: 100, pattern: '^order_[A-Za-z0-9]+$' }
+        signature: { type: string, minLength: 64, maxLength: 64, pattern: '^[a-fA-F0-9]+$' }
     SchemeConfiguration:
       type: object
       additionalProperties: false
@@ -624,7 +833,7 @@ components:
           properties:
             id: { type: string, format: uuid }
             version: { type: integer, minimum: 1 }
-            status: { type: string, enum: [draft, archived] }
+            status: { type: string, enum: [draft, approved, archived] }
             createdAt: { type: string }
             updatedAt: { type: string }
     SchemeRevision:
@@ -634,7 +843,7 @@ components:
           required: [version, status, recordedAt, reason]
           properties:
             version: { type: integer, minimum: 1 }
-            status: { type: string, enum: [draft, archived] }
+            status: { type: string, enum: [draft, approved, archived] }
             recordedAt: { type: string }
             reason: { type: string }
     Scheme:

@@ -67,6 +67,7 @@ router.patch("/v1/workspace/:module/records/:id", async (req, res): Promise<void
   if (!m || !a.grants.some(g => m.roles.includes(g.role))) throw new PlatformError(403, "You cannot access this area.");
   if (m.key === "schemes") throw new PlatformError(409, "Use Customize schemes to edit drafts. Commercial approval is not available through this generic editor.");
   const changed = await db.transaction(async tx => {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(73421891)`);
     const [before] = await tx.select().from(workflowRecords).where(and(eq(workflowRecords.id, id), eq(workflowRecords.module, m.key), visibleScope(a, m))).for("update");
     if (!before) throw new PlatformError(404, "Record not found.");
     if (before.version !== body.version) throw new PlatformError(409, "This record changed. Reload before saving.");

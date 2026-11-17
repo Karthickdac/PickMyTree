@@ -8,6 +8,367 @@
 import * as zod from 'zod';
 
 
+export const GetAdoptionReadinessResponse = zod.object({
+  "recentMfa": zod.boolean(),
+  "payment": zod.object({
+  "configured": zod.boolean(),
+  "mode": zod.enum(['test', 'live', 'unconfigured']),
+  "acceptingPayments": zod.boolean(),
+  "webhookConfigured": zod.boolean()
+}),
+  "items": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "kind": zod.enum(['farms', 'trees', 'schemes']),
+  "name": zod.string(),
+  "version": zod.number().int(),
+  "approved": zod.boolean(),
+  "blockers": zod.array(zod.string())
+}))
+})
+
+
+
+export const recordAdoptionApprovalBodyReasonMin = 20;
+export const recordAdoptionApprovalBodyReasonMax = 4000;
+
+export const recordAdoptionApprovalBodyEvidenceReferenceMax = 500;
+
+export const recordAdoptionApprovalBodyValidUntilRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const recordAdoptionApprovalBodyInspectedOnRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const recordAdoptionApprovalBodyQualificationMax = 500;
+
+export const recordAdoptionApprovalBodyOwnerOverrideReasonMax = 2000;
+
+
+
+export const RecordAdoptionApprovalBody = zod.object({
+  "recordId": zod.string().uuid(),
+  "version": zod.number().int().min(1),
+  "decision": zod.enum(['approve', 'revoke']),
+  "reason": zod.string().min(recordAdoptionApprovalBodyReasonMin).max(recordAdoptionApprovalBodyReasonMax),
+  "attested": zod.boolean(),
+  "evidenceReference": zod.string().max(recordAdoptionApprovalBodyEvidenceReferenceMax).optional(),
+  "validUntil": zod.string().regex(recordAdoptionApprovalBodyValidUntilRegExp).nullish(),
+  "inspectedOn": zod.string().regex(recordAdoptionApprovalBodyInspectedOnRegExp).nullish(),
+  "qualification": zod.string().max(recordAdoptionApprovalBodyQualificationMax).optional(),
+  "ownerOverrideReason": zod.string().max(recordAdoptionApprovalBodyOwnerOverrideReasonMax).optional()
+})
+
+export const RecordAdoptionApprovalResponse = zod.object({
+  "recentMfa": zod.boolean(),
+  "payment": zod.object({
+  "configured": zod.boolean(),
+  "mode": zod.enum(['test', 'live', 'unconfigured']),
+  "acceptingPayments": zod.boolean(),
+  "webhookConfigured": zod.boolean()
+}),
+  "items": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "kind": zod.enum(['farms', 'trees', 'schemes']),
+  "name": zod.string(),
+  "version": zod.number().int(),
+  "approved": zod.boolean(),
+  "blockers": zod.array(zod.string())
+}))
+})
+
+
+export const GetAdoptionCheckoutParams = zod.object({
+  "treeId": zod.coerce.string().uuid()
+})
+
+export const GetAdoptionCheckoutResponse = zod.object({
+  "tree": zod.object({
+  "id": zod.string(),
+  "treeCode": zod.string(),
+  "name": zod.string(),
+  "species": zod.string(),
+  "variety": zod.string(),
+  "farmName": zod.string(),
+  "zone": zod.string(),
+  "status": zod.string(),
+  "description": zod.string(),
+  "image": zod.string().optional(),
+  "age": zod.string().optional(),
+  "inspectedAt": zod.string().optional(),
+  "productiveAssessment": zod.string().optional(),
+  "isSample": zod.boolean().optional(),
+  "images": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "url": zod.string(),
+  "name": zod.string(),
+  "isIllustrative": zod.boolean()
+})).optional(),
+  "farmId": zod.string().optional(),
+  "adoptionEligible": zod.boolean().optional()
+}),
+  "offers": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "schemeId": zod.string().uuid(),
+  "name": zod.string(),
+  "version": zod.number().int(),
+  "feePaise": zod.number().int(),
+  "taxBps": zod.number().int(),
+  "deliveryFeePaise": zod.number().int(),
+  "durationMonths": zod.number().int(),
+  "benefit": zod.string(),
+  "fulfilmentMethods": zod.array(zod.string()),
+  "deliveryRegions": zod.string(),
+  "fulfilmentPolicy": zod.string(),
+  "risks": zod.string(),
+  "shortfallPolicy": zod.string(),
+  "cancellationPolicy": zod.string(),
+  "terms": zod.string(),
+  "agreementVersion": zod.string(),
+  "inclusions": zod.string(),
+  "exclusions": zod.string()
+})),
+  "payment": zod.object({
+  "configured": zod.boolean(),
+  "mode": zod.enum(['test', 'live', 'unconfigured']),
+  "acceptingPayments": zod.boolean(),
+  "webhookConfigured": zod.boolean()
+}),
+  "blockers": zod.array(zod.string())
+})
+
+
+export const reserveAdoptionBodyNameMin = 2;
+export const reserveAdoptionBodyNameMax = 120;
+
+export const reserveAdoptionBodyDeliveryAddressMax = 2000;
+
+
+
+export const ReserveAdoptionBody = zod.object({
+  "treeId": zod.string().uuid(),
+  "offerId": zod.string().uuid(),
+  "idempotencyKey": zod.string().uuid(),
+  "fulfilment": zod.enum(['pickup', 'delivery', 'sale-settlement']),
+  "name": zod.string().min(reserveAdoptionBodyNameMin).max(reserveAdoptionBodyNameMax),
+  "deliveryAddress": zod.string().max(reserveAdoptionBodyDeliveryAddressMax).optional(),
+  "acceptedTerms": zod.boolean()
+})
+
+export const ReserveAdoptionResponse = zod.object({
+  "id": zod.string().uuid(),
+  "treeId": zod.string().uuid(),
+  "treeName": zod.string(),
+  "treeCode": zod.string(),
+  "schemeName": zod.string(),
+  "schemeVersion": zod.number().int(),
+  "status": zod.enum(['reserved', 'creating-payment', 'payment-pending', 'active', 'expired', 'payment-review']),
+  "feePaise": zod.number().int(),
+  "taxPaise": zod.number().int(),
+  "deliveryFeePaise": zod.number().int(),
+  "totalPaise": zod.number().int(),
+  "fulfilment": zod.string(),
+  "expiresAt": zod.string(),
+  "createdAt": zod.string(),
+  "activatedAt": zod.string().nullish(),
+  "endsAt": zod.string().nullish(),
+  "paymentId": zod.string().nullish(),
+  "paymentMode": zod.enum(['test', 'live']),
+  "agreement": zod.object({
+  "id": zod.string().uuid(),
+  "schemeId": zod.string().uuid(),
+  "name": zod.string(),
+  "version": zod.number().int(),
+  "feePaise": zod.number().int(),
+  "taxBps": zod.number().int(),
+  "deliveryFeePaise": zod.number().int(),
+  "durationMonths": zod.number().int(),
+  "benefit": zod.string(),
+  "fulfilmentMethods": zod.array(zod.string()),
+  "deliveryRegions": zod.string(),
+  "fulfilmentPolicy": zod.string(),
+  "risks": zod.string(),
+  "shortfallPolicy": zod.string(),
+  "cancellationPolicy": zod.string(),
+  "terms": zod.string(),
+  "agreementVersion": zod.string(),
+  "inclusions": zod.string(),
+  "exclusions": zod.string()
+}),
+  "message": zod.string()
+})
+
+
+export const GetAdoptionOrderParams = zod.object({
+  "orderId": zod.coerce.string().uuid()
+})
+
+export const GetAdoptionOrderResponse = zod.object({
+  "id": zod.string().uuid(),
+  "treeId": zod.string().uuid(),
+  "treeName": zod.string(),
+  "treeCode": zod.string(),
+  "schemeName": zod.string(),
+  "schemeVersion": zod.number().int(),
+  "status": zod.enum(['reserved', 'creating-payment', 'payment-pending', 'active', 'expired', 'payment-review']),
+  "feePaise": zod.number().int(),
+  "taxPaise": zod.number().int(),
+  "deliveryFeePaise": zod.number().int(),
+  "totalPaise": zod.number().int(),
+  "fulfilment": zod.string(),
+  "expiresAt": zod.string(),
+  "createdAt": zod.string(),
+  "activatedAt": zod.string().nullish(),
+  "endsAt": zod.string().nullish(),
+  "paymentId": zod.string().nullish(),
+  "paymentMode": zod.enum(['test', 'live']),
+  "agreement": zod.object({
+  "id": zod.string().uuid(),
+  "schemeId": zod.string().uuid(),
+  "name": zod.string(),
+  "version": zod.number().int(),
+  "feePaise": zod.number().int(),
+  "taxBps": zod.number().int(),
+  "deliveryFeePaise": zod.number().int(),
+  "durationMonths": zod.number().int(),
+  "benefit": zod.string(),
+  "fulfilmentMethods": zod.array(zod.string()),
+  "deliveryRegions": zod.string(),
+  "fulfilmentPolicy": zod.string(),
+  "risks": zod.string(),
+  "shortfallPolicy": zod.string(),
+  "cancellationPolicy": zod.string(),
+  "terms": zod.string(),
+  "agreementVersion": zod.string(),
+  "inclusions": zod.string(),
+  "exclusions": zod.string()
+}),
+  "message": zod.string()
+})
+
+
+export const StartAdoptionPaymentParams = zod.object({
+  "orderId": zod.coerce.string().uuid()
+})
+
+export const StartAdoptionPaymentResponse = zod.object({
+  "keyId": zod.string(),
+  "providerOrderId": zod.string(),
+  "amount": zod.number().int(),
+  "currency": zod.enum(['INR']),
+  "name": zod.string(),
+  "contact": zod.string(),
+  "order": zod.object({
+  "id": zod.string().uuid(),
+  "treeId": zod.string().uuid(),
+  "treeName": zod.string(),
+  "treeCode": zod.string(),
+  "schemeName": zod.string(),
+  "schemeVersion": zod.number().int(),
+  "status": zod.enum(['reserved', 'creating-payment', 'payment-pending', 'active', 'expired', 'payment-review']),
+  "feePaise": zod.number().int(),
+  "taxPaise": zod.number().int(),
+  "deliveryFeePaise": zod.number().int(),
+  "totalPaise": zod.number().int(),
+  "fulfilment": zod.string(),
+  "expiresAt": zod.string(),
+  "createdAt": zod.string(),
+  "activatedAt": zod.string().nullish(),
+  "endsAt": zod.string().nullish(),
+  "paymentId": zod.string().nullish(),
+  "paymentMode": zod.enum(['test', 'live']),
+  "agreement": zod.object({
+  "id": zod.string().uuid(),
+  "schemeId": zod.string().uuid(),
+  "name": zod.string(),
+  "version": zod.number().int(),
+  "feePaise": zod.number().int(),
+  "taxBps": zod.number().int(),
+  "deliveryFeePaise": zod.number().int(),
+  "durationMonths": zod.number().int(),
+  "benefit": zod.string(),
+  "fulfilmentMethods": zod.array(zod.string()),
+  "deliveryRegions": zod.string(),
+  "fulfilmentPolicy": zod.string(),
+  "risks": zod.string(),
+  "shortfallPolicy": zod.string(),
+  "cancellationPolicy": zod.string(),
+  "terms": zod.string(),
+  "agreementVersion": zod.string(),
+  "inclusions": zod.string(),
+  "exclusions": zod.string()
+}),
+  "message": zod.string()
+})
+})
+
+
+export const VerifyAdoptionPaymentParams = zod.object({
+  "orderId": zod.coerce.string().uuid()
+})
+
+export const verifyAdoptionPaymentBodyPaymentIdMin = 5;
+export const verifyAdoptionPaymentBodyPaymentIdMax = 100;
+
+
+export const verifyAdoptionPaymentBodyPaymentIdRegExp = new RegExp('^pay_[A-Za-z0-9]+$');
+export const verifyAdoptionPaymentBodyProviderOrderIdMin = 5;
+export const verifyAdoptionPaymentBodyProviderOrderIdMax = 100;
+
+
+export const verifyAdoptionPaymentBodyProviderOrderIdRegExp = new RegExp('^order_[A-Za-z0-9]+$');
+export const verifyAdoptionPaymentBodySignatureMin = 64;
+export const verifyAdoptionPaymentBodySignatureMax = 64;
+
+
+export const verifyAdoptionPaymentBodySignatureRegExp = new RegExp('^[a-fA-F0-9]+$');
+
+
+export const VerifyAdoptionPaymentBody = zod.object({
+  "paymentId": zod.string().min(verifyAdoptionPaymentBodyPaymentIdMin).max(verifyAdoptionPaymentBodyPaymentIdMax).regex(verifyAdoptionPaymentBodyPaymentIdRegExp),
+  "providerOrderId": zod.string().min(verifyAdoptionPaymentBodyProviderOrderIdMin).max(verifyAdoptionPaymentBodyProviderOrderIdMax).regex(verifyAdoptionPaymentBodyProviderOrderIdRegExp),
+  "signature": zod.string().min(verifyAdoptionPaymentBodySignatureMin).max(verifyAdoptionPaymentBodySignatureMax).regex(verifyAdoptionPaymentBodySignatureRegExp)
+})
+
+export const VerifyAdoptionPaymentResponse = zod.object({
+  "id": zod.string().uuid(),
+  "treeId": zod.string().uuid(),
+  "treeName": zod.string(),
+  "treeCode": zod.string(),
+  "schemeName": zod.string(),
+  "schemeVersion": zod.number().int(),
+  "status": zod.enum(['reserved', 'creating-payment', 'payment-pending', 'active', 'expired', 'payment-review']),
+  "feePaise": zod.number().int(),
+  "taxPaise": zod.number().int(),
+  "deliveryFeePaise": zod.number().int(),
+  "totalPaise": zod.number().int(),
+  "fulfilment": zod.string(),
+  "expiresAt": zod.string(),
+  "createdAt": zod.string(),
+  "activatedAt": zod.string().nullish(),
+  "endsAt": zod.string().nullish(),
+  "paymentId": zod.string().nullish(),
+  "paymentMode": zod.enum(['test', 'live']),
+  "agreement": zod.object({
+  "id": zod.string().uuid(),
+  "schemeId": zod.string().uuid(),
+  "name": zod.string(),
+  "version": zod.number().int(),
+  "feePaise": zod.number().int(),
+  "taxBps": zod.number().int(),
+  "deliveryFeePaise": zod.number().int(),
+  "durationMonths": zod.number().int(),
+  "benefit": zod.string(),
+  "fulfilmentMethods": zod.array(zod.string()),
+  "deliveryRegions": zod.string(),
+  "fulfilmentPolicy": zod.string(),
+  "risks": zod.string(),
+  "shortfallPolicy": zod.string(),
+  "cancellationPolicy": zod.string(),
+  "terms": zod.string(),
+  "agreementVersion": zod.string(),
+  "inclusions": zod.string(),
+  "exclusions": zod.string()
+}),
+  "message": zod.string()
+})
+
+
 export const listManagedSchemesResponseOneNameMin = 2;
 export const listManagedSchemesResponseOneNameMax = 200;
 
@@ -109,7 +470,7 @@ export const ListManagedSchemesResponseItem = zod.object({
 }).and(zod.object({
   "id": zod.string().uuid(),
   "version": zod.number().int().min(1),
-  "status": zod.enum(['draft', 'archived']),
+  "status": zod.enum(['draft', 'approved', 'archived']),
   "createdAt": zod.string(),
   "updatedAt": zod.string()
 }))
@@ -316,7 +677,7 @@ export const CreateManagedSchemeResponse = zod.object({
 }).and(zod.object({
   "id": zod.string().uuid(),
   "version": zod.number().int().min(1),
-  "status": zod.enum(['draft', 'archived']),
+  "status": zod.enum(['draft', 'approved', 'archived']),
   "createdAt": zod.string(),
   "updatedAt": zod.string()
 }))
@@ -427,7 +788,7 @@ export const GetManagedSchemeResponse = zod.object({
 }).and(zod.object({
   "id": zod.string().uuid(),
   "version": zod.number().int().min(1),
-  "status": zod.enum(['draft', 'archived']),
+  "status": zod.enum(['draft', 'approved', 'archived']),
   "createdAt": zod.string(),
   "updatedAt": zod.string()
 }))
@@ -645,7 +1006,7 @@ export const UpdateManagedSchemeResponse = zod.object({
 }).and(zod.object({
   "id": zod.string().uuid(),
   "version": zod.number().int().min(1),
-  "status": zod.enum(['draft', 'archived']),
+  "status": zod.enum(['draft', 'approved', 'archived']),
   "createdAt": zod.string(),
   "updatedAt": zod.string()
 }))
@@ -755,7 +1116,7 @@ export const ListSchemeRevisionsResponseItem = zod.object({
 })
 }).and(zod.object({
   "version": zod.number().int().min(1),
-  "status": zod.enum(['draft', 'archived']),
+  "status": zod.enum(['draft', 'approved', 'archived']),
   "recordedAt": zod.string(),
   "reason": zod.string()
 }))

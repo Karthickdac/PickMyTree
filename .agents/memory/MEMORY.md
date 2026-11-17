@@ -1,3 +1,4 @@
 - [Product boundaries](product-boundaries.md) — Pick My Tree branding, harvest entitlements, sale proceeds, Razorpay preference, concise OTP login and catalogue wording.
 - [App Storage compatibility](app-storage-compatibility.md) — validate SDK upgrades against Replit sidecar uploads, not just TypeScript or bucket provisioning.
 - [Auth0 verification](auth0-verification.md) — authorization checks must preserve cookies and inspect sanitized callback errors, not just the final sign-in page.
+- [Approval chronology](approval-chronology.md) — transaction start times can misorder serialized approvals and revocations; use a monotonic append sequence.

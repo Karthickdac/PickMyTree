@@ -46,6 +46,7 @@ function RecordSheet({ record, onClose }: { record: PlatformRecord | null; onClo
         {record && (<>
           <SheetHeader><SheetTitle className="font-display text-2xl font-normal text-emerald">{record.title}</SheetTitle></SheetHeader>
           <p className="mt-1 font-mono text-xs text-muted-foreground">Status {record.status} · version {record.version}</p>
+          {typeof record.data.receipt === 'string' && /^\/adoption-orders\/[a-f0-9-]{36}$/i.test(record.data.receipt) && <Link href={record.data.receipt} className="mt-4 inline-flex rounded-full bg-emerald px-5 py-2 text-sm font-semibold text-ivory">Open payment & agreement</Link>}
           <div className="mt-6"><RecordFields record={record} /></div>
         </>)}
       </SheetContent>
@@ -65,7 +66,7 @@ function Overview({ name }: { name: string }) {
   return (
     <>
       <AppHeading eyebrow="Your portal" title={<>Vanakkam, <em className="text-harvest">{name}</em>.</>} />
-      {me && canManageFarms(me.roles) && <div className="mb-8"><AvailabilityNote><Link href="/manage/farms" className="font-semibold underline underline-offset-4" data-testid="link-portal-manage">Manage farms, trees and photos</Link>{me.roles.some(role => ['administrator', 'super-administrator'].includes(role)) && <><span className="mx-3">·</span><Link href="/manage/schemes" className="font-semibold underline underline-offset-4" data-testid="link-portal-schemes">Customize schemes</Link></>}</AvailabilityNote></div>}
+      {me && canManageFarms(me.roles) && <div className="mb-8"><AvailabilityNote><Link href="/manage/farms" className="font-semibold underline underline-offset-4" data-testid="link-portal-manage">Manage farms, trees and photos</Link>{me.roles.some(role => ['administrator', 'super-administrator'].includes(role)) && <><span className="mx-3">·</span><Link href="/manage/schemes" className="font-semibold underline underline-offset-4" data-testid="link-portal-schemes">Customize schemes</Link><span className="mx-3">·</span><Link href="/manage/adoption-readiness" className="font-semibold underline underline-offset-4" data-testid="link-portal-readiness">Adoption readiness</Link></>}</AvailabilityNote></div>}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {tiles.map(([label, n, href]) => (
           <Link key={label} href={href} className="rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-leaf" data-testid={`link-tile-${label.toLowerCase().replace(/\s/g, '-')}`}>

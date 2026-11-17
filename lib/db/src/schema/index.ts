@@ -20,3 +20,4 @@
 export * from "./identity";
 export * from "./records";
 export * from "./catalogue-images";
+export * from "./adoption-commerce";

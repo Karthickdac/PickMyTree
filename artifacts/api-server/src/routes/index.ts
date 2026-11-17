@@ -6,6 +6,8 @@ import workspaceRouter from "./platform-workspace";
 import farmManagementRouter from "./farm-management";
 import catalogueImagesRouter from "./catalogue-images";
 import schemeManagementRouter from "./scheme-management";
+import adoptionApprovalsRouter from "./adoption-approvals";
+import adoptionCheckoutRouter from "./adoption-checkout";
 
 const router: IRouter = Router();
 
@@ -13,6 +15,8 @@ router.use(healthRouter);
 router.use(publicRouter);
 router.use(accountRouter);
 router.use(workspaceRouter);
+router.use(adoptionApprovalsRouter);
+router.use(adoptionCheckoutRouter);
 router.use(schemeManagementRouter);
 router.use(farmManagementRouter);
 router.use(catalogueImagesRouter);

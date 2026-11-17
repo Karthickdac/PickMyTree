@@ -28,7 +28,7 @@ const NAV: NavItem[] = [
 
 function ManageShell({ children }: { children: ReactNode }) {
   const { data: me } = useGetMe();
-  const navigation = me?.roles.some(r => ['administrator', 'super-administrator'].includes(r)) ? [NAV[0], { href: '/manage/schemes', label: 'Customize schemes', icon: ClipboardList }, ...NAV.slice(1)] : NAV;
+  const navigation = me?.roles.some(r => ['administrator', 'super-administrator'].includes(r)) ? [NAV[0], { href: '/manage/schemes', label: 'Customize schemes', icon: ClipboardList }, { href: '/manage/adoption-readiness', label: 'Adoption readiness', icon: CheckCircle2 }, ...NAV.slice(1)] : NAV;
   return <AppShell nav={navigation} zone="Farm management" footerLink={<Link href="/farms" className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-harvest hover:bg-sidebar-accent" data-testid="link-public-farms">View public farms <ExternalLink className="h-3.5 w-3.5" /></Link>}>{children}</AppShell>;
 }
 

@@ -13,7 +13,7 @@ export function requireSchemeAdmin(a: Actor): void {
 
 export function schemeDTO(row: WorkflowRecord) {
   // Legacy or approved records must not be silently converted into editable drafts.
-  if (!["draft", "archived"].includes(row.status) || !row.data.configuration) {
+  if (!["draft", "approved", "archived"].includes(row.status) || !row.data.configuration) {
     throw new PlatformError(409, "This scheme cannot be edited as a draft. Its existing record must be reviewed separately.");
   }
   return GetManagedSchemeResponse.parse({

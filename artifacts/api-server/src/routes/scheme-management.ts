@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { and, eq, desc, inArray } from "drizzle-orm";
+import { and, eq, desc, inArray, sql } from "drizzle-orm";
 import { db, workflowRecords, auditEvents } from "@workspace/db";
 import {
   CreateManagedSchemeBody, CreateManagedSchemeResponse, UpdateManagedSchemeBody,
@@ -61,9 +61,11 @@ router.patch("/v1/management/schemes/:schemeId", async (req, res): Promise<void>
   validateSchemeConfiguration(input.configuration);
   await validateSchemeReferences(input.configuration, input.status === "archived");
   const changed = await db.transaction(async tx => {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(73421891)`);
     const [before] = await tx.select().from(workflowRecords).where(and(eq(workflowRecords.id, schemeId), eq(workflowRecords.module, "schemes"))).for("update");
     if (!before) throw new PlatformError(404, "Scheme not found.");
     schemeDTO(before);
+    if (before.status === "approved" && input.status !== "archived") throw new PlatformError(409, "Approved terms are immutable. Copy this scheme to create a new draft, or revoke its approval before editing.");
     if (before.version !== input.version) throw new PlatformError(409, "This scheme changed in another session. Reload before saving; your changes have not been written.");
     if (before.status === "archived" && input.status === "archived") {
       throw new PlatformError(409, "Restore this scheme before editing it.");

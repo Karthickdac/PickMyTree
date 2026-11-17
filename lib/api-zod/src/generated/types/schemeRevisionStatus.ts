@@ -11,5 +11,6 @@ export type SchemeRevisionStatus = typeof SchemeRevisionStatus[keyof typeof Sche
 
 export const SchemeRevisionStatus = {
   draft: 'draft',
+  approved: 'approved',
   archived: 'archived',
 } as const;

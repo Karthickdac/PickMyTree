@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
 import { useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, ArrowRight, ClipboardList, Copy, Eye, Leaf, Lock, Plus, Save, Tractor } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ClipboardList, Copy, Eye, Leaf, Lock, Plus, Save, ShieldCheck, Tractor } from 'lucide-react';
 import {
   useGetMe, useListManagedSchemes, useCreateManagedScheme, useGetManagedScheme,
   useUpdateManagedScheme, useListSchemeRevisions, getListManagedSchemesQueryKey, getManagedScheme,
@@ -18,6 +18,7 @@ import { errorMessage, formatDate, formatPaise, humanize, useSeo } from '@/lib/b
 const nav: NavItem[] = [
   { href: '/manage/farms', label: 'Farms & trees', icon: Tractor },
   { href: '/manage/schemes', label: 'Customize schemes', icon: Leaf },
+  { href: '/manage/adoption-readiness', label: 'Adoption readiness', icon: ShieldCheck },
   { href: '/workspace', label: 'Operations workspace', icon: ClipboardList },
 ];
 const primary = 'inline-flex items-center justify-center gap-2 rounded-full bg-emerald px-5 py-2.5 text-sm font-semibold text-ivory transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-45';
@@ -38,7 +39,7 @@ export function SchemesPage() {
 function SchemeList() {
   const query = useListManagedSchemes(), create = useCreateManagedScheme(), cache = useQueryClient();
   const [, navigate] = useLocation();
-  const [search, setSearch] = useState(''), [filter, setFilter] = useState('draft');
+  const [search, setSearch] = useState(''), [filter, setFilter] = useState('all');
   async function duplicate(scheme: ManagedScheme) {
     try {
       const result = await create.mutateAsync({ data: { name: `${scheme.name.slice(0, 190)} · Copy`, configuration: scheme.configuration } });
@@ -50,16 +51,16 @@ function SchemeList() {
   return <>
     <AppHeading eyebrow="Your harvest offers" title="Customize schemes"><Link href="/manage/schemes/new" className={primary} data-testid="button-create-scheme"><Plus className="h-4 w-4" />New scheme</Link></AppHeading>
     <p className="-mt-4 mb-7 max-w-2xl text-sm leading-relaxed text-muted-foreground">Set your harvest benefits, pricing and fulfilment terms. Save drafts, review the purchase experience and keep a record of every revision.</p>
-    <div className="mb-6 flex flex-col gap-3 sm:flex-row"><Input aria-label="Search schemes" placeholder="Search name or species" value={search} onChange={e => setSearch(e.target.value)} /><select aria-label="Scheme status" className="h-10 rounded-md border border-input bg-card px-3 text-sm" value={filter} onChange={e => setFilter(e.target.value)}><option value="draft">Draft schemes</option><option value="archived">Archived schemes</option><option value="all">All schemes</option></select></div>
+    <div className="mb-6 flex flex-col gap-3 sm:flex-row"><Input aria-label="Search schemes" placeholder="Search name or species" value={search} onChange={e => setSearch(e.target.value)} /><select aria-label="Scheme status" className="h-10 rounded-md border border-input bg-card px-3 text-sm" value={filter} onChange={e => setFilter(e.target.value)}><option value="all">All schemes</option><option value="draft">Draft schemes</option><option value="approved">Approved schemes</option><option value="archived">Archived schemes</option></select></div>
     {create.isError && <p role="alert" className="mb-4 text-sm text-destructive">{errorMessage(create.error)}</p>}
     {query.isError ? <ErrorState message={errorMessage(query.error)} onRetry={() => query.refetch()} /> : query.isLoading ? <Skeleton className="h-64 rounded-2xl" /> : !items.length ? <EmptyState icon={<Leaf className="h-6 w-6" />} title="No schemes found" body="Create a scheme or change your search and status filter." /> : <div className="grid gap-4 xl:grid-cols-2">{items.map(s => <article key={s.id} className="rounded-2xl border border-border bg-card p-6 transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between gap-3"><div><StatusPill status={s.status} /><h2 className="mt-3 font-display text-2xl text-emerald">{s.name}</h2></div><p className="whitespace-nowrap text-lg font-semibold text-harvest">{formatPaise(s.configuration.feePaise)}</p></div>
       <p className="mt-2 text-sm text-muted-foreground">{s.configuration.species} · {s.configuration.durationMonths} months · {humanize(s.configuration.allocationType)}</p>
       <p className="mt-2 line-clamp-2 text-sm">{s.configuration.description || 'Add a short description in the editor.'}</p>
       <p className="mt-4 font-mono text-xs text-muted-foreground">Version {s.version} · Updated {formatDate(s.updatedAt)}</p>
-      <div className="mt-5 flex flex-wrap gap-2"><Link href={`/manage/schemes/${s.id}`} className={primary} data-testid={`edit-scheme-${s.id}`}>Edit scheme <ArrowRight className="h-4 w-4" /></Link><Link href={`/manage/schemes/${s.id}/checkout-preview`} className={secondary}><Eye className="h-4 w-4" />Preview</Link><button type="button" onClick={() => duplicate(s)} disabled={create.isPending} className={secondary} aria-label={`Copy ${s.name}`}><Copy className="h-4 w-4" />Copy</button></div>
+      <div className="mt-5 flex flex-wrap gap-2"><Link href={`/manage/schemes/${s.id}`} className={primary} data-testid={`edit-scheme-${s.id}`}>{s.status === 'approved' ? 'View scheme' : 'Edit scheme'} <ArrowRight className="h-4 w-4" /></Link><Link href={`/manage/schemes/${s.id}/checkout-preview`} className={secondary}><Eye className="h-4 w-4" />Preview</Link><button type="button" onClick={() => duplicate(s)} disabled={create.isPending} className={secondary} aria-label={`Copy ${s.name}`}><Copy className="h-4 w-4" />Copy</button></div>
     </article>)}</div>}
-    <p className="mt-7 text-xs text-muted-foreground">Draft schemes are not published offers. Tree verification, scheme approval and a connected payment gateway are required before purchase.</p>
+    <p className="mt-7 text-xs text-muted-foreground">Draft schemes are not published offers. Approval happens in <Link href="/manage/adoption-readiness" className="font-semibold underline">adoption readiness</Link>, together with tree verification and an accepting payment gateway.</p>
   </>;
 }
 
@@ -83,7 +84,7 @@ function SchemeEditor({ initial }: { initial?: ManagedScheme }) {
   const revisions = useListSchemeRevisions(saved?.id ?? '', { query: { enabled: !!saved?.id } });
   const [, navigate] = useLocation();
   const dirty = JSON.stringify(draft) !== JSON.stringify(saved ? { name: saved.name, configuration: saved.configuration } : { name: '', configuration: newConfiguration() });
-  const busy = create.isPending || update.isPending, archived = saved?.status === 'archived';
+  const busy = create.isPending || update.isPending, archived = saved?.status === 'archived', approved = saved?.status === 'approved', locked = archived || approved;
   useEffect(() => {
     if (!dirty) return;
     const unload = (event: BeforeUnloadEvent) => { event.preventDefault(); };
@@ -105,6 +106,14 @@ function SchemeEditor({ initial }: { initial?: ManagedScheme }) {
       if (!saved) navigate(`/manage/schemes/${result.id}`);
     } catch { /* Errors remain beside the save action. */ }
   }
+  async function copyDraft() {
+    if (!saved) return;
+    try {
+      const result = await create.mutateAsync({ data: { name: `${saved.name.slice(0, 190)} · Draft`, configuration: saved.configuration } });
+      await cache.invalidateQueries({ queryKey: getListManagedSchemesQueryKey() });
+      navigate(`/manage/schemes/${result.id}`);
+    } catch { /* Error shown below. */ }
+  }
   async function reload() {
     if (dirty && !window.confirm('Discard local changes and load the latest saved version?')) return;
     if (!saved) return;
@@ -118,17 +127,18 @@ function SchemeEditor({ initial }: { initial?: ManagedScheme }) {
     <Link href="/manage/schemes" className="mb-5 inline-flex items-center gap-2 text-sm text-muted-foreground"><ArrowLeft className="h-4 w-4" />All schemes</Link>
     <AppHeading eyebrow={saved ? `Version ${saved.version} · ${saved.status}` : 'New scheme'} title={saved?.name ?? 'Create your scheme'}>{saved && <Link href={`/manage/schemes/${saved.id}/checkout-preview`} className={secondary}><Eye className="h-4 w-4" />Preview saved scheme</Link>}</AppHeading>
     {archived && <p className="mb-5 rounded-xl bg-secondary p-4 text-sm">This scheme is archived. Restore it to make changes.</p>}
+    {approved && saved && <div className="mb-5 flex flex-col gap-3 rounded-xl border border-leaf/40 bg-secondary p-4 text-sm sm:flex-row sm:items-center sm:justify-between" data-testid="notice-approved"><span>Version {saved.version} is approved and read only. Customers accept exactly these terms. Copy it to a new draft to change anything, or archive it.</span><span className="flex shrink-0 gap-2"><button type="button" className={secondary} disabled={create.isPending} onClick={() => void copyDraft()} data-testid="button-copy-draft"><Copy className="h-4 w-4" />Copy to new draft</button><Link href="/manage/adoption-readiness" className={secondary}><ShieldCheck className="h-4 w-4" />Readiness</Link></span></div>}
     {initial && saved && initial.version !== saved.version && <div className="mb-4 rounded-xl border border-harvest p-4 text-sm">A different saved version is available. <button type="button" className="font-semibold underline" onClick={reload}>Load latest</button></div>}
-    <form onSubmit={e => { e.preventDefault(); void save(); }} className="space-y-5">
-      <label className="block space-y-2 rounded-2xl border border-border bg-card p-5 text-sm font-medium" htmlFor="scheme-name"><span>Scheme name</span><Input id="scheme-name" required minLength={2} maxLength={200} value={draft.name} disabled={busy || archived} onChange={e => setDraft({ ...draft, name: e.target.value })} /></label>
-      <SchemeFields value={draft.configuration} onChange={configuration => setDraft({ ...draft, configuration })} disabled={busy || archived} />
-      {saved && !archived && <label htmlFor="scheme-reason" className="block space-y-2 text-sm font-medium"><span>Reason for this revision</span><Input id="scheme-reason" required minLength={3} maxLength={2000} value={reason} onChange={e => setReason(e.target.value)} /></label>}
+    <form onSubmit={e => { e.preventDefault(); if (!locked) void save(); }} className="space-y-5">
+      <label className="block space-y-2 rounded-2xl border border-border bg-card p-5 text-sm font-medium" htmlFor="scheme-name"><span>Scheme name</span><Input id="scheme-name" required minLength={2} maxLength={200} value={draft.name} disabled={busy || locked} onChange={e => setDraft({ ...draft, name: e.target.value })} /></label>
+      <SchemeFields value={draft.configuration} onChange={configuration => setDraft({ ...draft, configuration })} disabled={busy || locked} />
+      {saved && !locked && <label htmlFor="scheme-reason" className="block space-y-2 text-sm font-medium"><span>Reason for this revision</span><Input id="scheme-reason" required minLength={3} maxLength={2000} value={reason} onChange={e => setReason(e.target.value)} /></label>}
       {(create.isError || update.isError) && <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">{errorMessage(create.error || update.error)}{saved && <button type="button" className="ml-2 underline" onClick={reload}>Reload saved version</button>}</div>}
       {message && <p role="status" className="text-sm font-medium text-leaf">{message}</p>}
       <div className="sticky bottom-3 z-20 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card/95 p-4 shadow-lg backdrop-blur">
-        {!archived && <button className={primary} disabled={busy} type="submit" data-testid="button-save-scheme"><Save className="h-4 w-4" />{busy ? 'Saving…' : 'Save scheme'}</button>}
+        {!locked && <button className={primary} disabled={busy} type="submit" data-testid="button-save-scheme"><Save className="h-4 w-4" />{busy ? 'Saving…' : 'Save scheme'}</button>}
         {saved && <button className={secondary} type="button" disabled={busy || dirty} onClick={() => void save(archived ? 'draft' : 'archived')}>{archived ? 'Restore scheme' : 'Archive scheme'}</button>}
-        <span className="text-xs text-muted-foreground">{dirty ? 'Unsaved changes · save before archiving or previewing changes' : 'Saved configuration · payments unavailable'}</span>
+        <span className="text-xs text-muted-foreground">{dirty ? 'Unsaved changes · save before archiving or previewing changes' : approved ? 'Approved configuration · read only' : 'Saved configuration'}</span>
       </div>
     </form>
     {saved && <section className="mt-10"><h2 className="font-display text-2xl text-emerald">Revision history</h2>{revisions.isLoading ? <Skeleton className="mt-4 h-24" /> : revisions.isError ? <ErrorState message={errorMessage(revisions.error)} onRetry={() => revisions.refetch()} /> : <div className="mt-4 space-y-2">{revisions.data?.map(r => <details key={r.version} className="rounded-xl border border-border bg-card p-4"><summary className="cursor-pointer text-sm font-medium">Version {r.version} · {r.status} · {formatDate(r.recordedAt)} · {r.reason}</summary><dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2"><div><dt className="text-muted-foreground">Name</dt><dd>{r.name}</dd></div>{Object.entries(r.configuration).map(([key, value]) => <div key={key} className="min-w-0"><dt className="text-xs text-muted-foreground">{humanize(key.replace(/([A-Z])/g, ' $1'))}</dt><dd className="whitespace-pre-wrap break-words">{Array.isArray(value) ? value.join(', ') || '—' : value === null || value === '' ? '—' : String(value)}</dd></div>)}</dl></details>)}</div>}</section>}
@@ -160,8 +170,8 @@ function CheckoutPreview({ id }: { id: string }) {
         {([['Benefits & exclusions', [c.inclusions, c.exclusions].filter(Boolean).join('\n')], ['Risks & harvest shortfall', [c.risks, c.lossRules, c.shortfallPolicy].filter(Boolean).join('\n')], ['Cancellation & agreement', [c.cancellationPolicy, c.renewalPolicy, c.terms].filter(Boolean).join('\n')], ['Fulfilment & settlement', c.fulfilmentPolicy]] as const).map(([title, content]) => <details key={title} className="border-t border-border pt-4"><summary className="cursor-pointer text-sm font-semibold">{title}</summary><p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{content || 'Terms must be configured and approved before this scheme can be purchased.'}</p></details>)}
       </section>
       <aside className="rounded-2xl bg-emerald p-6 text-ivory"><p className="eyebrow text-ivory/65">Purchase review</p><h2 className="mt-3 font-display text-2xl">One clear total.</h2><dl className="mt-6 space-y-3 text-sm">{[['Adoption fee', c.feePaise], [`Tax on fee (${c.taxBps / 100}%)`, tax], ['Delivery · tax inclusive', delivery]].map(([label, amount]) => <div key={label} className="flex justify-between gap-4"><dt>{label}</dt><dd>{formatPaise(Number(amount))}</dd></div>)}<div className="flex justify-between gap-3 border-t border-ivory/20 pt-4 text-xl font-semibold"><dt>Total</dt><dd>{formatPaise(c.feePaise + tax + delivery)}</dd></div></dl>
-        <button type="button" disabled className="mt-6 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-full bg-ivory/20 px-4 py-3 font-semibold text-ivory/70"><Lock className="h-4 w-4" />Payment unavailable</button>
-        <p className="mt-4 text-xs leading-relaxed text-ivory/75">Private preview only. No order or payment is created. Farm and tree verification, scheme approval and a connected payment gateway are required before checkout can open.</p>
+        <button type="button" disabled className="mt-6 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-full bg-ivory/20 px-4 py-3 font-semibold text-ivory/70"><Lock className="h-4 w-4" />Preview only</button>
+        <p className="mt-4 text-xs leading-relaxed text-ivory/75">Private preview only. No order or payment is created. Customers check out only from approved trees and schemes once payments are accepted.</p>
       </aside>
     </div>
   </>;
