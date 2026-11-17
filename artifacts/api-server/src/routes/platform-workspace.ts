@@ -9,7 +9,7 @@ import { identify, actor, can, isAdmin, visibleScope, PlatformError, requireMfa 
 import { modules, moduleByKey } from "../lib/platform/modules";
 import { validateData, presentRecord, ensureReferences, allowedTransitions, transitionGuard, recordStateIsEditable, staffMutation } from "../lib/platform/records";
 const router: IRouter = Router();
-router.use("/v1/workspace", identify);
+router.use("/v1/workspace", identify, (_req, res, next) => { res.setHeader("Cache-Control", "no-store"); next(); });
 
 router.get("/v1/workspace/modules", (req, res) => {
   const a = actor(req);

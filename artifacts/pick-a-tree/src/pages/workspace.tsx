@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'wouter';
-import { ArrowLeft, ChevronLeft, ChevronRight, ClipboardList, FileClock, LayoutGrid, Lock, Pencil, Plus, Search } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, ClipboardList, FileClock, LayoutGrid, Lock, Pencil, Plus, Search, Tractor } from 'lucide-react';
 import { useGetWorkspaceSummary, useListRecords, useListWorkspaceModules, type Module, type PlatformRecord } from '@workspace/api-client-react';
 import { AppHeading, AppShell, type NavItem } from '@/components/app-shell';
 import { EmptyState, ErrorState, StatusPill } from '@/components/site/bits';
@@ -127,7 +127,7 @@ export default function WorkspacePage() {
   const { module: key } = useParams<{ module?: string }>();
   const { data: modules, isLoading, isError, error, refetch } = useListWorkspaceModules();
   useSeo('Operations workspace', 'Staff workspace for farms, trees, tasks, harvest and support records.');
-  const nav: NavItem[] = [{ href: '/workspace', label: 'Overview', icon: LayoutGrid }, ...(modules ?? []).map((m) => ({ href: `/workspace/${m.key}`, label: m.title, icon: ClipboardList }))];
+  const nav: NavItem[] = [{ href: '/workspace', label: 'Overview', icon: LayoutGrid }, { href: '/manage/farms', label: 'Manage farms', icon: Tractor }, ...(modules ?? []).map((m) => ({ href: `/workspace/${m.key}`, label: m.title, icon: ClipboardList }))];
   const mod = modules?.find((m) => m.key === key);
   let body;
   if (isError) body = errorStatus(error) === 403 ? <EmptyState icon={<Lock className="h-6 w-6" />} title="Staff access required." body="Your account does not have an operations role. Roles are granted by a verified administrator." /> : <ErrorState message={errorMessage(error)} onRetry={() => refetch()} />;

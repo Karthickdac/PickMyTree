@@ -23,3 +23,9 @@ timeoutMs = 20000
 
 [userenv.shared]
 AUTH0_ISSUER_BASE_URL = "https://dev-dqqe23r66l08tgf8.us.auth0.com"
+
+[userenv.development]
+AUTH0_BASE_URL = "https://688aabd1-1d0a-4bf0-80b3-9c39da11ed03-00-24y5k1cp75wqa.pike.replit.dev"
+
+[objectStorage]
+defaultBucketID = "replit-objstore-6ad1fed5-a9a3-4bdb-8f9e-1b0c8c0e9284"

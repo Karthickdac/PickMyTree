@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams, useSearch } from 'wouter';
 import { ArrowLeft, ArrowRight, CalendarCheck, Leaf, MapPin, Search, Sprout, TreeDeciduous } from 'lucide-react';
-import { getGetPublicTreeQueryKey, useGetPublicTree, useGetReadiness, useListPublicTrees } from '@workspace/api-client-react';
+import { getGetPublicTreeQueryKey, useGetPublicTree, useGetReadiness, useListPublicTrees, type CatalogueImage } from '@workspace/api-client-react';
 import { errorMessage, errorStatus, formatDate, formatPaise, IMAGES, SPECIES, useSeo } from '@/lib/brand';
-import { EmptyState, ErrorState, Eyebrow, IllustrativeImage, PageHero, PrelaunchNotice, Reveal, Section, StatusPill } from '@/components/site/bits';
+import { AvailabilityNote, EmptyState, ErrorState, Eyebrow, IllustrativeImage, PageHero, Reveal, SampleBadge, Section, StatusPill } from '@/components/site/bits';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -26,7 +26,7 @@ export function AdoptPage() {
   return (
     <>
       <PageHero eyebrow="Adoption catalogue" title={<>Every tree here was <em className="text-harvest">walked to</em>.</>}
-        lede="Only trees that staff have registered, physically inspected and approved appear below. If the list is short or empty, that is the system working as intended." />
+        lede="Every listed tree has a permanent code on a registered farm. Records marked Sample data are test listings that show how the catalogue works; they cannot be adopted." />
       <Section className="pt-10">
         <div className="sticky top-[72px] z-20 -mx-5 mb-10 flex flex-col gap-3 bg-background/90 px-5 py-4 backdrop-blur-md md:mx-0 md:flex-row md:items-center md:rounded-full md:border md:border-border md:px-3 md:py-2">
           <div className="relative flex-1">
@@ -53,10 +53,11 @@ export function AdoptPage() {
               <Reveal key={t.id} delay={(i % 3) * 0.06}>
                 <Link href={`/adopt/${t.id}`} className="group block" data-testid={`card-tree-${t.id}`}>
                   <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem] bg-secondary">
-                    {t.image ? <img src={t.image} alt={t.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" /> : (
+                    {(t.images?.[0]?.url ?? t.image) ? <img src={t.images?.[0]?.url ?? t.image} alt={t.images?.[0]?.name ?? t.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" /> : (
                       <div className="flex h-full items-center justify-center"><TreeDeciduous className="h-16 w-16 text-leaf/50" strokeWidth={1} /></div>
                     )}
-                    <div className="absolute left-3 top-3"><StatusPill status={t.status} className="bg-card/90" /></div>
+                    <div className="absolute left-3 top-3 flex flex-wrap gap-2"><StatusPill status={t.status} className="bg-card/90" />{t.isSample && <SampleBadge className="bg-card/90" />}</div>
+                    {t.images?.[0]?.isIllustrative && <span className="absolute bottom-3 left-3 rounded-full bg-card/85 px-2 py-0.5 text-[10px] text-soil">Illustrative photo</span>}
                   </div>
                   <div className="mt-4 flex items-start justify-between gap-3">
                     <div>
@@ -73,10 +74,10 @@ export function AdoptPage() {
           </div>
         ) : (
           <EmptyState icon={<Sprout className="h-6 w-6" />}
-            title={filtered ? 'No verified trees match yet.' : 'The catalogue is honestly empty — for now.'}
+            title={filtered ? 'No verified trees match yet.' : 'No trees are listed right now.'}
             body={filtered
               ? `No approved ${species || ''} trees match this search. Listings appear only after inspection and approval.`
-              : 'Our team is inspecting candidate trees in the Madurai–Dindigul belt. Nothing is listed until it has a permanent identity, a dated inspection and an approved scheme.'}>
+              : 'Trees appear here as farm managers list them. Check back soon, or tell us what you are looking for.'}>
             {filtered && <button type="button" onClick={() => { setSpecies(''); setText(''); }} className="rounded-full border border-emerald px-5 py-2.5 text-sm font-semibold text-emerald" data-testid="button-clear-filters">Clear filters</button>}
             <Link href="/contact" className="rounded-full bg-harvest px-5 py-2.5 text-sm font-semibold text-ivory" data-testid="link-empty-enquire">Register adoption interest</Link>
           </EmptyState>
@@ -90,7 +91,7 @@ export function TreeDetailPage() {
   const { id = '' } = useParams<{ id: string }>();
   const { data, isLoading, isError, error, refetch } = useGetPublicTree(id, { query: { enabled: !!id, queryKey: getGetPublicTreeQueryKey(id) } });
   const { data: readiness } = useGetReadiness();
-  useSeo(data ? `${data.tree.name} (${data.tree.treeCode})` : 'Tree detail', data ? `${data.tree.species} · ${data.tree.variety} at ${data.tree.farmName}. Inspection, scheme and disclosures.` : 'Verified tree listing on PICK A TREE.');
+  useSeo(data ? `${data.tree.name} (${data.tree.treeCode})` : 'Tree detail', data ? `${data.tree.species} · ${data.tree.variety} at ${data.tree.farmName}. Inspection, scheme and disclosures.` : 'Verified tree listing on Pick My Tree.');
 
   if (isLoading) return <Section><Skeleton className="h-10 w-48" /><div className="mt-8 grid gap-10 lg:grid-cols-2"><Skeleton className="aspect-square rounded-[2rem]" /><div className="space-y-4"><Skeleton className="h-14 w-3/4" /><Skeleton className="h-24 w-full" /><Skeleton className="h-40 w-full" /></div></div></Section>;
   if (isError || !data) {
@@ -116,12 +117,11 @@ export function TreeDetailPage() {
         <Link href="/adopt" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-emerald" data-testid="link-back"><ArrowLeft className="h-4 w-4" /> Catalogue</Link>
         <div className="mt-8 grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            {tree.image ? <img src={tree.image} alt={tree.name} className="aspect-[4/5] w-full rounded-[2rem] object-cover shadow-xl" data-testid="img-tree" /> : (
-              <IllustrativeImage src={SPECIES.find((s) => s.key === tree.species)?.image ?? IMAGES.heroOrchard} alt="Illustrative species image" className="aspect-[4/5] rounded-[2rem] shadow-xl" />
-            )}
+            <TreeGallery images={tree.images ?? []} fallback={tree.image} name={tree.name} species={tree.species} />
           </div>
           <div className="lg:col-span-6">
-            <div className="flex flex-wrap items-center gap-3"><span className="font-mono text-sm text-harvest" data-testid="text-tree-code">{tree.treeCode}</span><StatusPill status={tree.status} /></div>
+            <div className="flex flex-wrap items-center gap-3"><span className="font-mono text-sm text-harvest" data-testid="text-tree-code">{tree.treeCode}</span><StatusPill status={tree.status} />{tree.isSample && <SampleBadge />}</div>
+            {tree.isSample && <p className="mt-3 text-sm text-soil" data-testid="text-sample-note">Sample data: a test listing used to demonstrate the catalogue. It is not available to adopt or purchase.</p>}
             <h1 className="mt-4 text-5xl font-light leading-none text-emerald md:text-6xl" data-testid="text-tree-name">{tree.name}</h1>
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground">{tree.description}</p>
             <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border">
@@ -164,12 +164,46 @@ export function TreeDetailPage() {
           </div>
         )}
         <div className="mt-8">
-          <PrelaunchNotice>
-            <strong>Reservation and payment are not available.</strong> {readiness?.message ?? 'Adoptions open only after payment, agreements and approvals are in place.'} You can register interest and we will contact you when this tree can be reserved.
-            <div className="mt-3"><Link href="/contact" className="font-semibold underline underline-offset-4" data-testid="link-register-interest">Register interest in this tree</Link></div>
-          </PrelaunchNotice>
+          <AvailabilityNote>
+            <span data-testid="text-adoption-availability">{tree.isSample
+              ? <><strong>Sample tree.</strong> Sample listings cannot be adopted or purchased.</>
+              : schemes.length === 0
+                ? <><strong>Adoption terms not configured for this tree.</strong> Nothing can be reserved until approved terms are attached.</>
+                : tree.adoptionEligible && readiness?.adoptionsOpen
+                  ? <><strong>This tree can be adopted.</strong> Contact us to begin.</>
+                  : <><strong>Online reservation is not available for this tree yet.</strong> Payment for adoptions is not connected.</>}</span>
+            {!tree.isSample && <div className="mt-3"><Link href="/contact" className="font-semibold underline underline-offset-4" data-testid="link-register-interest">Ask about this tree</Link></div>}
+          </AvailabilityNote>
         </div>
       </Section>
     </>
+  );
+}
+
+function TreeGallery({ images, fallback, name, species }: { images: CatalogueImage[]; fallback?: string; name: string; species: string }) {
+  const [active, setActive] = useState(0);
+  const current = images[Math.min(active, images.length - 1)];
+  if (!current) {
+    return fallback
+      ? <img src={fallback} alt={name} className="aspect-[4/5] w-full rounded-[2rem] object-cover shadow-xl" data-testid="img-tree" />
+      : <IllustrativeImage src={SPECIES.find((s) => s.key === species)?.image ?? IMAGES.heroOrchard} alt="Illustrative species image" className="aspect-[4/5] rounded-[2rem] shadow-xl" />;
+  }
+  return (
+    <div>
+      <div className="relative">
+        <img src={current.url} alt={current.name} className="aspect-[4/5] w-full rounded-[2rem] object-cover shadow-xl" data-testid="img-tree" />
+        {current.isIllustrative && <span className="absolute bottom-4 left-4 rounded-full bg-card/85 px-3 py-1 text-[11px] text-soil">Illustrative photo</span>}
+      </div>
+      {images.length > 1 && (
+        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+          {images.map((img, i) => (
+            <button key={img.id} type="button" onClick={() => setActive(i)} aria-label={`Show photo ${i + 1}`} aria-pressed={i === active}
+              className={cn('h-16 w-20 shrink-0 overflow-hidden rounded-xl border-2 transition-opacity', i === active ? 'border-harvest' : 'border-transparent opacity-70 hover:opacity-100')} data-testid={`button-photo-${i}`}>
+              <img src={img.url} alt="" className="h-full w-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

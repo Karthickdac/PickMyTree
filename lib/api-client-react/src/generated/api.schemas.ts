@@ -5,6 +5,158 @@
  * PICK A TREE versioned platform API. Commercial activation requires approved real inventory and connected providers.
  * OpenAPI spec version: 1.0.0
  */
+export interface CatalogueImage {
+  id: string;
+  url: string;
+  name: string;
+  isIllustrative: boolean;
+}
+
+export type FarmEditorInputStatus = typeof FarmEditorInputStatus[keyof typeof FarmEditorInputStatus];
+
+
+export const FarmEditorInputStatus = {
+  draft: 'draft',
+  listed: 'listed',
+  archived: 'archived',
+} as const;
+
+export interface FarmEditorInput {
+  /**
+     * @minLength 2
+     * @maxLength 180
+     */
+  name: string;
+  /**
+     * @minLength 2
+     * @maxLength 120
+     */
+  district: string;
+  /**
+     * @minLength 5
+     * @maxLength 5000
+     */
+  description: string;
+  /** @maxLength 300 */
+  location: string;
+  /**
+     * @minimum 0
+     * @maximum 100000
+     */
+  areaAcres: number;
+  status: FarmEditorInputStatus;
+  /** @maxItems 12 */
+  imageIds: string[];
+}
+
+export type FarmEditorUpdate = FarmEditorInput & {
+  /** @minimum 1 */
+  version: number;
+};
+
+export type ManagedFarm = FarmEditorInput & {
+  id: string;
+  version: number;
+  isSample: boolean;
+  images: CatalogueImage[];
+  treeCount: number;
+};
+
+export interface ManagedFarmList {
+  items: ManagedFarm[];
+  storageAvailable: boolean;
+}
+
+export type TreeEditorInputSpecies = typeof TreeEditorInputSpecies[keyof typeof TreeEditorInputSpecies];
+
+
+export const TreeEditorInputSpecies = {
+  Mango: 'Mango',
+  Guava: 'Guava',
+  Coconut: 'Coconut',
+} as const;
+
+export type TreeEditorInputStatus = typeof TreeEditorInputStatus[keyof typeof TreeEditorInputStatus];
+
+
+export const TreeEditorInputStatus = {
+  draft: 'draft',
+  listed: 'listed',
+  'temporarily-unavailable': 'temporarily-unavailable',
+  archived: 'archived',
+} as const;
+
+export interface TreeEditorInput {
+  /**
+     * @minLength 2
+     * @maxLength 180
+     */
+  name: string;
+  species: TreeEditorInputSpecies;
+  /**
+     * @minLength 2
+     * @maxLength 120
+     */
+  variety: string;
+  /** @maxLength 120 */
+  zone: string;
+  /** @maxLength 100 */
+  age: string;
+  /**
+     * @minLength 5
+     * @maxLength 5000
+     */
+  description: string;
+  /** @maxLength 500 */
+  condition: string;
+  status: TreeEditorInputStatus;
+  /** @maxItems 12 */
+  imageIds: string[];
+}
+
+export type TreeEditorUpdate = TreeEditorInput & {
+  /** @minimum 1 */
+  version: number;
+};
+
+export type ManagedTree = TreeEditorInput & {
+  id: string;
+  farmId: string;
+  treeCode: string;
+  version: number;
+  isSample: boolean;
+  images: CatalogueImage[];
+};
+
+export type FarmImageUploadInputContentType = typeof FarmImageUploadInputContentType[keyof typeof FarmImageUploadInputContentType];
+
+
+export const FarmImageUploadInputContentType = {
+  'image/jpeg': 'image/jpeg',
+  'image/png': 'image/png',
+  'image/webp': 'image/webp',
+} as const;
+
+export interface FarmImageUploadInput {
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
+  name: string;
+  contentType: FarmImageUploadInputContentType;
+  /**
+     * @minimum 1
+     * @maximum 10485760
+     */
+  size: number;
+}
+
+export interface PhoneAuthConfig {
+  configured: boolean;
+  loginPath: string;
+  logoutPath: string;
+}
+
 export interface HealthStatus {
   status: string;
 }
@@ -26,6 +178,11 @@ export interface Farm {
   description: string;
   image?: string;
   practices?: string[];
+  isSample?: boolean;
+  images?: CatalogueImage[];
+  areaAcres?: number;
+  treeCount?: number;
+  location?: string;
 }
 
 export interface Tree {
@@ -42,6 +199,10 @@ export interface Tree {
   age?: string;
   inspectedAt?: string;
   productiveAssessment?: string;
+  isSample?: boolean;
+  images?: CatalogueImage[];
+  farmId?: string;
+  adoptionEligible?: boolean;
 }
 
 export interface Scheme {
@@ -252,6 +413,11 @@ export interface Readiness {
  * Request could not be completed
  */
 export type FailureResponse = Error;
+
+export type RequestFarmImageUpload201 = {
+  id: string;
+  uploadURL: string;
+};
 
 export type ListPublicTreesParams = {
 search?: string;

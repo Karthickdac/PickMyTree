@@ -5,6 +5,7 @@
  * PICK A TREE versioned platform API. Commercial activation requires approved real inventory and connected providers.
  * OpenAPI spec version: 1.0.0
  */
+import type { CatalogueImage } from './catalogueImage';
 
 export interface Tree {
   id: string;
@@ -20,4 +21,8 @@ export interface Tree {
   age?: string;
   inspectedAt?: string;
   productiveAssessment?: string;
+  isSample?: boolean;
+  images?: CatalogueImage[];
+  farmId?: string;
+  adoptionEligible?: boolean;
 }

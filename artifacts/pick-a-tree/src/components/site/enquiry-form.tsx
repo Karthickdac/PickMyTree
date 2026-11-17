@@ -127,7 +127,7 @@ export function EnquiryForm({ kinds, defaultKind, showGiftFields = false, submit
           <FormItem>
             <div className="flex items-start gap-3 rounded-xl bg-secondary/60 p-4">
               <FormControl><Checkbox checked={field.value} onCheckedChange={(v) => field.onChange(v === true)} className="mt-0.5" data-testid="checkbox-consent" /></FormControl>
-              <FormLabel className="text-sm font-normal leading-relaxed text-foreground/80">I agree that PICK A TREE may store these details and contact me about this enquiry only. Nothing here creates an adoption, reservation or payment.</FormLabel>
+              <FormLabel className="text-sm font-normal leading-relaxed text-foreground/80">I agree that Pick My Tree may store these details and contact me about this enquiry only. Nothing here creates an adoption, reservation or payment.</FormLabel>
             </div>
             <FormMessage />
           </FormItem>

@@ -8,13 +8,13 @@ import harvestHands from '@assets/generated_images/harvest-hands.jpg';
 
 export const IMAGES = { heroOrchard, mango, guava, coconut, farmLandscape, harvestHands };
 
-export const ILLUSTRATIVE_LABEL = 'Illustrative imagery — not a registered PICK A TREE farm or tree';
+export const ILLUSTRATIVE_LABEL = 'Illustrative imagery — not a registered Pick My Tree farm or tree';
 
 export const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 export function useSeo(title: string, description: string) {
   useEffect(() => {
-    document.title = title.includes('PICK A TREE') ? title : `${title} · PICK A TREE`;
+    document.title = title.includes('Pick My Tree') ? title : `${title} · Pick My Tree`;
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) {
       meta = document.createElement('meta');

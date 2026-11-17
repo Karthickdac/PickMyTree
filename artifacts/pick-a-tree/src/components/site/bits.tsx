@@ -103,6 +103,10 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
   );
 }
 
+export function SampleBadge({ className }: { className?: string }) {
+  return <span className={cn('inline-flex items-center rounded-full border border-harvest/40 bg-harvest/12 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-soil', className)} data-testid="badge-sample-data">Sample data</span>;
+}
+
 export function StatusPill({ status, className }: { status: string; className?: string }) {
   const s = status.toLowerCase();
   const tone = /approved|available|active|completed|verified|published|resolved|closed|delivered/.test(s)
@@ -120,10 +124,10 @@ export function StatusPill({ status, className }: { status: string; className?: 
   );
 }
 
-export function PrelaunchNotice({ children }: { children: ReactNode }) {
+export function AvailabilityNote({ children }: { children: ReactNode }) {
   return (
-    <div className="flex items-start gap-3 rounded-2xl border border-harvest/35 bg-harvest/8 px-5 py-4 text-sm leading-relaxed text-soil" data-testid="notice-prelaunch">
-      <span className="mt-1 h-2 w-2 shrink-0 animate-pulse rounded-full bg-harvest" />
+    <div className="flex items-start gap-3 rounded-2xl border border-harvest/35 bg-harvest/8 px-5 py-4 text-sm leading-relaxed text-soil" data-testid="notice-availability">
+      <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-harvest" />
       <div>{children}</div>
     </div>
   );

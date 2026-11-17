@@ -1,9 +1,15 @@
 import { Router, type IRouter } from "express";
 import { eq } from "drizzle-orm";
 import { db, platformUsers, workflowRecords, auditEvents, consentEvents } from "@workspace/db";
-import { GetMeResponse, UpdateProfileBody, UpdateProfileResponse, GetCustomerDashboardResponse } from "@workspace/api-zod";
+import { GetMeResponse, UpdateProfileBody, UpdateProfileResponse, GetCustomerDashboardResponse, GetPhoneAuthConfigResponse } from "@workspace/api-zod";
 import { identify, actor } from "../lib/platform/access";
+import { phoneAuthConfigured } from "../middlewares/auth0";
 const router: IRouter = Router();
+router.get("/v1/auth/config", (_req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  res.json(GetPhoneAuthConfigResponse.parse({ configured: phoneAuthConfigured, loginPath: "/api/auth/login", logoutPath: "/api/auth/logout" }));
+});
+router.use("/v1/me", (_req, res, next) => { res.setHeader("Cache-Control", "no-store"); next(); });
 function profileResponse(a: ReturnType<typeof actor>) {
   return { id: a.id, displayName: a.displayName, roles: [...new Set(a.grants.map(g => g.role))], profile: a.profile };
 }

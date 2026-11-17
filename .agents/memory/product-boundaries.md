@@ -1,6 +1,6 @@
 ---
 name: Product boundaries
-description: User-mandated scope and sign-in experience for PICK A TREE.
+description: Pick My Tree branding, scope, sample inventory and sign-in requirements.
 ---
 
 Build everything in the supplied PICK A TREE specification, not only the MVP. Unavailable providers and business approvals must remain explicit blockers, never silently omitted.
@@ -8,6 +8,24 @@ Build everything in the supplied PICK A TREE specification, not only the MVP. Un
 **Why:** The user asked for every feature without anything missed.
 
 **How to apply:** Track the full coverage plan and report partial delivery honestly.
+
+The brand is **Pick My Tree**, renamed from PICK A TREE.
+
+**Why:** The user explicitly renamed the brand.
+
+**How to apply:** Use Pick My Tree for visible branding and copy; retain the original specification's requirements.
+
+The user said: "no more prelaunch. it should be ready to add the farms. add one farm with test data and trees,images that we can edit and upload".
+
+**Why:** The user wants usable farm administration, not an informational waiting page.
+
+**How to apply:** Provide real editing and persistent uploads. Clearly distinguish the explicitly requested sample inventory from real operating farms without global prelaunch banners.
+
+The login page must not have lengthy content.
+
+**Why:** The user explicitly asked for a short login page.
+
+**How to apply:** Keep the login surface focused on mobile-number/OTP access rather than explanatory steps and cards.
 
 Sign-in should be very simple: mobile number and OTP.
 

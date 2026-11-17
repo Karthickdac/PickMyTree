@@ -6,32 +6,35 @@ import {
   ListPublicFarmsResponse, ListArticlesResponse, SubmitEnquiryBody, SubmitEnquiryResponse, GetReadinessResponse,
 } from "@workspace/api-zod";
 import { PlatformError } from "../lib/platform/access";
+import { isPublicFarm, isPublicTree, farmDTO, photos } from "../lib/platform/catalogue";
 const router: IRouter = Router();
-const farmIsCurrent = (r: typeof workflowRecords.$inferSelect) => r.status === "approved" && r.data.authorityReviewed === true && String(r.data.agreementExpires) > new Date().toISOString().slice(0, 10);
 
 router.get("/v1/readiness", (_req, res) => {
   res.json(GetReadinessResponse.parse({
     adoptionsOpen: false,
-    message: "We’re preparing our first verified tree collection. Explore the programme or register your interest. No adoption payments are being accepted.",
+    message: "Browse the farm and tree directory. Sample listings are marked. Payment is available only when a tree has approved adoption terms and a connected checkout.",
     gates: ["Real farm authority and verified tree evidence", "Approved scheme terms and harvest remedies", "Connected and tested payment gateway", "Complete commercial and fulfilment workflows"],
   }));
 });
 router.get("/v1/public/farms", async (_req, res): Promise<void> => {
   const farms = await db.select().from(workflowRecords).where(eq(workflowRecords.module, "farms"));
-  res.json(ListPublicFarmsResponse.parse(farms.filter(farmIsCurrent).map(f => ({
-    id: f.id, name: f.title, district: f.data.district, description: f.data.description,
-  }))));
+  const listings = await Promise.all(farms.filter(isPublicFarm).map(farmDTO));
+  res.json(ListPublicFarmsResponse.parse(listings.map(f => ({ ...f, image: f.images[0]?.url }))));
 });
 async function treeInventory() {
-  const farms = (await db.select().from(workflowRecords).where(eq(workflowRecords.module, "farms"))).filter(farmIsCurrent);
-  const trees = await db.select().from(workflowRecords).where(and(eq(workflowRecords.module, "trees"), eq(workflowRecords.status, "available")));
-  return trees.flatMap(t => {
+  const farms = (await db.select().from(workflowRecords).where(eq(workflowRecords.module, "farms"))).filter(isPublicFarm);
+  const trees = (await db.select().from(workflowRecords).where(eq(workflowRecords.module, "trees"))).filter(isPublicTree);
+  const listings = await Promise.all(trees.map(async t => {
     const farm = farms.find(f => f.id === t.farmId);
-    if (!farm || t.data.provenanceVerified !== true) return [];
-    return [{ id: t.id, treeCode: t.data.treeCode, name: t.title, species: t.data.species, variety: t.data.variety,
+    if (!farm) return null;
+    const images = await photos(t.data.imageIds);
+    return { id: t.id, treeCode: t.data.treeCode, name: t.title, species: t.data.species, variety: t.data.variety,
       farmName: farm.title, zone: t.data.zone, status: t.status, description: t.data.description, age: t.data.age,
-      inspectedAt: t.data.inspectedAt, productiveAssessment: t.data.productiveAssessment }];
-  });
+      inspectedAt: t.data.inspectedAt, productiveAssessment: t.data.productiveAssessment,
+      images, image: images[0]?.url, farmId: farm.id, isSample: t.data.isSample === true || farm.data.isSample === true,
+      adoptionEligible: false };
+  }));
+  return listings.filter((t): t is NonNullable<typeof t> => t !== null);
 }
 router.get("/v1/public/trees", async (req, res): Promise<void> => {
   const query = ListPublicTreesQueryParams.parse(req.query);
@@ -41,7 +44,7 @@ router.get("/v1/public/trees", async (req, res): Promise<void> => {
 });
 router.get("/v1/public/trees/:id", async (req, res): Promise<void> => {
   const tree = (await treeInventory()).find(t => t.id === req.params.id || t.treeCode === req.params.id);
-  if (!tree) throw new PlatformError(404, "This tree is not available in the verified public collection.");
+  if (!tree) throw new PlatformError(404, "This tree is not in the public directory.");
   res.json(GetPublicTreeResponse.parse({ tree, schemes: [] }));
 });
 router.get("/v1/public/articles", async (_req, res): Promise<void> => {

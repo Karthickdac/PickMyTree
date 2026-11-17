@@ -3,7 +3,7 @@ import { TreeDeciduous } from 'lucide-react';
 import { useSeo } from '@/lib/brand';
 
 export default function NotFound() {
-  useSeo('Page not found', 'This path does not lead to a PICK A TREE page.');
+  useSeo('Page not found', 'This path does not lead to a Pick My Tree page.');
   return (
     <div className="topo-bg flex min-h-[70dvh] w-full items-center justify-center px-5 py-20">
       <div className="max-w-lg text-center">

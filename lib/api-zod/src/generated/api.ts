@@ -8,6 +8,464 @@
 import * as zod from 'zod';
 
 
+export const listManagedFarmsResponseItemsItemOneNameMin = 2;
+export const listManagedFarmsResponseItemsItemOneNameMax = 180;
+
+export const listManagedFarmsResponseItemsItemOneDistrictMin = 2;
+export const listManagedFarmsResponseItemsItemOneDistrictMax = 120;
+
+export const listManagedFarmsResponseItemsItemOneDescriptionMin = 5;
+export const listManagedFarmsResponseItemsItemOneDescriptionMax = 5000;
+
+export const listManagedFarmsResponseItemsItemOneLocationMax = 300;
+
+export const listManagedFarmsResponseItemsItemOneAreaAcresMin = 0;
+export const listManagedFarmsResponseItemsItemOneAreaAcresMax = 100000;
+
+export const listManagedFarmsResponseItemsItemOneImageIdsMax = 12;
+
+
+
+export const ListManagedFarmsResponse = zod.object({
+  "items": zod.array(zod.object({
+  "name": zod.string().min(listManagedFarmsResponseItemsItemOneNameMin).max(listManagedFarmsResponseItemsItemOneNameMax),
+  "district": zod.string().min(listManagedFarmsResponseItemsItemOneDistrictMin).max(listManagedFarmsResponseItemsItemOneDistrictMax),
+  "description": zod.string().min(listManagedFarmsResponseItemsItemOneDescriptionMin).max(listManagedFarmsResponseItemsItemOneDescriptionMax),
+  "location": zod.string().max(listManagedFarmsResponseItemsItemOneLocationMax),
+  "areaAcres": zod.number().min(listManagedFarmsResponseItemsItemOneAreaAcresMin).max(listManagedFarmsResponseItemsItemOneAreaAcresMax),
+  "status": zod.enum(['draft', 'listed', 'archived']),
+  "imageIds": zod.array(zod.string().uuid()).max(listManagedFarmsResponseItemsItemOneImageIdsMax)
+}).and(zod.object({
+  "id": zod.string().uuid(),
+  "version": zod.number().int(),
+  "isSample": zod.boolean(),
+  "images": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "url": zod.string(),
+  "name": zod.string(),
+  "isIllustrative": zod.boolean()
+})),
+  "treeCount": zod.number().int()
+}))),
+  "storageAvailable": zod.boolean()
+})
+
+
+export const createManagedFarmBodyNameMin = 2;
+export const createManagedFarmBodyNameMax = 180;
+
+export const createManagedFarmBodyDistrictMin = 2;
+export const createManagedFarmBodyDistrictMax = 120;
+
+export const createManagedFarmBodyDescriptionMin = 5;
+export const createManagedFarmBodyDescriptionMax = 5000;
+
+export const createManagedFarmBodyLocationMax = 300;
+
+export const createManagedFarmBodyAreaAcresMin = 0;
+export const createManagedFarmBodyAreaAcresMax = 100000;
+
+export const createManagedFarmBodyImageIdsMax = 12;
+
+
+
+export const CreateManagedFarmBody = zod.object({
+  "name": zod.string().min(createManagedFarmBodyNameMin).max(createManagedFarmBodyNameMax),
+  "district": zod.string().min(createManagedFarmBodyDistrictMin).max(createManagedFarmBodyDistrictMax),
+  "description": zod.string().min(createManagedFarmBodyDescriptionMin).max(createManagedFarmBodyDescriptionMax),
+  "location": zod.string().max(createManagedFarmBodyLocationMax),
+  "areaAcres": zod.number().min(createManagedFarmBodyAreaAcresMin).max(createManagedFarmBodyAreaAcresMax),
+  "status": zod.enum(['draft', 'listed', 'archived']),
+  "imageIds": zod.array(zod.string().uuid()).max(createManagedFarmBodyImageIdsMax)
+})
+
+export const createManagedFarmResponseOneNameMin = 2;
+export const createManagedFarmResponseOneNameMax = 180;
+
+export const createManagedFarmResponseOneDistrictMin = 2;
+export const createManagedFarmResponseOneDistrictMax = 120;
+
+export const createManagedFarmResponseOneDescriptionMin = 5;
+export const createManagedFarmResponseOneDescriptionMax = 5000;
+
+export const createManagedFarmResponseOneLocationMax = 300;
+
+export const createManagedFarmResponseOneAreaAcresMin = 0;
+export const createManagedFarmResponseOneAreaAcresMax = 100000;
+
+export const createManagedFarmResponseOneImageIdsMax = 12;
+
+
+
+export const CreateManagedFarmResponse = zod.object({
+  "name": zod.string().min(createManagedFarmResponseOneNameMin).max(createManagedFarmResponseOneNameMax),
+  "district": zod.string().min(createManagedFarmResponseOneDistrictMin).max(createManagedFarmResponseOneDistrictMax),
+  "description": zod.string().min(createManagedFarmResponseOneDescriptionMin).max(createManagedFarmResponseOneDescriptionMax),
+  "location": zod.string().max(createManagedFarmResponseOneLocationMax),
+  "areaAcres": zod.number().min(createManagedFarmResponseOneAreaAcresMin).max(createManagedFarmResponseOneAreaAcresMax),
+  "status": zod.enum(['draft', 'listed', 'archived']),
+  "imageIds": zod.array(zod.string().uuid()).max(createManagedFarmResponseOneImageIdsMax)
+}).and(zod.object({
+  "id": zod.string().uuid(),
+  "version": zod.number().int(),
+  "isSample": zod.boolean(),
+  "images": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "url": zod.string(),
+  "name": zod.string(),
+  "isIllustrative": zod.boolean()
+})),
+  "treeCount": zod.number().int()
+}))
+
+
+export const UpdateManagedFarmParams = zod.object({
+  "farmId": zod.coerce.string().uuid()
+})
+
+export const updateManagedFarmBodyOneNameMin = 2;
+export const updateManagedFarmBodyOneNameMax = 180;
+
+export const updateManagedFarmBodyOneDistrictMin = 2;
+export const updateManagedFarmBodyOneDistrictMax = 120;
+
+export const updateManagedFarmBodyOneDescriptionMin = 5;
+export const updateManagedFarmBodyOneDescriptionMax = 5000;
+
+export const updateManagedFarmBodyOneLocationMax = 300;
+
+export const updateManagedFarmBodyOneAreaAcresMin = 0;
+export const updateManagedFarmBodyOneAreaAcresMax = 100000;
+
+export const updateManagedFarmBodyOneImageIdsMax = 12;
+
+
+
+
+export const UpdateManagedFarmBody = zod.object({
+  "name": zod.string().min(updateManagedFarmBodyOneNameMin).max(updateManagedFarmBodyOneNameMax),
+  "district": zod.string().min(updateManagedFarmBodyOneDistrictMin).max(updateManagedFarmBodyOneDistrictMax),
+  "description": zod.string().min(updateManagedFarmBodyOneDescriptionMin).max(updateManagedFarmBodyOneDescriptionMax),
+  "location": zod.string().max(updateManagedFarmBodyOneLocationMax),
+  "areaAcres": zod.number().min(updateManagedFarmBodyOneAreaAcresMin).max(updateManagedFarmBodyOneAreaAcresMax),
+  "status": zod.enum(['draft', 'listed', 'archived']),
+  "imageIds": zod.array(zod.string().uuid()).max(updateManagedFarmBodyOneImageIdsMax)
+}).and(zod.object({
+  "version": zod.number().int().min(1)
+}))
+
+export const updateManagedFarmResponseOneNameMin = 2;
+export const updateManagedFarmResponseOneNameMax = 180;
+
+export const updateManagedFarmResponseOneDistrictMin = 2;
+export const updateManagedFarmResponseOneDistrictMax = 120;
+
+export const updateManagedFarmResponseOneDescriptionMin = 5;
+export const updateManagedFarmResponseOneDescriptionMax = 5000;
+
+export const updateManagedFarmResponseOneLocationMax = 300;
+
+export const updateManagedFarmResponseOneAreaAcresMin = 0;
+export const updateManagedFarmResponseOneAreaAcresMax = 100000;
+
+export const updateManagedFarmResponseOneImageIdsMax = 12;
+
+
+
+export const UpdateManagedFarmResponse = zod.object({
+  "name": zod.string().min(updateManagedFarmResponseOneNameMin).max(updateManagedFarmResponseOneNameMax),
+  "district": zod.string().min(updateManagedFarmResponseOneDistrictMin).max(updateManagedFarmResponseOneDistrictMax),
+  "description": zod.string().min(updateManagedFarmResponseOneDescriptionMin).max(updateManagedFarmResponseOneDescriptionMax),
+  "location": zod.string().max(updateManagedFarmResponseOneLocationMax),
+  "areaAcres": zod.number().min(updateManagedFarmResponseOneAreaAcresMin).max(updateManagedFarmResponseOneAreaAcresMax),
+  "status": zod.enum(['draft', 'listed', 'archived']),
+  "imageIds": zod.array(zod.string().uuid()).max(updateManagedFarmResponseOneImageIdsMax)
+}).and(zod.object({
+  "id": zod.string().uuid(),
+  "version": zod.number().int(),
+  "isSample": zod.boolean(),
+  "images": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "url": zod.string(),
+  "name": zod.string(),
+  "isIllustrative": zod.boolean()
+})),
+  "treeCount": zod.number().int()
+}))
+
+
+export const ListManagedTreesParams = zod.object({
+  "farmId": zod.coerce.string().uuid()
+})
+
+export const listManagedTreesResponseOneNameMin = 2;
+export const listManagedTreesResponseOneNameMax = 180;
+
+export const listManagedTreesResponseOneVarietyMin = 2;
+export const listManagedTreesResponseOneVarietyMax = 120;
+
+export const listManagedTreesResponseOneZoneMax = 120;
+
+export const listManagedTreesResponseOneAgeMax = 100;
+
+export const listManagedTreesResponseOneDescriptionMin = 5;
+export const listManagedTreesResponseOneDescriptionMax = 5000;
+
+export const listManagedTreesResponseOneConditionMax = 500;
+
+export const listManagedTreesResponseOneImageIdsMax = 12;
+
+
+
+export const ListManagedTreesResponseItem = zod.object({
+  "name": zod.string().min(listManagedTreesResponseOneNameMin).max(listManagedTreesResponseOneNameMax),
+  "species": zod.enum(['Mango', 'Guava', 'Coconut']),
+  "variety": zod.string().min(listManagedTreesResponseOneVarietyMin).max(listManagedTreesResponseOneVarietyMax),
+  "zone": zod.string().max(listManagedTreesResponseOneZoneMax),
+  "age": zod.string().max(listManagedTreesResponseOneAgeMax),
+  "description": zod.string().min(listManagedTreesResponseOneDescriptionMin).max(listManagedTreesResponseOneDescriptionMax),
+  "condition": zod.string().max(listManagedTreesResponseOneConditionMax),
+  "status": zod.enum(['draft', 'listed', 'temporarily-unavailable', 'archived']),
+  "imageIds": zod.array(zod.string().uuid()).max(listManagedTreesResponseOneImageIdsMax)
+}).and(zod.object({
+  "id": zod.string().uuid(),
+  "farmId": zod.string().uuid(),
+  "treeCode": zod.string(),
+  "version": zod.number().int(),
+  "isSample": zod.boolean(),
+  "images": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "url": zod.string(),
+  "name": zod.string(),
+  "isIllustrative": zod.boolean()
+}))
+}))
+export const ListManagedTreesResponse = zod.array(ListManagedTreesResponseItem)
+
+
+export const CreateManagedTreeParams = zod.object({
+  "farmId": zod.coerce.string().uuid()
+})
+
+export const createManagedTreeBodyNameMin = 2;
+export const createManagedTreeBodyNameMax = 180;
+
+export const createManagedTreeBodyVarietyMin = 2;
+export const createManagedTreeBodyVarietyMax = 120;
+
+export const createManagedTreeBodyZoneMax = 120;
+
+export const createManagedTreeBodyAgeMax = 100;
+
+export const createManagedTreeBodyDescriptionMin = 5;
+export const createManagedTreeBodyDescriptionMax = 5000;
+
+export const createManagedTreeBodyConditionMax = 500;
+
+export const createManagedTreeBodyImageIdsMax = 12;
+
+
+
+export const CreateManagedTreeBody = zod.object({
+  "name": zod.string().min(createManagedTreeBodyNameMin).max(createManagedTreeBodyNameMax),
+  "species": zod.enum(['Mango', 'Guava', 'Coconut']),
+  "variety": zod.string().min(createManagedTreeBodyVarietyMin).max(createManagedTreeBodyVarietyMax),
+  "zone": zod.string().max(createManagedTreeBodyZoneMax),
+  "age": zod.string().max(createManagedTreeBodyAgeMax),
+  "description": zod.string().min(createManagedTreeBodyDescriptionMin).max(createManagedTreeBodyDescriptionMax),
+  "condition": zod.string().max(createManagedTreeBodyConditionMax),
+  "status": zod.enum(['draft', 'listed', 'temporarily-unavailable', 'archived']),
+  "imageIds": zod.array(zod.string().uuid()).max(createManagedTreeBodyImageIdsMax)
+})
+
+export const createManagedTreeResponseOneNameMin = 2;
+export const createManagedTreeResponseOneNameMax = 180;
+
+export const createManagedTreeResponseOneVarietyMin = 2;
+export const createManagedTreeResponseOneVarietyMax = 120;
+
+export const createManagedTreeResponseOneZoneMax = 120;
+
+export const createManagedTreeResponseOneAgeMax = 100;
+
+export const createManagedTreeResponseOneDescriptionMin = 5;
+export const createManagedTreeResponseOneDescriptionMax = 5000;
+
+export const createManagedTreeResponseOneConditionMax = 500;
+
+export const createManagedTreeResponseOneImageIdsMax = 12;
+
+
+
+export const CreateManagedTreeResponse = zod.object({
+  "name": zod.string().min(createManagedTreeResponseOneNameMin).max(createManagedTreeResponseOneNameMax),
+  "species": zod.enum(['Mango', 'Guava', 'Coconut']),
+  "variety": zod.string().min(createManagedTreeResponseOneVarietyMin).max(createManagedTreeResponseOneVarietyMax),
+  "zone": zod.string().max(createManagedTreeResponseOneZoneMax),
+  "age": zod.string().max(createManagedTreeResponseOneAgeMax),
+  "description": zod.string().min(createManagedTreeResponseOneDescriptionMin).max(createManagedTreeResponseOneDescriptionMax),
+  "condition": zod.string().max(createManagedTreeResponseOneConditionMax),
+  "status": zod.enum(['draft', 'listed', 'temporarily-unavailable', 'archived']),
+  "imageIds": zod.array(zod.string().uuid()).max(createManagedTreeResponseOneImageIdsMax)
+}).and(zod.object({
+  "id": zod.string().uuid(),
+  "farmId": zod.string().uuid(),
+  "treeCode": zod.string(),
+  "version": zod.number().int(),
+  "isSample": zod.boolean(),
+  "images": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "url": zod.string(),
+  "name": zod.string(),
+  "isIllustrative": zod.boolean()
+}))
+}))
+
+
+export const UpdateManagedTreeParams = zod.object({
+  "treeId": zod.coerce.string().uuid()
+})
+
+export const updateManagedTreeBodyOneNameMin = 2;
+export const updateManagedTreeBodyOneNameMax = 180;
+
+export const updateManagedTreeBodyOneVarietyMin = 2;
+export const updateManagedTreeBodyOneVarietyMax = 120;
+
+export const updateManagedTreeBodyOneZoneMax = 120;
+
+export const updateManagedTreeBodyOneAgeMax = 100;
+
+export const updateManagedTreeBodyOneDescriptionMin = 5;
+export const updateManagedTreeBodyOneDescriptionMax = 5000;
+
+export const updateManagedTreeBodyOneConditionMax = 500;
+
+export const updateManagedTreeBodyOneImageIdsMax = 12;
+
+
+
+
+export const UpdateManagedTreeBody = zod.object({
+  "name": zod.string().min(updateManagedTreeBodyOneNameMin).max(updateManagedTreeBodyOneNameMax),
+  "species": zod.enum(['Mango', 'Guava', 'Coconut']),
+  "variety": zod.string().min(updateManagedTreeBodyOneVarietyMin).max(updateManagedTreeBodyOneVarietyMax),
+  "zone": zod.string().max(updateManagedTreeBodyOneZoneMax),
+  "age": zod.string().max(updateManagedTreeBodyOneAgeMax),
+  "description": zod.string().min(updateManagedTreeBodyOneDescriptionMin).max(updateManagedTreeBodyOneDescriptionMax),
+  "condition": zod.string().max(updateManagedTreeBodyOneConditionMax),
+  "status": zod.enum(['draft', 'listed', 'temporarily-unavailable', 'archived']),
+  "imageIds": zod.array(zod.string().uuid()).max(updateManagedTreeBodyOneImageIdsMax)
+}).and(zod.object({
+  "version": zod.number().int().min(1)
+}))
+
+export const updateManagedTreeResponseOneNameMin = 2;
+export const updateManagedTreeResponseOneNameMax = 180;
+
+export const updateManagedTreeResponseOneVarietyMin = 2;
+export const updateManagedTreeResponseOneVarietyMax = 120;
+
+export const updateManagedTreeResponseOneZoneMax = 120;
+
+export const updateManagedTreeResponseOneAgeMax = 100;
+
+export const updateManagedTreeResponseOneDescriptionMin = 5;
+export const updateManagedTreeResponseOneDescriptionMax = 5000;
+
+export const updateManagedTreeResponseOneConditionMax = 500;
+
+export const updateManagedTreeResponseOneImageIdsMax = 12;
+
+
+
+export const UpdateManagedTreeResponse = zod.object({
+  "name": zod.string().min(updateManagedTreeResponseOneNameMin).max(updateManagedTreeResponseOneNameMax),
+  "species": zod.enum(['Mango', 'Guava', 'Coconut']),
+  "variety": zod.string().min(updateManagedTreeResponseOneVarietyMin).max(updateManagedTreeResponseOneVarietyMax),
+  "zone": zod.string().max(updateManagedTreeResponseOneZoneMax),
+  "age": zod.string().max(updateManagedTreeResponseOneAgeMax),
+  "description": zod.string().min(updateManagedTreeResponseOneDescriptionMin).max(updateManagedTreeResponseOneDescriptionMax),
+  "condition": zod.string().max(updateManagedTreeResponseOneConditionMax),
+  "status": zod.enum(['draft', 'listed', 'temporarily-unavailable', 'archived']),
+  "imageIds": zod.array(zod.string().uuid()).max(updateManagedTreeResponseOneImageIdsMax)
+}).and(zod.object({
+  "id": zod.string().uuid(),
+  "farmId": zod.string().uuid(),
+  "treeCode": zod.string(),
+  "version": zod.number().int(),
+  "isSample": zod.boolean(),
+  "images": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "url": zod.string(),
+  "name": zod.string(),
+  "isIllustrative": zod.boolean()
+}))
+}))
+
+
+export const requestFarmImageUploadBodyNameMax = 200;
+
+export const requestFarmImageUploadBodySizeMax = 10485760;
+
+
+
+export const RequestFarmImageUploadBody = zod.object({
+  "name": zod.string().min(1).max(requestFarmImageUploadBodyNameMax),
+  "contentType": zod.enum(['image/jpeg', 'image/png', 'image/webp']),
+  "size": zod.number().int().min(1).max(requestFarmImageUploadBodySizeMax)
+})
+
+export const RequestFarmImageUploadResponse = zod.object({
+  "id": zod.string().uuid(),
+  "uploadURL": zod.string()
+})
+
+
+export const CompleteFarmImageUploadParams = zod.object({
+  "imageId": zod.coerce.string().uuid()
+})
+
+export const CompleteFarmImageUploadResponse = zod.object({
+  "id": zod.string().uuid(),
+  "url": zod.string(),
+  "name": zod.string(),
+  "isIllustrative": zod.boolean()
+})
+
+
+export const ServeCatalogueImageParams = zod.object({
+  "imageId": zod.coerce.string().uuid()
+})
+
+export const ServeCatalogueImageResponse = zod.unknown()
+
+
+export const GetPhoneAuthConfigResponse = zod.object({
+  "configured": zod.boolean(),
+  "loginPath": zod.string(),
+  "logoutPath": zod.string()
+})
+
+
+/**
+ * Top-level browser navigation to Auth0 passwordless SMS. This endpoint does not send an SMS itself.
+ */
+export const StartPhoneSignInResponse = zod.void()
+
+
+/**
+ * SDK-owned OIDC callback validates authorization code, PKCE, state, nonce, issuer and signed identity. Never call directly from application forms.
+ */
+export const FinishPhoneSignInResponse = zod.void()
+
+
+/**
+ * Same-origin browser form clears the application session and starts provider sign-out.
+ */
+export const EndPhoneSessionResponse = zod.void()
+
+
 export const HealthCheckResponse = zod.object({
   "status": zod.string()
 })
@@ -31,7 +489,16 @@ export const ListPublicTreesResponseItem = zod.object({
   "image": zod.string().optional(),
   "age": zod.string().optional(),
   "inspectedAt": zod.string().optional(),
-  "productiveAssessment": zod.string().optional()
+  "productiveAssessment": zod.string().optional(),
+  "isSample": zod.boolean().optional(),
+  "images": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "url": zod.string(),
+  "name": zod.string(),
+  "isIllustrative": zod.boolean()
+})).optional(),
+  "farmId": zod.string().optional(),
+  "adoptionEligible": zod.boolean().optional()
 })
 export const ListPublicTreesResponse = zod.array(ListPublicTreesResponseItem)
 
@@ -54,7 +521,16 @@ export const GetPublicTreeResponse = zod.object({
   "image": zod.string().optional(),
   "age": zod.string().optional(),
   "inspectedAt": zod.string().optional(),
-  "productiveAssessment": zod.string().optional()
+  "productiveAssessment": zod.string().optional(),
+  "isSample": zod.boolean().optional(),
+  "images": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "url": zod.string(),
+  "name": zod.string(),
+  "isIllustrative": zod.boolean()
+})).optional(),
+  "farmId": zod.string().optional(),
+  "adoptionEligible": zod.boolean().optional()
 }),
   "schemes": zod.array(zod.object({
   "id": zod.string(),
@@ -74,7 +550,17 @@ export const ListPublicFarmsResponseItem = zod.object({
   "district": zod.string(),
   "description": zod.string(),
   "image": zod.string().optional(),
-  "practices": zod.array(zod.string()).optional()
+  "practices": zod.array(zod.string()).optional(),
+  "isSample": zod.boolean().optional(),
+  "images": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "url": zod.string(),
+  "name": zod.string(),
+  "isIllustrative": zod.boolean()
+})).optional(),
+  "areaAcres": zod.number().optional(),
+  "treeCount": zod.number().int().optional(),
+  "location": zod.string().optional()
 })
 export const ListPublicFarmsResponse = zod.array(ListPublicFarmsResponseItem)
 

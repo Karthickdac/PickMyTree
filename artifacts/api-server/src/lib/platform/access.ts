@@ -1,12 +1,10 @@
-import { getAuth, clerkClient } from "@clerk/express";
 import type { Request, RequestHandler } from "express";
 import { and, eq, or, sql, type SQL } from "drizzle-orm";
 import { db, platformUsers, roleGrants, workflowRecords } from "@workspace/db";
 import type { ModuleDefinition } from "./modules";
-
-export class PlatformError extends Error {
-  constructor(public status: number, message: string) { super(message); }
-}
+import { PlatformError } from "./errors";
+import { hasRecentMfa } from "./mobile-identity";
+export { PlatformError } from "./errors";
 export type Actor = {
   id: string; authId: string; displayName: string; profile: Record<string, unknown>;
   grants: { role: string; scope: string }[]; recentMfa: boolean;
@@ -15,24 +13,34 @@ declare global {
   namespace Express { interface Request { actor?: Actor } }
 }
 export const identify: RequestHandler = async (req, _res, next) => {
-  const auth = getAuth(req);
-  if (!auth.userId) throw new PlatformError(401, "Please sign in to continue.");
-  let [user] = await db.select().from(platformUsers).where(eq(platformUsers.authId, auth.userId));
+  const identity = req.patSession?.mobileIdentity;
+  if (!req.oidc?.isAuthenticated() || !identity || identity.subject !== req.oidc.user?.sub) {
+    throw new PlatformError(401, "Please sign in with your mobile number to continue.");
+  }
+  const claims: Record<string, unknown> = req.oidc.idTokenClaims ?? {};
+  if (typeof claims.iss !== "string") throw new PlatformError(401, "Please sign in again.");
+  const authId = `${claims.iss}|${identity.subject}`;
+  let [user] = await db.select().from(platformUsers).where(eq(platformUsers.authId, authId));
   if (!user) {
-    const remote = await clerkClient.users.getUser(auth.userId);
-    if (!remote.emailAddresses.some(e => e.verification?.status === "verified")) {
-      throw new PlatformError(403, "Verify your email address before continuing.");
-    }
     [user] = await db.insert(platformUsers).values({
-      authId: auth.userId, displayName: remote.firstName || remote.username || "Tree adopter",
+      authId, displayName: "Tree adopter", profile: { phone: identity.phone, language: "en" },
     }).onConflictDoNothing().returning();
-    if (!user) [user] = await db.select().from(platformUsers).where(eq(platformUsers.authId, auth.userId));
+    if (!user) [user] = await db.select().from(platformUsers).where(eq(platformUsers.authId, authId));
   }
   if (!user) throw new PlatformError(500, "Could not initialize your profile.");
+  // Explicit owner allowlist, never "first visitor becomes admin". The configured
+  // number must first complete Auth0's real SMS verification.
+  const ownerPhone = process.env.PLATFORM_OWNER_PHONE?.replace(/[\s()-]/g, "");
+  if (ownerPhone && /^\+[1-9]\d{6,14}$/.test(ownerPhone) && identity.phone === ownerPhone) {
+    const { auditEvents } = await import("@workspace/db");
+    await db.transaction(async tx => {
+      const granted = await tx.insert(roleGrants).values({ userId: user!.id, role: "administrator", scope: "*", grantedBy: user!.id, reason: "Project-owner verified mobile allowlist" }).onConflictDoNothing().returning();
+      if (granted.length) await tx.insert(auditEvents).values({ actorId: user!.id, action: "owner-access-granted", module: "access", reason: "Verified the explicitly configured project-owner mobile number" });
+    });
+  }
   const grants = await db.select({ role: roleGrants.role, scope: roleGrants.scope }).from(roleGrants).where(eq(roleGrants.userId, user.id));
-  const fva = auth.sessionClaims?.fva;
   req.actor = { ...user, grants: [{ role: "customer", scope: user.id }, ...grants],
-    recentMfa: Array.isArray(fva) && typeof fva[1] === "number" && fva[1] >= 0 && fva[1] <= 10 };
+    recentMfa: hasRecentMfa(claims) };
   next();
 };
 export function actor(req: Request): Actor {

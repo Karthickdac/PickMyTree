@@ -6,6 +6,169 @@ info:
 servers:
   - url: /api
 paths:
+  /v1/management/farms:
+    get:
+      operationId: listManagedFarms
+      responses:
+        "200":
+          description: Farms visible to the signed-in manager
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ManagedFarmList" }
+        "403": { $ref: "#/components/responses/Failure" }
+    post:
+      operationId: createManagedFarm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FarmEditorInput" }
+      responses:
+        "201":
+          description: Created farm
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ManagedFarm" }
+        "400": { $ref: "#/components/responses/Failure" }
+  /v1/management/farms/{farmId}:
+    parameters:
+      - { name: farmId, in: path, required: true, schema: { type: string, format: uuid } }
+    patch:
+      operationId: updateManagedFarm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FarmEditorUpdate" }
+      responses:
+        "200":
+          description: Saved farm
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ManagedFarm" }
+        "409": { $ref: "#/components/responses/Failure" }
+  /v1/management/farms/{farmId}/trees:
+    parameters:
+      - { name: farmId, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      operationId: listManagedTrees
+      responses:
+        "200":
+          description: Trees belonging to the selected farm
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/ManagedTree" } }
+    post:
+      operationId: createManagedTree
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TreeEditorInput" }
+      responses:
+        "201":
+          description: Created tree
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ManagedTree" }
+  /v1/management/trees/{treeId}:
+    parameters:
+      - { name: treeId, in: path, required: true, schema: { type: string, format: uuid } }
+    patch:
+      operationId: updateManagedTree
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TreeEditorUpdate" }
+      responses:
+        "200":
+          description: Saved tree
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ManagedTree" }
+        "409": { $ref: "#/components/responses/Failure" }
+  /v1/management/images/request-upload:
+    post:
+      operationId: requestFarmImageUpload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FarmImageUploadInput" }
+      responses:
+        "201":
+          description: Short-lived direct upload URL, not a completed image
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, uploadURL]
+                properties:
+                  id: { type: string, format: uuid }
+                  uploadURL: { type: string }
+        "503": { $ref: "#/components/responses/Failure" }
+  /v1/management/images/{imageId}/complete:
+    parameters:
+      - { name: imageId, in: path, required: true, schema: { type: string, format: uuid } }
+    post:
+      operationId: completeFarmImageUpload
+      responses:
+        "200":
+          description: Validated public catalogue image, ready to attach to a farm or tree
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CatalogueImage" }
+        "400": { $ref: "#/components/responses/Failure" }
+  /v1/catalogue/images/{imageId}:
+    parameters:
+      - { name: imageId, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      operationId: serveCatalogueImage
+      responses:
+        "200":
+          description: Validated catalogue photo
+          content:
+            image/jpeg: { schema: { type: string, format: binary } }
+            image/png: { schema: { type: string, format: binary } }
+            image/webp: { schema: { type: string, format: binary } }
+        "404": { $ref: "#/components/responses/Failure" }
+  /v1/auth/config:
+    get:
+      operationId: getPhoneAuthConfig
+      responses:
+        "200":
+          description: Phone authentication availability without credentials
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PhoneAuthConfig" }
+  /auth/login:
+    get:
+      operationId: startPhoneSignIn
+      description: Top-level browser navigation to Auth0 passwordless SMS. This endpoint does not send an SMS itself.
+      responses:
+        "302":
+          description: Redirect to secure mobile verification
+        "503":
+          $ref: "#/components/responses/Failure"
+  /auth/callback:
+    get:
+      operationId: finishPhoneSignIn
+      description: SDK-owned OIDC callback validates authorization code, PKCE, state, nonce, issuer and signed identity. Never call directly from application forms.
+      responses:
+        "302":
+          description: Redirect to customer portal after verification
+        "303":
+          description: Redirect to sign-in with a safe error code
+  /auth/logout:
+    post:
+      operationId: endPhoneSession
+      description: Same-origin browser form clears the application session and starts provider sign-out.
+      responses:
+        "302":
+          description: Redirect through provider logout to the public homepage
+        "403":
+          $ref: "#/components/responses/Failure"
   /healthz:
     get:
       operationId: healthCheck
@@ -194,6 +357,95 @@ components:
         application/json:
           schema: { $ref: "#/components/schemas/Error" }
   schemas:
+    CatalogueImage:
+      type: object
+      required: [id, url, name, isIllustrative]
+      properties:
+        id: { type: string, format: uuid }
+        url: { type: string }
+        name: { type: string }
+        isIllustrative: { type: boolean }
+    FarmEditorInput:
+      type: object
+      required: [name, district, description, location, areaAcres, status, imageIds]
+      properties:
+        name: { type: string, minLength: 2, maxLength: 180 }
+        district: { type: string, minLength: 2, maxLength: 120 }
+        description: { type: string, minLength: 5, maxLength: 5000 }
+        location: { type: string, maxLength: 300 }
+        areaAcres: { type: number, minimum: 0, maximum: 100000 }
+        status: { type: string, enum: [draft, listed, archived] }
+        imageIds: { type: array, maxItems: 12, items: { type: string, format: uuid } }
+    FarmEditorUpdate:
+      allOf:
+        - { $ref: "#/components/schemas/FarmEditorInput" }
+        - type: object
+          required: [version]
+          properties:
+            version: { type: integer, minimum: 1 }
+    ManagedFarm:
+      allOf:
+        - { $ref: "#/components/schemas/FarmEditorInput" }
+        - type: object
+          required: [id, version, isSample, images, treeCount]
+          properties:
+            id: { type: string, format: uuid }
+            version: { type: integer }
+            isSample: { type: boolean }
+            images: { type: array, items: { $ref: "#/components/schemas/CatalogueImage" } }
+            treeCount: { type: integer }
+    ManagedFarmList:
+      type: object
+      required: [items, storageAvailable]
+      properties:
+        items: { type: array, items: { $ref: "#/components/schemas/ManagedFarm" } }
+        storageAvailable: { type: boolean }
+    TreeEditorInput:
+      type: object
+      required: [name, species, variety, zone, age, description, condition, status, imageIds]
+      properties:
+        name: { type: string, minLength: 2, maxLength: 180 }
+        species: { type: string, enum: [Mango, Guava, Coconut] }
+        variety: { type: string, minLength: 2, maxLength: 120 }
+        zone: { type: string, maxLength: 120 }
+        age: { type: string, maxLength: 100 }
+        description: { type: string, minLength: 5, maxLength: 5000 }
+        condition: { type: string, maxLength: 500 }
+        status: { type: string, enum: [draft, listed, temporarily-unavailable, archived] }
+        imageIds: { type: array, maxItems: 12, items: { type: string, format: uuid } }
+    TreeEditorUpdate:
+      allOf:
+        - { $ref: "#/components/schemas/TreeEditorInput" }
+        - type: object
+          required: [version]
+          properties:
+            version: { type: integer, minimum: 1 }
+    ManagedTree:
+      allOf:
+        - { $ref: "#/components/schemas/TreeEditorInput" }
+        - type: object
+          required: [id, farmId, treeCode, version, isSample, images]
+          properties:
+            id: { type: string, format: uuid }
+            farmId: { type: string, format: uuid }
+            treeCode: { type: string }
+            version: { type: integer }
+            isSample: { type: boolean }
+            images: { type: array, items: { $ref: "#/components/schemas/CatalogueImage" } }
+    FarmImageUploadInput:
+      type: object
+      required: [name, contentType, size]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 200 }
+        contentType: { type: string, enum: [image/jpeg, image/png, image/webp] }
+        size: { type: integer, minimum: 1, maximum: 10485760 }
+    PhoneAuthConfig:
+      type: object
+      required: [configured, loginPath, logoutPath]
+      properties:
+        configured: { type: boolean }
+        loginPath: { type: string }
+        logoutPath: { type: string }
     HealthStatus:
       type: object
       required: [status]
@@ -221,6 +473,11 @@ components:
         description: { type: string }
         image: { type: string }
         practices: { type: array, items: { type: string } }
+        isSample: { type: boolean }
+        images: { type: array, items: { $ref: "#/components/schemas/CatalogueImage" } }
+        areaAcres: { type: number }
+        treeCount: { type: integer }
+        location: { type: string }
     Tree:
       type: object
       required: [id, treeCode, name, species, variety, farmName, zone, status, description]
@@ -238,6 +495,10 @@ components:
         age: { type: string }
         inspectedAt: { type: string }
         productiveAssessment: { type: string }
+        isSample: { type: boolean }
+        images: { type: array, items: { $ref: "#/components/schemas/CatalogueImage" } }
+        farmId: { type: string }
+        adoptionEligible: { type: boolean }
     Scheme:
       type: object
       required: [id, name, version, feePaise, durationMonths, entitlement, disclosures]

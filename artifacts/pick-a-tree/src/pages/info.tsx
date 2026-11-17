@@ -2,7 +2,7 @@ import { Link, useParams } from 'wouter';
 import { ArrowLeft, ArrowRight, BookOpen, Building2, Clock, FileWarning, Heart, Mail, MapPin, QrCode, Sprout, Tractor } from 'lucide-react';
 import { useListArticles, useListPublicFarms } from '@workspace/api-client-react';
 import { errorMessage, IMAGES, useSeo } from '@/lib/brand';
-import { EmptyState, ErrorState, Eyebrow, IllustrativeImage, PageHero, PrelaunchNotice, Reveal, Section } from '@/components/site/bits';
+import { AvailabilityNote, EmptyState, ErrorState, Eyebrow, IllustrativeImage, PageHero, Reveal, SampleBadge, Section } from '@/components/site/bits';
 import { EnquiryForm } from '@/components/site/enquiry-form';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -24,7 +24,7 @@ function Steps({ items }: { items: { t: string; d: string }[] }) {
 }
 
 export function HowItWorksPage() {
-  useSeo('How it works', 'From choosing a verified tree to a measured, reconciled harvest share — the full PICK A TREE journey.');
+  useSeo('How it works', 'From choosing a verified tree to a measured, reconciled harvest share — the full Pick My Tree journey.');
   return (
     <>
       <PageHero eyebrow="ADOPT • GROW • HARVEST" title={<>From one tree to <em className="text-harvest">one honest harvest</em>.</>}
@@ -32,7 +32,7 @@ export function HowItWorksPage() {
       <Section>
         <div className="grid gap-16 lg:grid-cols-12">
           <div className="lg:col-span-4"><Eyebrow>The journey</Eyebrow><h2 className="mt-4 text-4xl font-light text-emerald">Nine steps, each one recorded.</h2>
-            <div className="mt-8"><PrelaunchNotice>Reservation, checkout and agreements are not yet active. They open only after verified inventory and a connected payment provider.</PrelaunchNotice></div>
+            <div className="mt-8"><AvailabilityNote>Availability is shown on each tree. Online checkout is not connected yet, so no tree can be paid for on this site today.</AvailabilityNote></div>
           </div>
           <div className="lg:col-span-8">
             <Steps items={[
@@ -40,7 +40,7 @@ export function HowItWorksPage() {
               { t: 'Compare schemes', d: 'Each scheme states term, fee, exact entitlement formula, deductions, risks and remedies — versioned, never edited after you accept.' },
               { t: 'Create a verified account', d: 'Your profile, delivery address and communication preferences in English or Tamil.' },
               { t: 'Reserve with a short hold', d: 'A time-limited hold prevents two families adopting the same exclusive tree.' },
-              { t: 'Pay through an approved gateway', d: 'Itemised checkout, receipt and agreement. Not yet connected during prelaunch.' },
+              { t: 'Pay through an approved gateway', d: 'Itemised checkout, receipt and agreement. Not connected yet; each tree page says whether it can be reserved.' },
               { t: 'Open your Tree Passport', d: 'A private record of identity, inspections, care and moderated field updates.' },
               { t: 'Follow the season', d: 'Flowering, fruit set, care tasks and any weather events, logged by people on the farm.' },
               { t: 'Harvest, weighed and reconciled', d: 'Gross quantity, grades and losses recorded; your allocation calculated using your scheme version.' },
@@ -67,23 +67,30 @@ export function FarmsPage() {
           <div className="grid gap-8 md:grid-cols-2">
             {farms.map((f) => (
               <article key={f.id} className="overflow-hidden rounded-[2rem] border border-border bg-card" data-testid={`card-farm-${f.id}`}>
-                {f.image && <img src={f.image} alt={f.name} className="aspect-[16/9] w-full object-cover" />}
+                {(f.images?.[0]?.url ?? f.image) && <div className="relative"><img src={f.images?.[0]?.url ?? f.image} alt={f.images?.[0]?.name ?? f.name} className="aspect-[16/9] w-full object-cover" />{f.images?.[0]?.isIllustrative && <span className="absolute bottom-3 left-3 rounded-full bg-card/85 px-2 py-0.5 text-[10px] text-soil">Illustrative photo</span>}</div>}
+                {f.images && f.images.length > 1 && <div className="flex gap-1.5 overflow-x-auto px-7 pt-4">{f.images.slice(1, 6).map((img) => <img key={img.id} src={img.url} alt={img.name} className="h-14 w-20 shrink-0 rounded-lg object-cover" />)}</div>}
                 <div className="p-7">
-                  <p className="flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-4 w-4" />{f.district}</p>
+                  <div className="flex flex-wrap items-center gap-2"><p className="flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-4 w-4" />{f.location ? `${f.location}, ` : ''}{f.district}</p>{f.isSample && <SampleBadge />}</div>
                   <h3 className="mt-2 font-display text-3xl text-emerald">{f.name}</h3>
                   <p className="mt-3 leading-relaxed text-muted-foreground">{f.description}</p>
+                  {f.isSample && <p className="mt-3 text-sm text-soil">Sample data: a test farm record showing how listings work. Its trees cannot be adopted.</p>}
+                  <div className="mt-5 flex flex-wrap items-center gap-4 font-mono text-xs text-muted-foreground">{f.areaAcres !== undefined && <span>{f.areaAcres} acres</span>}{f.treeCount !== undefined && <span>{f.treeCount} listed trees</span>}<Link href="/adopt" className="font-sans text-sm font-semibold text-emerald underline underline-offset-4" data-testid={`link-farm-trees-${f.id}`}>Browse trees</Link></div>
                   {f.practices && f.practices.length > 0 && <div className="mt-5 flex flex-wrap gap-2">{f.practices.map((p) => <span key={p} className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-emerald">{p}</span>)}</div>}
                 </div>
               </article>
             ))}
           </div>
         ) : (
-          <EmptyState icon={<Tractor className="h-6 w-6" />} title="No farm is publicly listed yet." body="Conversations with orchard owners in the region are under way. We will not name a farm until its authority is verified and agreements are signed.">
+          <EmptyState icon={<Tractor className="h-6 w-6" />} title="No farm is listed right now." body="Farms appear here as soon as a farm manager lists them.">
             <Link href="/contact" className="rounded-full bg-emerald px-5 py-2.5 text-sm font-semibold text-ivory" data-testid="link-farm-partner">Own an orchard? Talk to us</Link>
           </EmptyState>
         )}
       </Section>
       <Section className="pt-0">
+        <div className="mb-8 flex flex-col justify-between gap-4 rounded-[1.5rem] border border-border bg-card p-7 md:flex-row md:items-center" data-testid="panel-owner-access">
+          <div><h3 className="font-display text-2xl text-emerald">Own or manage one of these farms?</h3><p className="mt-1 text-muted-foreground">Sign in with your verified mobile number to edit farm details, trees and photos. Editing needs a role granted by an administrator.</p></div>
+          <Link href="/manage/farms" className="shrink-0 rounded-full bg-emerald px-6 py-3 text-center font-semibold text-ivory" data-testid="link-owner-manage">Manage farms</Link>
+        </div>
         <div className="grid gap-6 md:grid-cols-3">
           {[['Authority', 'Owner or operator documentation, agreement validity and expiry alerts.'], ['Mapping', 'Zones, rows and blocks, with protected GPS that is never published exactly.'], ['People', 'Named farm manager, emergency contacts and a scoped field team.']].map(([t, d]) => (
             <div key={t} className="rounded-[1.5rem] bg-secondary/60 p-7"><h3 className="font-display text-2xl text-emerald">{t}</h3><p className="mt-2 text-muted-foreground">{d}</p></div>
@@ -95,7 +102,7 @@ export function FarmsPage() {
 }
 
 export function PassportPage() {
-  useSeo('Tree Passport', 'What the private Tree Passport records for every adopted PICK A TREE tree.');
+  useSeo('Tree Passport', 'What the private Tree Passport records for every adopted Pick My Tree tree.');
   const rows = [
     ['Identity', 'Permanent tree code, species, variety, estimated age and registration photo set.'],
     ['Location', 'Farm and zone. Exact GPS is masked to protect the farm.'],
@@ -129,7 +136,7 @@ export function PassportPage() {
 }
 
 export function TransparencyPage() {
-  useSeo('Transparency Centre', 'What PICK A TREE will and will not claim, and the gates that must be closed before launch.');
+  useSeo('Transparency Centre', 'What Pick My Tree will and will not claim, and the gates that must be closed before launch.');
   const will = ['Show estimates and actual measured quantities separately', 'Record crop losses, rejects and retentions with reasons', 'Keep immutable versions of every scheme you accept', 'Correct mistakes with visible, dated correction entries', 'Label illustrative imagery clearly, everywhere'];
   const wont = ['Promise a yield, a return or a resale value', 'Transfer land or tree title', 'Publish generated photos as field evidence', 'List a farm or tree before it is verified', 'Make Nourish a condition of core care'];
   return (
@@ -141,7 +148,7 @@ export function TransparencyPage() {
           <div className="rounded-[2rem] bg-emerald p-9 text-ivory"><h2 className="font-display text-3xl">We will</h2><ul className="mt-6 space-y-4">{will.map((w) => <li key={w} className="flex gap-3"><span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-harvest" />{w}</li>)}</ul></div>
           <div className="rounded-[2rem] border border-border bg-card p-9"><h2 className="font-display text-3xl text-emerald">We will not</h2><ul className="mt-6 space-y-4">{wont.map((w) => <li key={w} className="flex gap-3 text-foreground/80"><span className="mt-2 h-2 w-2 shrink-0 rounded-full border border-destructive" />{w}</li>)}</ul></div>
         </div>
-        <div className="mt-10"><PrelaunchNotice>PICK A TREE is in prelaunch. Legal terms, pricing, entitlement formulas and payment provider are awaiting approval. The live readiness status appears on the home page.</PrelaunchNotice></div>
+        <div className="mt-10"><AvailabilityNote>Adoption terms, pricing and entitlement are shown per tree once approved. A tree without configured terms says so on its page.</AvailabilityNote></div>
       </Section>
     </>
   );
@@ -183,7 +190,7 @@ export function ArticlePage() {
   const { id } = useParams<{ id: string }>();
   const { data: articles, isLoading, isError, error, refetch } = useListArticles();
   const article = articles?.find((a) => a.id === id);
-  useSeo(article?.title ?? 'Article', article?.excerpt ?? 'A PICK A TREE field note.');
+  useSeo(article?.title ?? 'Article', article?.excerpt ?? 'A Pick My Tree field note.');
   return (
     <Section className="max-w-3xl">
       <Link href="/learn" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-emerald" data-testid="link-back-learn"><ArrowLeft className="h-4 w-4" /> All field notes</Link>
@@ -222,7 +229,7 @@ export function NourishPage() {
             {['No auto-renewal and no hidden harvest deductions.', 'Recommended, purchased and applied quantities are shown separately.', 'Expired or recalled product batches are blocked from use.', 'Recommendations are never autonomous prescriptions.'].map((t) => (
               <div key={t} className="flex gap-4 rounded-2xl border border-border bg-card p-5"><Sprout className="h-5 w-5 shrink-0 text-leaf" /><p>{t}</p></div>
             ))}
-            <PrelaunchNotice>Nourish is not yet available. It requires agronomist approval workflows, product inventory and payments to be live.</PrelaunchNotice>
+            <AvailabilityNote>Nourish is not yet available. It requires agronomist approval workflows, product inventory and payments to be live.</AvailabilityNote>
           </div>
         </div>
       </Section>
@@ -231,7 +238,7 @@ export function NourishPage() {
 }
 
 export function GiftPage() {
-  useSeo('Gift a tree', 'Gift a tree adoption for weddings, birthdays and remembrance. Enquiries are open during prelaunch.');
+  useSeo('Gift a tree', 'Gift a tree adoption for weddings, birthdays and remembrance. Gift enquiries are open.');
   return (
     <>
       <PageHero eyebrow="Gift a tree" title={<>A gift that <em className="text-harvest">fruits next summer</em>.</>}
@@ -285,7 +292,7 @@ const FAQS = [
 ];
 
 export function FaqPage() {
-  useSeo('Questions', 'Plain answers about adopting a tree with PICK A TREE.');
+  useSeo('Questions', 'Plain answers about adopting a tree with Pick My Tree.');
   return (
     <>
       <PageHero eyebrow="Questions" title={<>Plain answers, <em className="text-harvest">including the awkward ones</em>.</>} lede="If yours is not here, ask us directly." />
@@ -305,7 +312,7 @@ export function FaqPage() {
 }
 
 export function ContactPage() {
-  useSeo('Contact', 'Contact PICK A TREE about adoption, gifting, farm visits or partnerships.');
+  useSeo('Contact', 'Contact Pick My Tree about adoption, gifting, farm visits or partnerships.');
   return (
     <>
       <PageHero eyebrow="Contact" title={<>Talk to a person, <em className="text-harvest">not a funnel</em>.</>} lede="Adoption interest, farm partnerships, visits or anything else. We reply in English or Tamil." />
@@ -314,7 +321,7 @@ export function ContactPage() {
           <div className="space-y-6 lg:col-span-4">
             <div className="flex gap-4"><MapPin className="h-5 w-5 text-leaf" /><div><p className="font-semibold">Region</p><p className="text-muted-foreground">Madurai–Dindigul, Tamil Nadu</p></div></div>
             <div className="flex gap-4"><Mail className="h-5 w-5 text-leaf" /><div><p className="font-semibold">Replies</p><p className="text-muted-foreground">By email from our team. Support hours are being finalised.</p></div></div>
-            <div className="flex gap-4"><Clock className="h-5 w-5 text-leaf" /><div><p className="font-semibold">Prelaunch</p><p className="text-muted-foreground">No payment is requested through any channel during prelaunch.</p></div></div>
+            <div className="flex gap-4"><Clock className="h-5 w-5 text-leaf" /><div><p className="font-semibold">Payments</p><p className="text-muted-foreground">We never request payment by phone, SMS or WhatsApp. Online checkout is not connected yet.</p></div></div>
           </div>
           <div className="lg:col-span-8"><EnquiryForm kinds={['contact', 'adoption', 'visit']} defaultKind="contact" /></div>
         </div>
@@ -325,7 +332,7 @@ export function ContactPage() {
 
 export function LegalPage({ kind }: { kind: 'privacy' | 'terms' }) {
   const isPrivacy = kind === 'privacy';
-  useSeo(isPrivacy ? 'Privacy notice' : 'Terms', isPrivacy ? 'Draft privacy notice for PICK A TREE — pending legal review.' : 'Draft terms for PICK A TREE — pending legal review.');
+  useSeo(isPrivacy ? 'Privacy notice' : 'Terms', isPrivacy ? 'Draft privacy notice for Pick My Tree — pending legal review.' : 'Draft terms for Pick My Tree — pending legal review.');
   return (
     <>
       <PageHero eyebrow={isPrivacy ? 'Privacy notice' : 'Terms of service'} title={isPrivacy ? 'Privacy notice' : 'Terms of service'} lede="Status: draft, awaiting professional legal review. Nothing on this page is a final legal term." />
@@ -333,7 +340,7 @@ export function LegalPage({ kind }: { kind: 'privacy' | 'terms' }) {
         <div className="flex items-start gap-4 rounded-2xl border-2 border-harvest/50 bg-harvest/8 p-6" data-testid="notice-legal-review">
           <FileWarning className="h-6 w-6 shrink-0 text-harvest" />
           <div>
-            <p className="font-semibold text-soil">Prelaunch review status: not approved</p>
+            <p className="font-semibold text-soil">Review status: not approved</p>
             <p className="mt-1 text-sm leading-relaxed text-foreground/80">The approved {isPrivacy ? 'privacy notice, retention schedule and grievance contact' : 'terms, adoption agreement, cancellation and refund policy'} will be published here once reviewed by qualified counsel. Until then, no adoption contract can be formed on this website.</p>
           </div>
         </div>
@@ -346,7 +353,7 @@ export function LegalPage({ kind }: { kind: 'privacy' | 'terms' }) {
           ) : (
             <>
               <p>What applies today: this website is informational. Enquiries do not create reservations, adoptions or obligations to pay.</p>
-              <p>PICK A TREE adoptions are not investments and confer no ownership of land or trees. Final scheme terms will be versioned and shown in full before any acceptance.</p>
+              <p>Pick My Tree adoptions are not investments and confer no ownership of land or trees. Final scheme terms will be versioned and shown in full before any acceptance.</p>
             </>
           )}
         </div>

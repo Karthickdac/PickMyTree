@@ -26,24 +26,35 @@ import type {
 
 import type {
   Article,
+  CatalogueImage,
   Confirmation,
   CurrentUser,
   Dashboard,
   EnquiryInput,
   FailureResponse,
   Farm,
+  FarmEditorInput,
+  FarmEditorUpdate,
+  FarmImageUploadInput,
   HealthStatus,
   ListPublicTreesParams,
   ListRecordsParams,
+  ManagedFarm,
+  ManagedFarmList,
+  ManagedTree,
   Module,
+  PhoneAuthConfig,
   PlatformRecord,
   ProfileInput,
   Readiness,
   RecordInput,
   RecordPage,
   RecordUpdate,
+  RequestFarmImageUpload201,
   Tree,
   TreeDetail,
+  TreeEditorInput,
+  TreeEditorUpdate,
   WorkspaceSummary
 } from './api.schemas';
 
@@ -73,6 +84,1134 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getListManagedFarmsUrl = () => {
+
+
+
+
+  return `/api/v1/management/farms`
+}
+
+export const listManagedFarms = async ( options?: Parameters<typeof customFetch>[1]): Promise<ManagedFarmList> => {
+
+  return customFetch<ManagedFarmList>(getListManagedFarmsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListManagedFarmsQueryKey = () => {
+    return [
+    `/api/v1/management/farms`
+    ] as const;
+    }
+
+
+export const getListManagedFarmsQueryOptions = <TData = Awaited<ReturnType<typeof listManagedFarms>>, TError = ErrorType<FailureResponse>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedFarms>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListManagedFarmsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listManagedFarms>>> = ({ signal }) => listManagedFarms({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listManagedFarms>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListManagedFarmsQueryResult = NonNullable<Awaited<ReturnType<typeof listManagedFarms>>>
+export type ListManagedFarmsQueryError = ErrorType<FailureResponse>
+
+
+export function useListManagedFarms<TData = Awaited<ReturnType<typeof listManagedFarms>>, TError = ErrorType<FailureResponse>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedFarms>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listManagedFarms>>,
+          TError,
+          Awaited<ReturnType<typeof listManagedFarms>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListManagedFarms<TData = Awaited<ReturnType<typeof listManagedFarms>>, TError = ErrorType<FailureResponse>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedFarms>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listManagedFarms>>,
+          TError,
+          Awaited<ReturnType<typeof listManagedFarms>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListManagedFarms<TData = Awaited<ReturnType<typeof listManagedFarms>>, TError = ErrorType<FailureResponse>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedFarms>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useListManagedFarms<TData = Awaited<ReturnType<typeof listManagedFarms>>, TError = ErrorType<FailureResponse>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedFarms>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListManagedFarmsQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateManagedFarmUrl = () => {
+
+
+
+
+  return `/api/v1/management/farms`
+}
+
+export const createManagedFarm = async (farmEditorInput: FarmEditorInput, options?: Parameters<typeof customFetch>[1]): Promise<ManagedFarm> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<ManagedFarm>(getCreateManagedFarmUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(farmEditorInput)
+  }
+);}
+
+
+
+
+
+export const getCreateManagedFarmMutationKey = () => ['createManagedFarm'] as const;
+
+export const getCreateManagedFarmMutationOptions = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createManagedFarm>>, TError,CreateManagedFarmMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createManagedFarm>>, TError,CreateManagedFarmMutationVariables, TContext> => {
+
+const mutationKey = getCreateManagedFarmMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createManagedFarm>>, CreateManagedFarmMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  createManagedFarm(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateManagedFarmMutationResult = NonNullable<Awaited<ReturnType<typeof createManagedFarm>>>
+    export type CreateManagedFarmMutationBody = BodyType<FarmEditorInput>
+    export type CreateManagedFarmMutationError = ErrorType<FailureResponse>
+    export type CreateManagedFarmMutationVariables = {data: BodyType<FarmEditorInput>}
+
+    export const useCreateManagedFarm = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createManagedFarm>>, TError,CreateManagedFarmMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createManagedFarm>>,
+        TError,
+        CreateManagedFarmMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateManagedFarmMutationOptions(options), queryClient);
+    }
+
+export const getUpdateManagedFarmUrl = (farmId: string,) => {
+
+
+
+
+  return `/api/v1/management/farms/${farmId}`
+}
+
+export const updateManagedFarm = async (farmId: string,
+    farmEditorUpdate: FarmEditorUpdate, options?: Parameters<typeof customFetch>[1]): Promise<ManagedFarm> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<ManagedFarm>(getUpdateManagedFarmUrl(farmId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(farmEditorUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateManagedFarmMutationKey = () => ['updateManagedFarm'] as const;
+
+export const getUpdateManagedFarmMutationOptions = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateManagedFarm>>, TError,UpdateManagedFarmMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateManagedFarm>>, TError,UpdateManagedFarmMutationVariables, TContext> => {
+
+const mutationKey = getUpdateManagedFarmMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateManagedFarm>>, UpdateManagedFarmMutationVariables> = (props) => {
+          const {farmId,data} = props ?? {};
+
+          return  updateManagedFarm(farmId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateManagedFarmMutationResult = NonNullable<Awaited<ReturnType<typeof updateManagedFarm>>>
+    export type UpdateManagedFarmMutationBody = BodyType<FarmEditorUpdate>
+    export type UpdateManagedFarmMutationError = ErrorType<FailureResponse>
+    export type UpdateManagedFarmMutationVariables = {farmId: string;data: BodyType<FarmEditorUpdate>}
+
+    export const useUpdateManagedFarm = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateManagedFarm>>, TError,UpdateManagedFarmMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateManagedFarm>>,
+        TError,
+        UpdateManagedFarmMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateManagedFarmMutationOptions(options), queryClient);
+    }
+
+export const getListManagedTreesUrl = (farmId: string,) => {
+
+
+
+
+  return `/api/v1/management/farms/${farmId}/trees`
+}
+
+export const listManagedTrees = async (farmId: string, options?: Parameters<typeof customFetch>[1]): Promise<ManagedTree[]> => {
+
+  return customFetch<ManagedTree[]>(getListManagedTreesUrl(farmId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListManagedTreesQueryKey = (farmId: string,) => {
+    return [
+    `/api/v1/management/farms/${farmId}/trees`
+    ] as const;
+    }
+
+
+export const getListManagedTreesQueryOptions = <TData = Awaited<ReturnType<typeof listManagedTrees>>, TError = ErrorType<unknown>>(farmId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedTrees>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListManagedTreesQueryKey(farmId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listManagedTrees>>> = ({ signal }) => listManagedTrees(farmId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: farmId !== null && farmId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listManagedTrees>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListManagedTreesQueryResult = NonNullable<Awaited<ReturnType<typeof listManagedTrees>>>
+export type ListManagedTreesQueryError = ErrorType<unknown>
+
+
+export function useListManagedTrees<TData = Awaited<ReturnType<typeof listManagedTrees>>, TError = ErrorType<unknown>>(
+ farmId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedTrees>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listManagedTrees>>,
+          TError,
+          Awaited<ReturnType<typeof listManagedTrees>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListManagedTrees<TData = Awaited<ReturnType<typeof listManagedTrees>>, TError = ErrorType<unknown>>(
+ farmId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedTrees>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listManagedTrees>>,
+          TError,
+          Awaited<ReturnType<typeof listManagedTrees>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListManagedTrees<TData = Awaited<ReturnType<typeof listManagedTrees>>, TError = ErrorType<unknown>>(
+ farmId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedTrees>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useListManagedTrees<TData = Awaited<ReturnType<typeof listManagedTrees>>, TError = ErrorType<unknown>>(
+ farmId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedTrees>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListManagedTreesQueryOptions(farmId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateManagedTreeUrl = (farmId: string,) => {
+
+
+
+
+  return `/api/v1/management/farms/${farmId}/trees`
+}
+
+export const createManagedTree = async (farmId: string,
+    treeEditorInput: TreeEditorInput, options?: Parameters<typeof customFetch>[1]): Promise<ManagedTree> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<ManagedTree>(getCreateManagedTreeUrl(farmId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(treeEditorInput)
+  }
+);}
+
+
+
+
+
+export const getCreateManagedTreeMutationKey = () => ['createManagedTree'] as const;
+
+export const getCreateManagedTreeMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createManagedTree>>, TError,CreateManagedTreeMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createManagedTree>>, TError,CreateManagedTreeMutationVariables, TContext> => {
+
+const mutationKey = getCreateManagedTreeMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createManagedTree>>, CreateManagedTreeMutationVariables> = (props) => {
+          const {farmId,data} = props ?? {};
+
+          return  createManagedTree(farmId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateManagedTreeMutationResult = NonNullable<Awaited<ReturnType<typeof createManagedTree>>>
+    export type CreateManagedTreeMutationBody = BodyType<TreeEditorInput>
+    export type CreateManagedTreeMutationError = ErrorType<unknown>
+    export type CreateManagedTreeMutationVariables = {farmId: string;data: BodyType<TreeEditorInput>}
+
+    export const useCreateManagedTree = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createManagedTree>>, TError,CreateManagedTreeMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createManagedTree>>,
+        TError,
+        CreateManagedTreeMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateManagedTreeMutationOptions(options), queryClient);
+    }
+
+export const getUpdateManagedTreeUrl = (treeId: string,) => {
+
+
+
+
+  return `/api/v1/management/trees/${treeId}`
+}
+
+export const updateManagedTree = async (treeId: string,
+    treeEditorUpdate: TreeEditorUpdate, options?: Parameters<typeof customFetch>[1]): Promise<ManagedTree> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<ManagedTree>(getUpdateManagedTreeUrl(treeId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(treeEditorUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateManagedTreeMutationKey = () => ['updateManagedTree'] as const;
+
+export const getUpdateManagedTreeMutationOptions = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateManagedTree>>, TError,UpdateManagedTreeMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateManagedTree>>, TError,UpdateManagedTreeMutationVariables, TContext> => {
+
+const mutationKey = getUpdateManagedTreeMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateManagedTree>>, UpdateManagedTreeMutationVariables> = (props) => {
+          const {treeId,data} = props ?? {};
+
+          return  updateManagedTree(treeId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateManagedTreeMutationResult = NonNullable<Awaited<ReturnType<typeof updateManagedTree>>>
+    export type UpdateManagedTreeMutationBody = BodyType<TreeEditorUpdate>
+    export type UpdateManagedTreeMutationError = ErrorType<FailureResponse>
+    export type UpdateManagedTreeMutationVariables = {treeId: string;data: BodyType<TreeEditorUpdate>}
+
+    export const useUpdateManagedTree = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateManagedTree>>, TError,UpdateManagedTreeMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateManagedTree>>,
+        TError,
+        UpdateManagedTreeMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateManagedTreeMutationOptions(options), queryClient);
+    }
+
+export const getRequestFarmImageUploadUrl = () => {
+
+
+
+
+  return `/api/v1/management/images/request-upload`
+}
+
+export const requestFarmImageUpload = async (farmImageUploadInput: FarmImageUploadInput, options?: Parameters<typeof customFetch>[1]): Promise<RequestFarmImageUpload201> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<RequestFarmImageUpload201>(getRequestFarmImageUploadUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(farmImageUploadInput)
+  }
+);}
+
+
+
+
+
+export const getRequestFarmImageUploadMutationKey = () => ['requestFarmImageUpload'] as const;
+
+export const getRequestFarmImageUploadMutationOptions = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestFarmImageUpload>>, TError,RequestFarmImageUploadMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof requestFarmImageUpload>>, TError,RequestFarmImageUploadMutationVariables, TContext> => {
+
+const mutationKey = getRequestFarmImageUploadMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof requestFarmImageUpload>>, RequestFarmImageUploadMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  requestFarmImageUpload(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RequestFarmImageUploadMutationResult = NonNullable<Awaited<ReturnType<typeof requestFarmImageUpload>>>
+    export type RequestFarmImageUploadMutationBody = BodyType<FarmImageUploadInput>
+    export type RequestFarmImageUploadMutationError = ErrorType<FailureResponse>
+    export type RequestFarmImageUploadMutationVariables = {data: BodyType<FarmImageUploadInput>}
+
+    export const useRequestFarmImageUpload = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestFarmImageUpload>>, TError,RequestFarmImageUploadMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof requestFarmImageUpload>>,
+        TError,
+        RequestFarmImageUploadMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRequestFarmImageUploadMutationOptions(options), queryClient);
+    }
+
+export const getCompleteFarmImageUploadUrl = (imageId: string,) => {
+
+
+
+
+  return `/api/v1/management/images/${imageId}/complete`
+}
+
+export const completeFarmImageUpload = async (imageId: string, options?: Parameters<typeof customFetch>[1]): Promise<CatalogueImage> => {
+
+  return customFetch<CatalogueImage>(getCompleteFarmImageUploadUrl(imageId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getCompleteFarmImageUploadMutationKey = () => ['completeFarmImageUpload'] as const;
+
+export const getCompleteFarmImageUploadMutationOptions = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeFarmImageUpload>>, TError,CompleteFarmImageUploadMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof completeFarmImageUpload>>, TError,CompleteFarmImageUploadMutationVariables, TContext> => {
+
+const mutationKey = getCompleteFarmImageUploadMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof completeFarmImageUpload>>, CompleteFarmImageUploadMutationVariables> = (props) => {
+          const {imageId} = props ?? {};
+
+          return  completeFarmImageUpload(imageId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CompleteFarmImageUploadMutationResult = NonNullable<Awaited<ReturnType<typeof completeFarmImageUpload>>>
+
+    export type CompleteFarmImageUploadMutationError = ErrorType<FailureResponse>
+    export type CompleteFarmImageUploadMutationVariables = {imageId: string}
+
+    export const useCompleteFarmImageUpload = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeFarmImageUpload>>, TError,CompleteFarmImageUploadMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof completeFarmImageUpload>>,
+        TError,
+        CompleteFarmImageUploadMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCompleteFarmImageUploadMutationOptions(options), queryClient);
+    }
+
+export const getServeCatalogueImageUrl = (imageId: string,) => {
+
+
+
+
+  return `/api/v1/catalogue/images/${imageId}`
+}
+
+export const serveCatalogueImage = async (imageId: string, options?: Parameters<typeof customFetch>[1]): Promise<Blob> => {
+
+  return customFetch<Blob>(getServeCatalogueImageUrl(imageId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getServeCatalogueImageQueryKey = (imageId: string,) => {
+    return [
+    `/api/v1/catalogue/images/${imageId}`
+    ] as const;
+    }
+
+
+export const getServeCatalogueImageQueryOptions = <TData = Awaited<ReturnType<typeof serveCatalogueImage>>, TError = ErrorType<FailureResponse>>(imageId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveCatalogueImage>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getServeCatalogueImageQueryKey(imageId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof serveCatalogueImage>>> = ({ signal }) => serveCatalogueImage(imageId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: imageId !== null && imageId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof serveCatalogueImage>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ServeCatalogueImageQueryResult = NonNullable<Awaited<ReturnType<typeof serveCatalogueImage>>>
+export type ServeCatalogueImageQueryError = ErrorType<FailureResponse>
+
+
+export function useServeCatalogueImage<TData = Awaited<ReturnType<typeof serveCatalogueImage>>, TError = ErrorType<FailureResponse>>(
+ imageId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveCatalogueImage>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof serveCatalogueImage>>,
+          TError,
+          Awaited<ReturnType<typeof serveCatalogueImage>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useServeCatalogueImage<TData = Awaited<ReturnType<typeof serveCatalogueImage>>, TError = ErrorType<FailureResponse>>(
+ imageId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveCatalogueImage>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof serveCatalogueImage>>,
+          TError,
+          Awaited<ReturnType<typeof serveCatalogueImage>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useServeCatalogueImage<TData = Awaited<ReturnType<typeof serveCatalogueImage>>, TError = ErrorType<FailureResponse>>(
+ imageId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveCatalogueImage>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useServeCatalogueImage<TData = Awaited<ReturnType<typeof serveCatalogueImage>>, TError = ErrorType<FailureResponse>>(
+ imageId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveCatalogueImage>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getServeCatalogueImageQueryOptions(imageId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetPhoneAuthConfigUrl = () => {
+
+
+
+
+  return `/api/v1/auth/config`
+}
+
+export const getPhoneAuthConfig = async ( options?: Parameters<typeof customFetch>[1]): Promise<PhoneAuthConfig> => {
+
+  return customFetch<PhoneAuthConfig>(getGetPhoneAuthConfigUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPhoneAuthConfigQueryKey = () => {
+    return [
+    `/api/v1/auth/config`
+    ] as const;
+    }
+
+
+export const getGetPhoneAuthConfigQueryOptions = <TData = Awaited<ReturnType<typeof getPhoneAuthConfig>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoneAuthConfig>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPhoneAuthConfigQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPhoneAuthConfig>>> = ({ signal }) => getPhoneAuthConfig({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPhoneAuthConfig>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetPhoneAuthConfigQueryResult = NonNullable<Awaited<ReturnType<typeof getPhoneAuthConfig>>>
+export type GetPhoneAuthConfigQueryError = ErrorType<unknown>
+
+
+export function useGetPhoneAuthConfig<TData = Awaited<ReturnType<typeof getPhoneAuthConfig>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoneAuthConfig>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPhoneAuthConfig>>,
+          TError,
+          Awaited<ReturnType<typeof getPhoneAuthConfig>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPhoneAuthConfig<TData = Awaited<ReturnType<typeof getPhoneAuthConfig>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoneAuthConfig>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPhoneAuthConfig>>,
+          TError,
+          Awaited<ReturnType<typeof getPhoneAuthConfig>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPhoneAuthConfig<TData = Awaited<ReturnType<typeof getPhoneAuthConfig>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoneAuthConfig>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetPhoneAuthConfig<TData = Awaited<ReturnType<typeof getPhoneAuthConfig>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPhoneAuthConfig>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetPhoneAuthConfigQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getStartPhoneSignInUrl = () => {
+
+
+
+
+  return `/api/auth/login`
+}
+
+/**
+ * Top-level browser navigation to Auth0 passwordless SMS. This endpoint does not send an SMS itself.
+ */
+export const startPhoneSignIn = async ( options?: Parameters<typeof customFetch>[1]): Promise<unknown> => {
+
+  return customFetch<unknown>(getStartPhoneSignInUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getStartPhoneSignInQueryKey = () => {
+    return [
+    `/api/auth/login`
+    ] as const;
+    }
+
+
+export const getStartPhoneSignInQueryOptions = <TData = Awaited<ReturnType<typeof startPhoneSignIn>>, TError = ErrorType<void | FailureResponse>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof startPhoneSignIn>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getStartPhoneSignInQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof startPhoneSignIn>>> = ({ signal }) => startPhoneSignIn({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof startPhoneSignIn>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type StartPhoneSignInQueryResult = NonNullable<Awaited<ReturnType<typeof startPhoneSignIn>>>
+export type StartPhoneSignInQueryError = ErrorType<void | FailureResponse>
+
+
+export function useStartPhoneSignIn<TData = Awaited<ReturnType<typeof startPhoneSignIn>>, TError = ErrorType<void | FailureResponse>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof startPhoneSignIn>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof startPhoneSignIn>>,
+          TError,
+          Awaited<ReturnType<typeof startPhoneSignIn>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useStartPhoneSignIn<TData = Awaited<ReturnType<typeof startPhoneSignIn>>, TError = ErrorType<void | FailureResponse>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof startPhoneSignIn>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof startPhoneSignIn>>,
+          TError,
+          Awaited<ReturnType<typeof startPhoneSignIn>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useStartPhoneSignIn<TData = Awaited<ReturnType<typeof startPhoneSignIn>>, TError = ErrorType<void | FailureResponse>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof startPhoneSignIn>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useStartPhoneSignIn<TData = Awaited<ReturnType<typeof startPhoneSignIn>>, TError = ErrorType<void | FailureResponse>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof startPhoneSignIn>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getStartPhoneSignInQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getFinishPhoneSignInUrl = () => {
+
+
+
+
+  return `/api/auth/callback`
+}
+
+/**
+ * SDK-owned OIDC callback validates authorization code, PKCE, state, nonce, issuer and signed identity. Never call directly from application forms.
+ */
+export const finishPhoneSignIn = async ( options?: Parameters<typeof customFetch>[1]): Promise<unknown> => {
+
+  return customFetch<unknown>(getFinishPhoneSignInUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getFinishPhoneSignInQueryKey = () => {
+    return [
+    `/api/auth/callback`
+    ] as const;
+    }
+
+
+export const getFinishPhoneSignInQueryOptions = <TData = Awaited<ReturnType<typeof finishPhoneSignIn>>, TError = ErrorType<void>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof finishPhoneSignIn>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getFinishPhoneSignInQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof finishPhoneSignIn>>> = ({ signal }) => finishPhoneSignIn({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof finishPhoneSignIn>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type FinishPhoneSignInQueryResult = NonNullable<Awaited<ReturnType<typeof finishPhoneSignIn>>>
+export type FinishPhoneSignInQueryError = ErrorType<void>
+
+
+export function useFinishPhoneSignIn<TData = Awaited<ReturnType<typeof finishPhoneSignIn>>, TError = ErrorType<void>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof finishPhoneSignIn>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof finishPhoneSignIn>>,
+          TError,
+          Awaited<ReturnType<typeof finishPhoneSignIn>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFinishPhoneSignIn<TData = Awaited<ReturnType<typeof finishPhoneSignIn>>, TError = ErrorType<void>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof finishPhoneSignIn>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof finishPhoneSignIn>>,
+          TError,
+          Awaited<ReturnType<typeof finishPhoneSignIn>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useFinishPhoneSignIn<TData = Awaited<ReturnType<typeof finishPhoneSignIn>>, TError = ErrorType<void>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof finishPhoneSignIn>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useFinishPhoneSignIn<TData = Awaited<ReturnType<typeof finishPhoneSignIn>>, TError = ErrorType<void>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof finishPhoneSignIn>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getFinishPhoneSignInQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getEndPhoneSessionUrl = () => {
+
+
+
+
+  return `/api/auth/logout`
+}
+
+/**
+ * Same-origin browser form clears the application session and starts provider sign-out.
+ */
+export const endPhoneSession = async ( options?: Parameters<typeof customFetch>[1]): Promise<unknown> => {
+
+  return customFetch<unknown>(getEndPhoneSessionUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getEndPhoneSessionMutationKey = () => ['endPhoneSession'] as const;
+
+export const getEndPhoneSessionMutationOptions = <TError = ErrorType<void | FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof endPhoneSession>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof endPhoneSession>>, TError,void, TContext> => {
+
+const mutationKey = getEndPhoneSessionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof endPhoneSession>>, void> = () => {
+
+
+          return  endPhoneSession(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type EndPhoneSessionMutationResult = NonNullable<Awaited<ReturnType<typeof endPhoneSession>>>
+
+    export type EndPhoneSessionMutationError = ErrorType<void | FailureResponse>
+
+
+    export const useEndPhoneSession = <TError = ErrorType<void | FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof endPhoneSession>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof endPhoneSession>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getEndPhoneSessionMutationOptions(options), queryClient);
+    }
 
 export const getHealthCheckUrl = () => {
 

@@ -1,4 +1,4 @@
-# PICK A TREE implementation status
+# Pick My Tree implementation status
 
 This is an incremental build, not a complete platform or launch approval.
 The accepted full-platform task remains active. No real tree inventory,
@@ -8,11 +8,12 @@ commercial approvals, payments, actual field media or fulfilment is invented.
 
 The user requires simple mobile-number/SMS-OTP sign-in instead of email/password.
 Managed Clerk was initially provisioned but official Replit documentation
-confirms that it does not support SMS/phone sign-in. The public sign-in screens
-therefore explain setup status without pretending to send a code.
-Auth0 is the proposed managed identity replacement, subject to connection;
-SMS/passwordless configuration and actual delivery still require verification.
-The existing protected API remains fail-closed pending that integration.
+confirms that it does not support SMS/phone sign-in. Auth0's official Express OIDC
+SDK now owns code/PKCE/state/nonce validation, encrypted secure-cookie sessions,
+SMS-only identity checks and sign-out. The regional tenant is used directly.
+The login page is deliberately concise. Auth0 application callback/logout
+allowlists, the enabled SMS connection, phone provider and real OTP delivery
+still require provider-side verification.
 
 ## Delivered foundations, not completed milestones
 
@@ -22,15 +23,24 @@ The existing protected API remains fail-closed pending that integration.
 - Real enquiry submission, customer profile/preferences, support case and privacy request endpoints.
 - Initial scoped operations document editor, field metadata and reasoned optimistic-lock transitions.
 - Abuse limits, secure headers, cross-site mutation checks and protected API routes.
-- No automatic first-admin grant; trusted-account bootstrap is still required.
+- No automatic first-admin grant. An explicitly configured `PLATFORM_OWNER_PHONE`
+  can bootstrap owner access only after that exact number completes real SMS verification.
+- Farm/tree catalogue CRUD with optimistic version checks, scoped access and audit history.
+- Archive/restore visibility without deleting records; permanent tree codes and sample markers.
+- One explicitly requested sample farm with six editable trees and five persistent illustrative photos.
+- Direct App Storage uploads with ownership/type/size limits, decoded/re-encoded WebP,
+  stripped metadata and sealed public images that outstanding upload URLs cannot replace.
+- Refreshed homepage/navigation, no global prelaunch banners, and Pick My Tree branding.
+- Automated API checks covered persistence, scope denials, stale edits, actual storage PUT/CORS,
+  photo processing/serving, disguised-script rejection and non-destructive archiving.
 
 ## Coverage register
 
 | Coverage | Current state | Remaining acceptance |
 |---|---|---|
-| C01 Public website | Initial UI and discovery APIs | CMS page/banner workflows, real approved media/inventory, SEO/accessibility verification |
-| C02 Customer accounts/portal | Portal UI and profile/case endpoints | Real phone OTP/session integration, onboarding, complete commercial records |
-| C03 Farm/tree inventory | Scoped draft registration | Dedicated normalized inventory tables, uploaded evidence, inspections, identity audits/reassignment |
+| C01 Public website | Refined homepage/navigation, real directory APIs, labelled sample inventory | CMS page/banner workflows, real approved inventory, SEO/accessibility verification |
+| C02 Customer accounts/portal | Auth0 SMS-only session integration and concise login | Provider-side SMS delivery verification, owner-phone configuration, onboarding and commercial records |
+| C03 Farm/tree inventory | Editable scoped farm/tree catalogue, sample inventory and persistent public photos | Dedicated normalized inventory, private evidence/inspection approval, identity audits/reassignment |
 | C04 Schemes | Commercial draft editor | Approved immutable versions, eligibility and legally approved formulas |
 | C05 Commerce | Explicitly unavailable | Reservation/payment/refund/contract/invoice ledgers and provider verification |
 | C06 Passport/media | Public explainer | Private owned Passport, upload provenance, moderation and true history |

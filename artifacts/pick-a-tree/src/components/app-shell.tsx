@@ -4,12 +4,14 @@ import { useGetMe } from '@workspace/api-client-react';
 import { Menu, X, type LucideIcon } from 'lucide-react';
 import { Wordmark } from '@/components/site/site-shell';
 import { cn } from '@/lib/utils';
+import { useQueryClient } from '@tanstack/react-query';
 
 export type NavItem = { href: string; label: string; icon: LucideIcon };
 
 export function AppShell({ nav, children, zone, footerLink }: { nav: NavItem[]; children: ReactNode; zone: string; footerLink?: ReactNode }) {
   const [location] = useLocation();
   const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
   const { data: me } = useGetMe();
   const name = me?.profile.displayName || me?.displayName || 'Your account';
   const initials = name.split(/\s|@/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase()).join('');
@@ -35,6 +37,9 @@ export function AppShell({ nav, children, zone, footerLink }: { nav: NavItem[]; 
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-harvest font-semibold text-ivory">{initials || 'P'}</span>
           <span className="min-w-0 flex-1 truncate text-sm" data-testid="text-user-name">{name}</span>
         </div>
+        <form action="/api/auth/logout" method="post" target="_top" onSubmit={() => queryClient.clear()} className="mt-4">
+          <button type="submit" className="text-sm text-sidebar-foreground/80 underline underline-offset-4 hover:text-ivory" data-testid="button-sign-out">Sign out</button>
+        </form>
       </div>
     </div>
   );

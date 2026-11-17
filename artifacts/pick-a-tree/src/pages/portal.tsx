@@ -3,11 +3,11 @@ import { Link, useParams } from 'wouter';
 import { useQueryClient } from '@tanstack/react-query';
 import { Bell, Briefcase, Home, LifeBuoy, Loader2, Package, Plus, ShieldCheck, Sprout, TreeDeciduous, User, Wheat } from 'lucide-react';
 import {
-  getGetMeQueryKey, useGetCustomerDashboard, useGetMe, useGetReadiness, useListRecords, useListWorkspaceModules, useUpdateProfile,
+  getGetMeQueryKey, useGetCustomerDashboard, useGetMe, useListRecords, useListWorkspaceModules, useUpdateProfile,
   type PlatformRecord, type ProfileInput,
 } from '@workspace/api-client-react';
 import { AppHeading, AppShell, type NavItem } from '@/components/app-shell';
-import { EmptyState, ErrorState, PrelaunchNotice } from '@/components/site/bits';
+import { EmptyState, ErrorState, AvailabilityNote } from '@/components/site/bits';
 import { RecordFields, RecordFormDialog, RecordRow } from '@/components/records';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useToast } from '@/hooks/use-toast';
 import { errorMessage, useSeo } from '@/lib/brand';
+import { canManageFarms } from '@/lib/manage';
 import NotFound from '@/pages/not-found';
 
 const NAV: NavItem[] = [
@@ -54,7 +55,7 @@ function RecordSheet({ record, onClose }: { record: PlatformRecord | null; onClo
 
 function Overview({ name }: { name: string }) {
   const { data, isLoading, isError, error, refetch } = useGetCustomerDashboard();
-  const { data: readiness } = useGetReadiness();
+  const { data: me } = useGetMe({ query: { retry: false, queryKey: getGetMeQueryKey() } });
   const [open, setOpen] = useState<PlatformRecord | null>(null);
   if (isError) return <ErrorState message={errorMessage(error)} onRetry={() => refetch()} />;
   const tiles = [
@@ -64,7 +65,7 @@ function Overview({ name }: { name: string }) {
   return (
     <>
       <AppHeading eyebrow="Your portal" title={<>Vanakkam, <em className="text-harvest">{name}</em>.</>} />
-      {!readiness?.adoptionsOpen && <div className="mb-8"><PrelaunchNotice>{readiness?.message ?? 'Adoptions are not open yet.'} Your profile is ready for when the first verified trees are listed.</PrelaunchNotice></div>}
+      {me && canManageFarms(me.roles) && <div className="mb-8"><AvailabilityNote>You hold a farm-management role. <Link href="/manage/farms" className="font-semibold underline underline-offset-4" data-testid="link-portal-manage">Open Manage farms</Link> to edit farms, trees and photos.</AvailabilityNote></div>}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {tiles.map(([label, n, href]) => (
           <Link key={label} href={href} className="rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-leaf" data-testid={`link-tile-${label.toLowerCase().replace(/\s/g, '-')}`}>
@@ -182,7 +183,7 @@ function Profile() {
 export default function PortalPage() {
   const { section } = useParams<{ section?: string }>();
   const { data: me } = useGetMe();
-  useSeo('My portal', 'Your PICK A TREE trees, harvests, orders, notifications and support.');
+  useSeo('My portal', 'Your Pick My Tree trees, harvests, orders, notifications and support.');
   const isStaff = !!me?.roles.some((r) => STAFF_ROLES.includes(r));
   const name = me?.profile.displayName || me?.displayName || 'friend';
   let body;

@@ -17,6 +17,7 @@ import {
 import SignInPage from '@/pages/sign-in';
 import PortalPage from '@/pages/portal';
 import WorkspacePage from '@/pages/workspace';
+import { ManageFarmDetailPage, ManageFarmsPage } from '@/pages/manage';
 import { basePath, errorStatus } from '@/lib/brand';
 
 const queryClient = new QueryClient({
@@ -32,9 +33,9 @@ function RequireSession({ children }: { children: ReactNode }) {
         <div className="max-w-md text-center">
           <Lock className="mx-auto h-10 w-10 text-leaf" strokeWidth={1.25} />
           <h1 className="mt-5 text-4xl font-light text-emerald">Verified sign-in required.</h1>
-          <p className="mt-3 text-muted-foreground">{errorStatus(error) === 401 || !error ? 'This area is protected on our servers. Mobile-number sign-in is being connected.' : 'We could not confirm your session right now.'}</p>
+          <p className="mt-3 text-muted-foreground">{errorStatus(error) === 401 || !error ? 'Sign in with your mobile number and the one-time code sent by SMS to open your private portal.' : 'We could not confirm your session right now.'}</p>
           <div className="mt-7 flex justify-center gap-3">
-            <Link href="/sign-in" className="rounded-full bg-emerald px-6 py-3 font-semibold text-ivory" data-testid="link-gate-signin">About sign-in</Link>
+            <Link href="/sign-in" className="rounded-full bg-emerald px-6 py-3 font-semibold text-ivory" data-testid="link-gate-signin">Sign in with mobile</Link>
             <Link href="/" className="rounded-full border border-emerald px-6 py-3 font-semibold text-emerald" data-testid="link-gate-home">Home</Link>
           </div>
         </div>
@@ -74,6 +75,9 @@ function Router() {
         <Route path="/portal/:section"><RequireSession><PortalPage /></RequireSession></Route>
         <Route path="/workspace"><RequireSession><WorkspacePage /></RequireSession></Route>
         <Route path="/workspace/:module"><RequireSession><WorkspacePage /></RequireSession></Route>
+        <Route path="/manage"><RequireSession><ManageFarmsPage /></RequireSession></Route>
+        <Route path="/manage/farms"><RequireSession><ManageFarmsPage /></RequireSession></Route>
+        <Route path="/manage/farms/:id"><RequireSession><ManageFarmDetailPage /></RequireSession></Route>
         <Route><Public><NotFound /></Public></Route>
       </Switch>
     </RoutedErrorBoundary>

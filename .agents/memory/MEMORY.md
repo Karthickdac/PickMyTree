@@ -1,1 +1,2 @@
-- [Product boundaries](product-boundaries.md) — full specification remains in scope; sign-in must use mobile number and OTP.
+- [Product boundaries](product-boundaries.md) — Pick My Tree branding, full specification scope, concise mobile-OTP login and editable sample inventory.
+- [App Storage compatibility](app-storage-compatibility.md) — validate SDK upgrades against Replit sidecar uploads, not just TypeScript or bucket provisioning.

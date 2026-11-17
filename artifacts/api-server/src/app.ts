@@ -1,10 +1,8 @@
 import express, { type Express, type ErrorRequestHandler } from "express";
 import { randomUUID } from "node:crypto";
-import { clerkMiddleware } from "@clerk/express";
-import { publishableKeyFromHost } from "@clerk/shared/keys";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import { CLERK_PROXY_PATH, clerkProxyMiddleware, getClerkProxyHost } from "./middlewares/clerkProxyMiddleware";
+import { createPhoneAuth } from "./middlewares/auth0";
 import { PlatformError } from "./lib/platform/access";
 import pinoHttp from "pino-http";
 import router from "./routes";
@@ -33,15 +31,16 @@ app.use(
     },
   }),
 );
-app.use(CLERK_PROXY_PATH, clerkProxyMiddleware());
 app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: "same-site" } }));
 app.use((req, res, next) => {
   const id = randomUUID();
   res.setHeader("X-Request-ID", id);
   if (!["GET", "HEAD", "OPTIONS"].includes(req.method)) {
     const origin = req.get("origin");
-    const host = getClerkProxyHost(req) ?? req.get("host");
-    if (req.get("sec-fetch-site") === "cross-site" || origin && new URL(origin).host !== host) {
+    const host = req.get("x-forwarded-host")?.split(",")[0]?.trim() ?? req.get("host");
+    let crossOrigin = false;
+    try { crossOrigin = Boolean(origin && new URL(origin).host !== host); } catch { crossOrigin = true; }
+    if (req.get("sec-fetch-site") === "cross-site" || crossOrigin) {
       res.status(403).json({ error: "Cross-site requests are not permitted.", requestId: id }); return;
     }
   }
@@ -51,9 +50,7 @@ app.use("/api/v1", rateLimit({ windowMs: 60_000, limit: 180, standardHeaders: "d
 app.use("/api/v1/public/enquiries", rateLimit({ windowMs: 15 * 60_000, limit: 8, standardHeaders: "draft-8", legacyHeaders: false, message: { error: "Too many enquiries. Please try again later." } }));
 app.use(express.json({ limit: "256kb" }));
 app.use(express.urlencoded({ extended: true }));
-app.use(clerkMiddleware(req => ({
-  publishableKey: publishableKeyFromHost(getClerkProxyHost(req) ?? "", process.env.CLERK_PUBLISHABLE_KEY),
-})));
+app.use(createPhoneAuth());
 
 app.use("/api", router);
 app.use("/api", (_req, res) => { res.status(404).json({ error: "API route not found." }); });
