@@ -30,6 +30,7 @@ export default defineConfig({
       clean: true,
       prettier: true,
       override: {
+        query: { version: 5 },
         fetch: {
           includeHttpResponseReturnType: false,
         },
@@ -50,6 +51,7 @@ export default defineConfig({
     output: {
       workspace: apiZodSrc,
       client: "zod",
+      indexFiles: false,
       target: "generated",
       schemas: { path: "generated/types", type: "typescript" },
       mode: "split",

@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "PICK A TREE"
+description = "A managed productive-tree adoption platform connecting people to verified farms, authentic tree journeys and transparent harvest records in Tamil Nadu."
+version = "1.0.0"
+id = "artifacts/pick-a-tree"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23930
+
+[services.development]
+run = "pnpm --filter @workspace/pick-a-tree run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/pick-a-tree", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/pick-a-tree/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23930"
+BASE_PATH = "/"

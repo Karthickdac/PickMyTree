@@ -1,0 +1,254 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@layer theme, base, clerk, components, utilities;
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover-border: hsl(var(--popover-border));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-border: var(--primary-border);
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary-border: var(--secondary-border);
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted-border: var(--muted-border);
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-border: var(--accent-border);
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-border: var(--destructive-border);
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-primary-border: var(--sidebar-primary-border);
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-accent-border: var(--sidebar-accent-border);
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --color-emerald: hsl(var(--emerald));
+  --color-leaf: hsl(var(--leaf));
+  --color-ivory: hsl(var(--ivory));
+  --color-harvest: hsl(var(--harvest));
+  --color-soil: hsl(var(--soil));
+  --color-sage: hsl(var(--sage));
+
+  --font-sans: var(--app-font-sans);
+  --font-serif: var(--app-font-serif);
+  --font-mono: var(--app-font-mono);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --button-outline: rgba(10, 50, 35, 0.12);
+  --badge-outline: rgba(10, 50, 35, 0.08);
+  --opaque-button-border-intensity: -8;
+  --elevate-1: rgba(10, 50, 35, 0.04);
+  --elevate-2: rgba(10, 50, 35, 0.09);
+
+  --emerald: 160 62% 15%;
+  --leaf: 146 38% 36%;
+  --ivory: 42 50% 95%;
+  --harvest: 24 86% 52%;
+  --soil: 14 48% 36%;
+  --sage: 100 18% 84%;
+
+  --background: 42 50% 95%;
+  --foreground: 160 45% 11%;
+  --border: 70 18% 82%;
+  --card: 44 60% 98%;
+  --card-foreground: 160 45% 11%;
+  --card-border: 70 20% 85%;
+  --sidebar: 160 62% 13%;
+  --sidebar-foreground: 42 45% 90%;
+  --sidebar-border: 160 40% 20%;
+  --sidebar-primary: 24 86% 52%;
+  --sidebar-primary-foreground: 42 60% 97%;
+  --sidebar-accent: 160 45% 19%;
+  --sidebar-accent-foreground: 42 50% 95%;
+  --sidebar-ring: 24 86% 52%;
+  --popover: 44 60% 98%;
+  --popover-foreground: 160 45% 11%;
+  --popover-border: 70 20% 84%;
+  --primary: 160 62% 15%;
+  --primary-foreground: 42 60% 96%;
+  --secondary: 100 22% 88%;
+  --secondary-foreground: 160 50% 14%;
+  --muted: 60 26% 90%;
+  --muted-foreground: 150 12% 34%;
+  --accent: 24 86% 52%;
+  --accent-foreground: 42 60% 97%;
+  --destructive: 4 70% 44%;
+  --destructive-foreground: 42 60% 97%;
+  --input: 70 16% 78%;
+  --ring: 146 38% 36%;
+  --chart-1: 160 62% 22%;
+  --chart-2: 24 86% 52%;
+  --chart-3: 146 38% 42%;
+  --chart-4: 42 70% 55%;
+  --chart-5: 14 48% 40%;
+
+  --app-font-sans: 'Figtree', ui-sans-serif, sans-serif;
+  --app-font-serif: 'Fraunces', Georgia, serif;
+  --app-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --radius: 0.85rem;
+  --shadow-2xs: 0 1px 2px hsl(160 50% 12% / 0.04);
+  --shadow-xs: 0 1px 3px hsl(160 50% 12% / 0.05);
+  --shadow-sm: 0 2px 6px -2px hsl(160 50% 12% / 0.08);
+  --shadow: 0 6px 18px -8px hsl(160 50% 12% / 0.14);
+  --shadow-md: 0 10px 28px -12px hsl(160 50% 12% / 0.18);
+  --shadow-lg: 0 18px 40px -18px hsl(160 50% 12% / 0.24);
+  --shadow-xl: 0 28px 60px -24px hsl(160 50% 12% / 0.3);
+  --shadow-2xl: 0 40px 80px -30px hsl(160 50% 12% / 0.35);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+  --primary-border: hsl(var(--primary));
+  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+  --secondary-border: hsl(var(--secondary));
+  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+  --muted-border: hsl(var(--muted));
+  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+  --accent-border: hsl(var(--accent));
+  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+  --destructive-border: hsl(var(--destructive));
+  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+}
+
+.dark {
+  --button-outline: rgba(255, 250, 235, 0.1);
+  --badge-outline: rgba(255, 250, 235, 0.06);
+  --opaque-button-border-intensity: 9;
+  --elevate-1: rgba(255, 250, 235, 0.04);
+  --elevate-2: rgba(255, 250, 235, 0.09);
+  --background: 160 50% 8%;
+  --foreground: 42 45% 92%;
+  --border: 160 30% 18%;
+  --card: 160 45% 10%;
+  --card-foreground: 42 45% 92%;
+  --card-border: 160 30% 18%;
+  --sidebar: 160 55% 7%;
+  --sidebar-foreground: 42 45% 90%;
+  --sidebar-border: 160 30% 16%;
+  --sidebar-primary: 24 86% 55%;
+  --sidebar-primary-foreground: 160 50% 8%;
+  --sidebar-accent: 160 40% 14%;
+  --sidebar-accent-foreground: 42 45% 92%;
+  --sidebar-ring: 24 86% 55%;
+  --popover: 160 45% 10%;
+  --popover-foreground: 42 45% 92%;
+  --popover-border: 160 30% 18%;
+  --primary: 146 40% 55%;
+  --primary-foreground: 160 50% 8%;
+  --secondary: 160 30% 16%;
+  --secondary-foreground: 42 45% 92%;
+  --muted: 160 30% 14%;
+  --muted-foreground: 90 12% 68%;
+  --accent: 24 86% 55%;
+  --accent-foreground: 160 50% 8%;
+  --destructive: 4 70% 52%;
+  --destructive-foreground: 42 60% 97%;
+  --input: 160 25% 26%;
+  --ring: 146 40% 55%;
+  --chart-1: 146 40% 55%;
+  --chart-2: 24 86% 55%;
+  --chart-3: 100 25% 60%;
+  --chart-4: 42 70% 60%;
+  --chart-5: 14 48% 55%;
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { scroll-behavior: smooth; }
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+  h1, h2, h3, h4 { font-family: var(--app-font-serif); letter-spacing: -0.02em; }
+  ::selection { background: hsl(var(--harvest) / 0.25); color: hsl(var(--emerald)); }
+}
+
+/* Paper grain */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.font-display { font-family: var(--app-font-serif); }
+.eyebrow {
+  font-family: var(--app-font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.topo-bg {
+  background-image: radial-gradient(circle at 20% 10%, hsl(var(--sage) / 0.6), transparent 45%),
+    radial-gradient(circle at 90% 80%, hsl(var(--harvest) / 0.09), transparent 40%);
+}
+.ring-lines {
+  background-image: repeating-radial-gradient(circle at 50% 50%, transparent 0 22px, hsl(var(--ivory) / 0.06) 22px 23px);
+}
+
+@keyframes sway { 0%,100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
+.animate-sway { animation: sway 7s ease-in-out infinite; transform-origin: bottom center; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.animate-marquee { animation: marquee 38s linear infinite; }
+@keyframes slowzoom { from { transform: scale(1.08); } to { transform: scale(1); } }
+.animate-slowzoom { animation: slowzoom 9s cubic-bezier(.2,.7,.2,1) forwards; }
+
+/* Clerk pseudo-states */
+.cl-formFieldInput::placeholder { color: hsl(150 12% 50%); opacity: 1; }
+.cl-formButtonPrimary:hover { background-color: hsl(24 86% 48%) !important; }
+.cl-socialButtonsBlockButton:hover { background-color: hsl(100 22% 90%) !important; }
+.cl-formFieldInput:focus { border-color: hsl(146 38% 36%) !important; box-shadow: 0 0 0 3px hsl(146 38% 36% / 0.18) !important; }
+
+@layer utilities {
+  input[type='search']::-webkit-search-cancel-button { @apply hidden; }
+  [contenteditable][data-placeholder]:empty::before { content: attr(data-placeholder); color: hsl(var(--muted-foreground)); pointer-events: none; }
+  .no-default-hover-elevate {}
+  .no-default-active-elevate {}
+  .toggle-elevate::before, .toggle-elevate-2::before { content: ''; pointer-events: none; position: absolute; inset: 0px; border-radius: inherit; z-index: -1; }
+  .toggle-elevate.toggle-elevated::before { background-color: var(--elevate-2); }
+  .border.toggle-elevate::before { inset: -1px; }
+  .hover-elevate:not(.no-default-hover-elevate), .active-elevate:not(.no-default-active-elevate), .hover-elevate-2:not(.no-default-hover-elevate), .active-elevate-2:not(.no-default-active-elevate) { position: relative; z-index: 0; }
+  .hover-elevate:not(.no-default-hover-elevate)::after, .active-elevate:not(.no-default-active-elevate)::after, .hover-elevate-2:not(.no-default-hover-elevate)::after, .active-elevate-2:not(.no-default-active-elevate)::after { content: ''; pointer-events: none; position: absolute; inset: 0px; border-radius: inherit; z-index: 999; }
+  .hover-elevate:hover:not(.no-default-hover-elevate)::after, .active-elevate:active:not(.no-default-active-elevate)::after { background-color: var(--elevate-1); }
+  .hover-elevate-2:hover:not(.no-default-hover-elevate)::after, .active-elevate-2:active:not(.no-default-active-elevate)::after { background-color: var(--elevate-2); }
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after, .border.active-elevate:not(.no-active-interaction-elevate)::after, .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after, .border.active-elevate-2:not(.no-active-interaction-elevate)::after { inset: -1px; }
+}

@@ -1,2 +1,3 @@
 export * from "./generated/api";
-export * from "./generated/types";
+// Keep request-validation schemas unambiguous when an operation has both
+// path and query parameters. Domain transport types live in api-client-react.

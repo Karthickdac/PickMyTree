@@ -1,0 +1,1 @@
+- [Product boundaries](product-boundaries.md) — full specification remains in scope; sign-in must use mobile number and OTP.

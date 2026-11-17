@@ -1,36 +1,388 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.1.0
-  description: API specification
+  version: 1.0.0
+  description: PICK A TREE versioned platform API. Commercial activation requires approved real inventory and connected providers.
 servers:
   - url: /api
-    description: Base API path
-tags:
-  - name: health
-    description: Health operations
 paths:
   /healthz:
     get:
       operationId: healthCheck
-      tags: [health]
-      summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/HealthStatus"
+              schema: { $ref: "#/components/schemas/HealthStatus" }
+  /v1/public/trees:
+    get:
+      operationId: listPublicTrees
+      parameters:
+        - { in: query, name: search, schema: { type: string } }
+        - { in: query, name: species, schema: { type: string } }
+      responses:
+        "200":
+          description: Approved inventory only
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Tree" } }
+  /v1/public/trees/{id}:
+    get:
+      operationId: getPublicTree
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Public tree with eligible schemes
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TreeDetail" }
+        "404":
+          $ref: "#/components/responses/Failure"
+  /v1/public/farms:
+    get:
+      operationId: listPublicFarms
+      responses:
+        "200":
+          description: Approved farm profiles without private coordinates
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Farm" } }
+  /v1/public/articles:
+    get:
+      operationId: listArticles
+      responses:
+        "200":
+          description: Published educational content
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Article" } }
+  /v1/public/enquiries:
+    post:
+      operationId: submitEnquiry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/EnquiryInput" }
+      responses:
+        "201":
+          description: Enquiry recorded; does not imply message delivery or an adoption
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Confirmation" }
+        "400":
+          $ref: "#/components/responses/Failure"
+  /v1/me:
+    get:
+      operationId: getMe
+      responses:
+        "200":
+          description: Current application user and scoped role assignments
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CurrentUser" }
+        "401":
+          $ref: "#/components/responses/Failure"
+  /v1/me/profile:
+    patch:
+      operationId: updateProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProfileInput" }
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CurrentUser" }
+  /v1/me/dashboard:
+    get:
+      operationId: getCustomerDashboard
+      responses:
+        "200":
+          description: Customer-owned records and next steps
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Dashboard" }
+  /v1/workspace/modules:
+    get:
+      operationId: listWorkspaceModules
+      responses:
+        "200":
+          description: Server-authorized modules and fields
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Module" } }
+  /v1/workspace/summary:
+    get:
+      operationId: getWorkspaceSummary
+      responses:
+        "200":
+          description: Scoped counts and recent activity
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/WorkspaceSummary" }
+  /v1/workspace/{module}/records:
+    parameters:
+      - { in: path, name: module, required: true, schema: { type: string } }
+    get:
+      operationId: listRecords
+      parameters:
+        - { in: query, name: search, schema: { type: string } }
+        - { in: query, name: status, schema: { type: string } }
+        - { in: query, name: page, schema: { type: integer, minimum: 1, default: 1 } }
+      responses:
+        "200":
+          description: Scoped paginated records
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RecordPage" }
+    post:
+      operationId: createRecord
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RecordInput" }
+      responses:
+        "201":
+          description: Validated record created in initial state
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PlatformRecord" }
+        "400":
+          $ref: "#/components/responses/Failure"
+        "403":
+          $ref: "#/components/responses/Failure"
+  /v1/workspace/{module}/records/{id}:
+    parameters:
+      - { in: path, name: module, required: true, schema: { type: string } }
+      - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+    patch:
+      operationId: updateRecord
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RecordUpdate" }
+      responses:
+        "200":
+          description: Updated draft or reasoned state transition
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PlatformRecord" }
+        "409":
+          $ref: "#/components/responses/Failure"
+  /v1/readiness:
+    get:
+      operationId: getReadiness
+      responses:
+        "200":
+          description: Honest public service availability and commercial gates
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Readiness" }
 components:
+  responses:
+    Failure:
+      description: Request could not be completed
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
-        status:
-          type: string
-      required:
-        - status
-
+        status: { type: string }
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+        requestId: { type: string }
+    Confirmation:
+      type: object
+      required: [id, message]
+      properties:
+        id: { type: string }
+        message: { type: string }
+    Farm:
+      type: object
+      required: [id, name, district, description]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        district: { type: string }
+        description: { type: string }
+        image: { type: string }
+        practices: { type: array, items: { type: string } }
+    Tree:
+      type: object
+      required: [id, treeCode, name, species, variety, farmName, zone, status, description]
+      properties:
+        id: { type: string }
+        treeCode: { type: string }
+        name: { type: string }
+        species: { type: string }
+        variety: { type: string }
+        farmName: { type: string }
+        zone: { type: string }
+        status: { type: string }
+        description: { type: string }
+        image: { type: string }
+        age: { type: string }
+        inspectedAt: { type: string }
+        productiveAssessment: { type: string }
+    Scheme:
+      type: object
+      required: [id, name, version, feePaise, durationMonths, entitlement, disclosures]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        version: { type: integer }
+        feePaise: { type: integer }
+        durationMonths: { type: integer }
+        entitlement: { type: string }
+        disclosures: { type: string }
+    TreeDetail:
+      type: object
+      required: [tree, schemes]
+      properties:
+        tree: { $ref: "#/components/schemas/Tree" }
+        schemes: { type: array, items: { $ref: "#/components/schemas/Scheme" } }
+    Article:
+      type: object
+      required: [id, title, category, excerpt, body]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        category: { type: string }
+        excerpt: { type: string }
+        body: { type: string }
+        image: { type: string }
+        readingMinutes: { type: integer }
+    EnquiryInput:
+      type: object
+      required: [kind, name, email, message, consent]
+      properties:
+        kind: { type: string, enum: [adoption, wedding, personal, corporate, contact, visit] }
+        name: { type: string, minLength: 2, maxLength: 120 }
+        email: { type: string, format: email, maxLength: 254 }
+        phone: { type: string, maxLength: 30 }
+        message: { type: string, minLength: 5, maxLength: 5000 }
+        quantity: { type: integer, minimum: 1, maximum: 100000 }
+        budgetPaise: { type: integer, minimum: 0 }
+        eventDate: { type: string }
+        location: { type: string, maxLength: 500 }
+        language: { type: string, enum: [en, ta] }
+        consent: { type: boolean }
+    CurrentUser:
+      type: object
+      required: [id, displayName, roles, profile]
+      properties:
+        id: { type: string }
+        displayName: { type: string }
+        roles: { type: array, items: { type: string } }
+        profile: { $ref: "#/components/schemas/ProfileInput" }
+    ProfileInput:
+      type: object
+      properties:
+        displayName: { type: string, maxLength: 120 }
+        phone: { type: string, maxLength: 30 }
+        address: { type: string, maxLength: 1000 }
+        language: { type: string, enum: [en, ta] }
+        emailNotifications: { type: boolean }
+        smsNotifications: { type: boolean }
+        whatsappNotifications: { type: boolean }
+    Dashboard:
+      type: object
+      required: [adoptions, harvests, orders, notifications, tickets]
+      properties:
+        adoptions: { type: array, items: { $ref: "#/components/schemas/PlatformRecord" } }
+        harvests: { type: array, items: { $ref: "#/components/schemas/PlatformRecord" } }
+        orders: { type: array, items: { $ref: "#/components/schemas/PlatformRecord" } }
+        notifications: { type: array, items: { $ref: "#/components/schemas/PlatformRecord" } }
+        tickets: { type: array, items: { $ref: "#/components/schemas/PlatformRecord" } }
+    Field:
+      type: object
+      required: [key, label, type, required]
+      properties:
+        key: { type: string }
+        label: { type: string }
+        type: { type: string }
+        required: { type: boolean }
+        options: { type: array, items: { type: string } }
+        help: { type: string }
+    Module:
+      type: object
+      required: [key, title, description, canCreate, fields, statuses]
+      properties:
+        key: { type: string }
+        title: { type: string }
+        description: { type: string }
+        canCreate: { type: boolean }
+        fields: { type: array, items: { $ref: "#/components/schemas/Field" } }
+        statuses: { type: array, items: { type: string } }
+    PlatformRecord:
+      type: object
+      required: [id, title, status, version, createdAt, data]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        status: { type: string }
+        version: { type: integer }
+        createdAt: { type: string }
+        farmId: { type: ["string", "null"] }
+        treeId: { type: ["string", "null"] }
+        customerId: { type: ["string", "null"] }
+        data: { type: object, additionalProperties: true }
+        allowedTransitions: { type: array, items: { type: string } }
+    RecordPage:
+      type: object
+      required: [items, total, page, pageSize]
+      properties:
+        items: { type: array, items: { $ref: "#/components/schemas/PlatformRecord" } }
+        total: { type: integer }
+        page: { type: integer }
+        pageSize: { type: integer }
+    RecordInput:
+      type: object
+      required: [title, data]
+      properties:
+        title: { type: string, minLength: 2, maxLength: 200 }
+        farmId: { type: ["string", "null"], format: uuid }
+        treeId: { type: ["string", "null"], format: uuid }
+        data: { type: object, additionalProperties: true }
+    RecordUpdate:
+      type: object
+      required: [version, reason]
+      properties:
+        version: { type: integer, minimum: 1 }
+        reason: { type: string, minLength: 5, maxLength: 2000 }
+        status: { type: string }
+        title: { type: string, minLength: 2, maxLength: 200 }
+        data: { type: object, additionalProperties: true }
+    Count:
+      type: object
+      required: [label, value]
+      properties:
+        label: { type: string }
+        value: { type: integer }
+    WorkspaceSummary:
+      type: object
+      required: [counts, recent]
+      properties:
+        counts: { type: array, items: { $ref: "#/components/schemas/Count" } }
+        recent: { type: array, items: { $ref: "#/components/schemas/PlatformRecord" } }
+    Readiness:
+      type: object
+      required: [adoptionsOpen, message, gates]
+      properties:
+        adoptionsOpen: { type: boolean }
+        message: { type: string }
+        gates: { type: array, items: { type: string } }
