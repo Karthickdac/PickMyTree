@@ -282,7 +282,7 @@ export function CorporatePage() {
 }
 
 const FAQS = [
-  ['Is this an investment?', 'No. You do not receive a financial return, ownership of land or the tree, or any right you can resell. You adopt a relationship with a specific tree and receive a share of its actual harvest under the scheme you accept.'],
+  ['How are scheme benefits and returns defined?', 'Benefits, any yield-linked returns, applicable costs and capital repayment are defined separately for each scheme. Review the selected scheme’s terms, agreement and risk disclosures before committing. Participation does not transfer ownership of land or trees.'],
   ['Can I adopt a tree today?', 'Not yet. Adoption opens only after real trees are verified, schemes and legal terms are approved, and a payment provider is connected. You can leave an enquiry now.'],
   ['What if my tree has a poor season?', 'Each scheme will state, before you pay, how losses, shortfalls and remedies are handled. We record actual measured quantities and do not promise yields.'],
   ['Where are the farms?', 'The first region is the Madurai–Dindigul belt in Tamil Nadu. Farms are named publicly only after verification.'],
@@ -353,7 +353,7 @@ export function LegalPage({ kind }: { kind: 'privacy' | 'terms' }) {
           ) : (
             <>
               <p>What applies today: this website is informational. Enquiries do not create reservations, adoptions or obligations to pay.</p>
-              <p>Pick My Tree adoptions are not investments and confer no ownership of land or trees. Final scheme terms will be versioned and shown in full before any acceptance.</p>
+              <p>Each scheme defines its benefits, any yield-linked returns, costs and capital repayment terms. Review the plan agreement and risk disclosures before accepting. Participation does not transfer ownership of land or trees.</p>
             </>
           )}
         </div>

@@ -140,7 +140,7 @@ function Footer() {
         </div>
         <div className="mt-14 flex flex-col justify-between gap-3 border-t border-ivory/15 pt-6 text-xs text-ivory/55 md:flex-row">
           <span>Each tree shows its own availability. Records marked Sample data are test listings and cannot be adopted. Farm owners and managers: <Link href="/manage/farms" className="underline underline-offset-4 hover:text-harvest" data-testid="link-footer-manage">manage farms</Link> after signing in.</span>
-          <span>Not an investment. No returns, title or tradable rights.</span>
+          <span>Benefits, returns and capital repayment follow the selected scheme’s terms and risks.</span>
         </div>
       </div>
     </footer>

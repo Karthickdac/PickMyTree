@@ -9,11 +9,17 @@ Build everything in the supplied PICK A TREE specification, not only the MVP. Un
 
 **How to apply:** Track the full coverage plan and report partial delivery honestly.
 
-The platform also has investment plans whose return on investment is based on yield.
+The platform also has investment plans whose return on investment is based on yield. The owner will configure them manually as normal schemes, with capital repayment defined separately for each plan.
 
-**Why:** The user clarified: "It's also having investment plans, but return on investment is based on the yield." This expands the original specification's adoption-only scope.
+**Why:** The user clarified that investment plans are included, then said: "The investment plans can be configured as a normal scheme plan. I'll configure that manually. I just want you to remove the (no investment) related content". This overrides the original specification's adoption-only restriction.
 
-**How to apply:** Keep investment plans distinct from adoption-only plans. Define the actual payout and capital-repayment rules before implementing financial calculations; do not infer fixed or guaranteed returns from this requirement. Live investment offers and collections require appropriate legal/compliance review.
+**How to apply:** Remove blanket "not an investment" and "no returns" statements from public copy. Use the normal scheme configuration rather than inventing a separate investment-plan type or ROI calculator. Do not require the owner to define an automated payout formula for this copy change. Keep plan-specific risks and legal-review notices; do not infer fixed or guaranteed returns.
+
+Checkout should be very smooth and easy to pay.
+
+**Why:** The user asked: "Check-out purchase should be very smooth and easy to pay. It should drive the user to pay without any second thoughts".
+
+**How to apply:** Minimize required fields and repeated sign-in, show the scheme and full payable amount before payment, support the connected provider's available payment methods, and preserve progress on failed payments. Confirm purchases only after server-side payment verification; keep scheme terms and risks visible.
 
 The brand is **Pick My Tree**, renamed from PICK A TREE.
 

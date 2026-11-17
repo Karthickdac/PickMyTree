@@ -236,7 +236,7 @@ function Promises() {
     { icon: Fingerprint, t: 'One tree, one identity', d: 'Every tree carries a permanent code and registration photo set before it can be listed.' },
     { icon: ClipboardCheck, t: 'Inspected, not assumed', d: 'Productive stage and condition are assessed in person and dated on the listing.' },
     { icon: Scale, t: 'Measured harvests', d: 'Estimates are labelled as estimates. Actual quantities, grades and losses are recorded separately.' },
-    { icon: ShieldCheck, t: 'Not an investment', d: 'No returns, no title to land or tree, nothing to resell. A relationship with a tree, not a portfolio.' },
+    { icon: ShieldCheck, t: 'Clear scheme terms', d: 'Benefits, any yield-linked returns and capital repayment are defined in each scheme. Review its terms and risks before you commit.' },
   ];
   return (
     <Section>
