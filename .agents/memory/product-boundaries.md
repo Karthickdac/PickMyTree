@@ -27,6 +27,12 @@ The user wants Razorpay as the payment gateway, not Shopify.
 
 **How to apply:** Do not add Shopify or substitute another gateway without the user's approval. Do not treat the physical harvest as permission to disregard this explicit provider choice.
 
+Use the direct Razorpay Orders API and Standard Checkout path rather than treating the Agent-only Razorpay connector as the application's payment API.
+
+**Why:** Official Replit documentation confirmed that applications can use third-party SDKs directly with credentials in Secrets, even without a native runtime connector. Earlier guidance incorrectly treated the guided connection flow's limitation as a reason to replace Razorpay.
+
+**How to apply:** Keep connector availability separate from runtime SDK capability. Request Razorpay application credentials through the secure Secrets flow, verify payments server-side against stored orders and captured status, and validate the flow without real charges before live activation. Do not repeat the declined Shopify or Stripe connection offers.
+
 The brand is **Pick My Tree**, renamed from PICK A TREE.
 
 **Why:** The user explicitly renamed the brand.
