@@ -8,6 +8,746 @@
 import * as zod from 'zod';
 
 
+export const listManagedSchemesResponseOneNameMin = 2;
+export const listManagedSchemesResponseOneNameMax = 200;
+
+export const listManagedSchemesResponseOneConfigurationDescriptionMax = 4000;
+
+export const listManagedSchemesResponseOneConfigurationVarietyMax = 120;
+
+export const listManagedSchemesResponseOneConfigurationTreeIdsMax = 500;
+
+export const listManagedSchemesResponseOneConfigurationDurationMonthsMax = 120;
+
+export const listManagedSchemesResponseOneConfigurationFeePaiseMin = 0;
+export const listManagedSchemesResponseOneConfigurationFeePaiseMax = 1000000000;
+
+export const listManagedSchemesResponseOneConfigurationTaxBpsMin = 0;
+export const listManagedSchemesResponseOneConfigurationTaxBpsMax = 10000;
+
+export const listManagedSchemesResponseOneConfigurationQuantityExclusiveMin = 0;
+export const listManagedSchemesResponseOneConfigurationQuantityMax = 1000000;
+
+export const listManagedSchemesResponseOneConfigurationSharePercentExclusiveMin = 0;
+export const listManagedSchemesResponseOneConfigurationSharePercentMax = 100;
+
+export const listManagedSchemesResponseOneConfigurationMaxAdoptersMax = 100000;
+
+export const listManagedSchemesResponseOneConfigurationSeasonMax = 120;
+
+export const listManagedSchemesResponseOneConfigurationQualityGradesMax = 2000;
+
+export const listManagedSchemesResponseOneConfigurationLossRulesMax = 4000;
+
+
+export const listManagedSchemesResponseOneConfigurationDeliveryFeePaiseMin = 0;
+export const listManagedSchemesResponseOneConfigurationDeliveryFeePaiseMax = 1000000000;
+
+export const listManagedSchemesResponseOneConfigurationDeliveryRegionsMax = 2000;
+
+export const listManagedSchemesResponseOneConfigurationFulfilmentPolicyMax = 4000;
+
+export const listManagedSchemesResponseOneConfigurationInclusionsMax = 4000;
+
+export const listManagedSchemesResponseOneConfigurationExclusionsMax = 4000;
+
+export const listManagedSchemesResponseOneConfigurationRisksMax = 4000;
+
+export const listManagedSchemesResponseOneConfigurationShortfallPolicyMax = 4000;
+
+export const listManagedSchemesResponseOneConfigurationCancellationPolicyMax = 4000;
+
+export const listManagedSchemesResponseOneConfigurationRenewalPolicyMax = 4000;
+
+export const listManagedSchemesResponseOneConfigurationAgreementVersionMax = 120;
+
+export const listManagedSchemesResponseOneConfigurationTermsMax = 20000;
+
+export const listManagedSchemesResponseOneConfigurationLegalReviewReferenceMax = 500;
+
+
+
+
+export const ListManagedSchemesResponseItem = zod.object({
+  "name": zod.string().min(listManagedSchemesResponseOneNameMin).max(listManagedSchemesResponseOneNameMax),
+  "configuration": zod.object({
+  "description": zod.string().max(listManagedSchemesResponseOneConfigurationDescriptionMax),
+  "species": zod.enum(['Mango', 'Guava', 'Coconut']),
+  "variety": zod.string().max(listManagedSchemesResponseOneConfigurationVarietyMax),
+  "farmId": zod.string().uuid().nullable(),
+  "treeIds": zod.array(zod.string().uuid()).max(listManagedSchemesResponseOneConfigurationTreeIdsMax),
+  "durationMonths": zod.number().int().min(1).max(listManagedSchemesResponseOneConfigurationDurationMonthsMax),
+  "feePaise": zod.number().int().min(listManagedSchemesResponseOneConfigurationFeePaiseMin).max(listManagedSchemesResponseOneConfigurationFeePaiseMax),
+  "taxBps": zod.number().int().min(listManagedSchemesResponseOneConfigurationTaxBpsMin).max(listManagedSchemesResponseOneConfigurationTaxBpsMax),
+  "allocationType": zod.enum(['fixed-quantity', 'harvest-share', 'exclusive-harvest', 'sale-proceeds']),
+  "quantity": zod.number().gt(listManagedSchemesResponseOneConfigurationQuantityExclusiveMin).max(listManagedSchemesResponseOneConfigurationQuantityMax).nullable(),
+  "unit": zod.enum(['kg', 'count']),
+  "sharePercent": zod.number().gt(listManagedSchemesResponseOneConfigurationSharePercentExclusiveMin).max(listManagedSchemesResponseOneConfigurationSharePercentMax),
+  "maxAdopters": zod.number().int().min(1).max(listManagedSchemesResponseOneConfigurationMaxAdoptersMax),
+  "enrollmentStart": zod.coerce.date().nullable(),
+  "enrollmentEnd": zod.coerce.date().nullable(),
+  "season": zod.string().max(listManagedSchemesResponseOneConfigurationSeasonMax),
+  "roundingRule": zod.enum(['down', 'nearest', 'up']),
+  "qualityGrades": zod.string().max(listManagedSchemesResponseOneConfigurationQualityGradesMax),
+  "lossRules": zod.string().max(listManagedSchemesResponseOneConfigurationLossRulesMax),
+  "fulfilmentMethods": zod.array(zod.enum(['pickup', 'delivery', 'sale-settlement'])).min(1),
+  "deliveryFeePaise": zod.number().int().min(listManagedSchemesResponseOneConfigurationDeliveryFeePaiseMin).max(listManagedSchemesResponseOneConfigurationDeliveryFeePaiseMax),
+  "deliveryRegions": zod.string().max(listManagedSchemesResponseOneConfigurationDeliveryRegionsMax),
+  "fulfilmentPolicy": zod.string().max(listManagedSchemesResponseOneConfigurationFulfilmentPolicyMax),
+  "inclusions": zod.string().max(listManagedSchemesResponseOneConfigurationInclusionsMax),
+  "exclusions": zod.string().max(listManagedSchemesResponseOneConfigurationExclusionsMax),
+  "risks": zod.string().max(listManagedSchemesResponseOneConfigurationRisksMax),
+  "shortfallPolicy": zod.string().max(listManagedSchemesResponseOneConfigurationShortfallPolicyMax),
+  "cancellationPolicy": zod.string().max(listManagedSchemesResponseOneConfigurationCancellationPolicyMax),
+  "renewalPolicy": zod.string().max(listManagedSchemesResponseOneConfigurationRenewalPolicyMax),
+  "agreementVersion": zod.string().max(listManagedSchemesResponseOneConfigurationAgreementVersionMax),
+  "terms": zod.string().max(listManagedSchemesResponseOneConfigurationTermsMax),
+  "legalReviewReference": zod.string().max(listManagedSchemesResponseOneConfigurationLegalReviewReferenceMax)
+})
+}).and(zod.object({
+  "id": zod.string().uuid(),
+  "version": zod.number().int().min(1),
+  "status": zod.enum(['draft', 'archived']),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+}))
+export const ListManagedSchemesResponse = zod.array(ListManagedSchemesResponseItem)
+
+
+export const createManagedSchemeBodyNameMin = 2;
+export const createManagedSchemeBodyNameMax = 200;
+
+export const createManagedSchemeBodyConfigurationDescriptionMax = 4000;
+
+export const createManagedSchemeBodyConfigurationVarietyMax = 120;
+
+export const createManagedSchemeBodyConfigurationTreeIdsMax = 500;
+
+export const createManagedSchemeBodyConfigurationDurationMonthsMax = 120;
+
+export const createManagedSchemeBodyConfigurationFeePaiseMin = 0;
+export const createManagedSchemeBodyConfigurationFeePaiseMax = 1000000000;
+
+export const createManagedSchemeBodyConfigurationTaxBpsMin = 0;
+export const createManagedSchemeBodyConfigurationTaxBpsMax = 10000;
+
+export const createManagedSchemeBodyConfigurationQuantityExclusiveMin = 0;
+export const createManagedSchemeBodyConfigurationQuantityMax = 1000000;
+
+export const createManagedSchemeBodyConfigurationSharePercentExclusiveMin = 0;
+export const createManagedSchemeBodyConfigurationSharePercentMax = 100;
+
+export const createManagedSchemeBodyConfigurationMaxAdoptersMax = 100000;
+
+export const createManagedSchemeBodyConfigurationSeasonMax = 120;
+
+export const createManagedSchemeBodyConfigurationQualityGradesMax = 2000;
+
+export const createManagedSchemeBodyConfigurationLossRulesMax = 4000;
+
+
+export const createManagedSchemeBodyConfigurationDeliveryFeePaiseMin = 0;
+export const createManagedSchemeBodyConfigurationDeliveryFeePaiseMax = 1000000000;
+
+export const createManagedSchemeBodyConfigurationDeliveryRegionsMax = 2000;
+
+export const createManagedSchemeBodyConfigurationFulfilmentPolicyMax = 4000;
+
+export const createManagedSchemeBodyConfigurationInclusionsMax = 4000;
+
+export const createManagedSchemeBodyConfigurationExclusionsMax = 4000;
+
+export const createManagedSchemeBodyConfigurationRisksMax = 4000;
+
+export const createManagedSchemeBodyConfigurationShortfallPolicyMax = 4000;
+
+export const createManagedSchemeBodyConfigurationCancellationPolicyMax = 4000;
+
+export const createManagedSchemeBodyConfigurationRenewalPolicyMax = 4000;
+
+export const createManagedSchemeBodyConfigurationAgreementVersionMax = 120;
+
+export const createManagedSchemeBodyConfigurationTermsMax = 20000;
+
+export const createManagedSchemeBodyConfigurationLegalReviewReferenceMax = 500;
+
+
+
+export const CreateManagedSchemeBody = zod.object({
+  "name": zod.string().min(createManagedSchemeBodyNameMin).max(createManagedSchemeBodyNameMax),
+  "configuration": zod.object({
+  "description": zod.string().max(createManagedSchemeBodyConfigurationDescriptionMax),
+  "species": zod.enum(['Mango', 'Guava', 'Coconut']),
+  "variety": zod.string().max(createManagedSchemeBodyConfigurationVarietyMax),
+  "farmId": zod.string().uuid().nullable(),
+  "treeIds": zod.array(zod.string().uuid()).max(createManagedSchemeBodyConfigurationTreeIdsMax),
+  "durationMonths": zod.number().int().min(1).max(createManagedSchemeBodyConfigurationDurationMonthsMax),
+  "feePaise": zod.number().int().min(createManagedSchemeBodyConfigurationFeePaiseMin).max(createManagedSchemeBodyConfigurationFeePaiseMax),
+  "taxBps": zod.number().int().min(createManagedSchemeBodyConfigurationTaxBpsMin).max(createManagedSchemeBodyConfigurationTaxBpsMax),
+  "allocationType": zod.enum(['fixed-quantity', 'harvest-share', 'exclusive-harvest', 'sale-proceeds']),
+  "quantity": zod.number().gt(createManagedSchemeBodyConfigurationQuantityExclusiveMin).max(createManagedSchemeBodyConfigurationQuantityMax).nullable(),
+  "unit": zod.enum(['kg', 'count']),
+  "sharePercent": zod.number().gt(createManagedSchemeBodyConfigurationSharePercentExclusiveMin).max(createManagedSchemeBodyConfigurationSharePercentMax),
+  "maxAdopters": zod.number().int().min(1).max(createManagedSchemeBodyConfigurationMaxAdoptersMax),
+  "enrollmentStart": zod.coerce.date().nullable(),
+  "enrollmentEnd": zod.coerce.date().nullable(),
+  "season": zod.string().max(createManagedSchemeBodyConfigurationSeasonMax),
+  "roundingRule": zod.enum(['down', 'nearest', 'up']),
+  "qualityGrades": zod.string().max(createManagedSchemeBodyConfigurationQualityGradesMax),
+  "lossRules": zod.string().max(createManagedSchemeBodyConfigurationLossRulesMax),
+  "fulfilmentMethods": zod.array(zod.enum(['pickup', 'delivery', 'sale-settlement'])).min(1),
+  "deliveryFeePaise": zod.number().int().min(createManagedSchemeBodyConfigurationDeliveryFeePaiseMin).max(createManagedSchemeBodyConfigurationDeliveryFeePaiseMax),
+  "deliveryRegions": zod.string().max(createManagedSchemeBodyConfigurationDeliveryRegionsMax),
+  "fulfilmentPolicy": zod.string().max(createManagedSchemeBodyConfigurationFulfilmentPolicyMax),
+  "inclusions": zod.string().max(createManagedSchemeBodyConfigurationInclusionsMax),
+  "exclusions": zod.string().max(createManagedSchemeBodyConfigurationExclusionsMax),
+  "risks": zod.string().max(createManagedSchemeBodyConfigurationRisksMax),
+  "shortfallPolicy": zod.string().max(createManagedSchemeBodyConfigurationShortfallPolicyMax),
+  "cancellationPolicy": zod.string().max(createManagedSchemeBodyConfigurationCancellationPolicyMax),
+  "renewalPolicy": zod.string().max(createManagedSchemeBodyConfigurationRenewalPolicyMax),
+  "agreementVersion": zod.string().max(createManagedSchemeBodyConfigurationAgreementVersionMax),
+  "terms": zod.string().max(createManagedSchemeBodyConfigurationTermsMax),
+  "legalReviewReference": zod.string().max(createManagedSchemeBodyConfigurationLegalReviewReferenceMax)
+})
+})
+
+export const createManagedSchemeResponseOneNameMin = 2;
+export const createManagedSchemeResponseOneNameMax = 200;
+
+export const createManagedSchemeResponseOneConfigurationDescriptionMax = 4000;
+
+export const createManagedSchemeResponseOneConfigurationVarietyMax = 120;
+
+export const createManagedSchemeResponseOneConfigurationTreeIdsMax = 500;
+
+export const createManagedSchemeResponseOneConfigurationDurationMonthsMax = 120;
+
+export const createManagedSchemeResponseOneConfigurationFeePaiseMin = 0;
+export const createManagedSchemeResponseOneConfigurationFeePaiseMax = 1000000000;
+
+export const createManagedSchemeResponseOneConfigurationTaxBpsMin = 0;
+export const createManagedSchemeResponseOneConfigurationTaxBpsMax = 10000;
+
+export const createManagedSchemeResponseOneConfigurationQuantityExclusiveMin = 0;
+export const createManagedSchemeResponseOneConfigurationQuantityMax = 1000000;
+
+export const createManagedSchemeResponseOneConfigurationSharePercentExclusiveMin = 0;
+export const createManagedSchemeResponseOneConfigurationSharePercentMax = 100;
+
+export const createManagedSchemeResponseOneConfigurationMaxAdoptersMax = 100000;
+
+export const createManagedSchemeResponseOneConfigurationSeasonMax = 120;
+
+export const createManagedSchemeResponseOneConfigurationQualityGradesMax = 2000;
+
+export const createManagedSchemeResponseOneConfigurationLossRulesMax = 4000;
+
+
+export const createManagedSchemeResponseOneConfigurationDeliveryFeePaiseMin = 0;
+export const createManagedSchemeResponseOneConfigurationDeliveryFeePaiseMax = 1000000000;
+
+export const createManagedSchemeResponseOneConfigurationDeliveryRegionsMax = 2000;
+
+export const createManagedSchemeResponseOneConfigurationFulfilmentPolicyMax = 4000;
+
+export const createManagedSchemeResponseOneConfigurationInclusionsMax = 4000;
+
+export const createManagedSchemeResponseOneConfigurationExclusionsMax = 4000;
+
+export const createManagedSchemeResponseOneConfigurationRisksMax = 4000;
+
+export const createManagedSchemeResponseOneConfigurationShortfallPolicyMax = 4000;
+
+export const createManagedSchemeResponseOneConfigurationCancellationPolicyMax = 4000;
+
+export const createManagedSchemeResponseOneConfigurationRenewalPolicyMax = 4000;
+
+export const createManagedSchemeResponseOneConfigurationAgreementVersionMax = 120;
+
+export const createManagedSchemeResponseOneConfigurationTermsMax = 20000;
+
+export const createManagedSchemeResponseOneConfigurationLegalReviewReferenceMax = 500;
+
+
+
+
+export const CreateManagedSchemeResponse = zod.object({
+  "name": zod.string().min(createManagedSchemeResponseOneNameMin).max(createManagedSchemeResponseOneNameMax),
+  "configuration": zod.object({
+  "description": zod.string().max(createManagedSchemeResponseOneConfigurationDescriptionMax),
+  "species": zod.enum(['Mango', 'Guava', 'Coconut']),
+  "variety": zod.string().max(createManagedSchemeResponseOneConfigurationVarietyMax),
+  "farmId": zod.string().uuid().nullable(),
+  "treeIds": zod.array(zod.string().uuid()).max(createManagedSchemeResponseOneConfigurationTreeIdsMax),
+  "durationMonths": zod.number().int().min(1).max(createManagedSchemeResponseOneConfigurationDurationMonthsMax),
+  "feePaise": zod.number().int().min(createManagedSchemeResponseOneConfigurationFeePaiseMin).max(createManagedSchemeResponseOneConfigurationFeePaiseMax),
+  "taxBps": zod.number().int().min(createManagedSchemeResponseOneConfigurationTaxBpsMin).max(createManagedSchemeResponseOneConfigurationTaxBpsMax),
+  "allocationType": zod.enum(['fixed-quantity', 'harvest-share', 'exclusive-harvest', 'sale-proceeds']),
+  "quantity": zod.number().gt(createManagedSchemeResponseOneConfigurationQuantityExclusiveMin).max(createManagedSchemeResponseOneConfigurationQuantityMax).nullable(),
+  "unit": zod.enum(['kg', 'count']),
+  "sharePercent": zod.number().gt(createManagedSchemeResponseOneConfigurationSharePercentExclusiveMin).max(createManagedSchemeResponseOneConfigurationSharePercentMax),
+  "maxAdopters": zod.number().int().min(1).max(createManagedSchemeResponseOneConfigurationMaxAdoptersMax),
+  "enrollmentStart": zod.coerce.date().nullable(),
+  "enrollmentEnd": zod.coerce.date().nullable(),
+  "season": zod.string().max(createManagedSchemeResponseOneConfigurationSeasonMax),
+  "roundingRule": zod.enum(['down', 'nearest', 'up']),
+  "qualityGrades": zod.string().max(createManagedSchemeResponseOneConfigurationQualityGradesMax),
+  "lossRules": zod.string().max(createManagedSchemeResponseOneConfigurationLossRulesMax),
+  "fulfilmentMethods": zod.array(zod.enum(['pickup', 'delivery', 'sale-settlement'])).min(1),
+  "deliveryFeePaise": zod.number().int().min(createManagedSchemeResponseOneConfigurationDeliveryFeePaiseMin).max(createManagedSchemeResponseOneConfigurationDeliveryFeePaiseMax),
+  "deliveryRegions": zod.string().max(createManagedSchemeResponseOneConfigurationDeliveryRegionsMax),
+  "fulfilmentPolicy": zod.string().max(createManagedSchemeResponseOneConfigurationFulfilmentPolicyMax),
+  "inclusions": zod.string().max(createManagedSchemeResponseOneConfigurationInclusionsMax),
+  "exclusions": zod.string().max(createManagedSchemeResponseOneConfigurationExclusionsMax),
+  "risks": zod.string().max(createManagedSchemeResponseOneConfigurationRisksMax),
+  "shortfallPolicy": zod.string().max(createManagedSchemeResponseOneConfigurationShortfallPolicyMax),
+  "cancellationPolicy": zod.string().max(createManagedSchemeResponseOneConfigurationCancellationPolicyMax),
+  "renewalPolicy": zod.string().max(createManagedSchemeResponseOneConfigurationRenewalPolicyMax),
+  "agreementVersion": zod.string().max(createManagedSchemeResponseOneConfigurationAgreementVersionMax),
+  "terms": zod.string().max(createManagedSchemeResponseOneConfigurationTermsMax),
+  "legalReviewReference": zod.string().max(createManagedSchemeResponseOneConfigurationLegalReviewReferenceMax)
+})
+}).and(zod.object({
+  "id": zod.string().uuid(),
+  "version": zod.number().int().min(1),
+  "status": zod.enum(['draft', 'archived']),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+}))
+
+
+export const GetManagedSchemeParams = zod.object({
+  "schemeId": zod.coerce.string().uuid()
+})
+
+export const getManagedSchemeResponseOneNameMin = 2;
+export const getManagedSchemeResponseOneNameMax = 200;
+
+export const getManagedSchemeResponseOneConfigurationDescriptionMax = 4000;
+
+export const getManagedSchemeResponseOneConfigurationVarietyMax = 120;
+
+export const getManagedSchemeResponseOneConfigurationTreeIdsMax = 500;
+
+export const getManagedSchemeResponseOneConfigurationDurationMonthsMax = 120;
+
+export const getManagedSchemeResponseOneConfigurationFeePaiseMin = 0;
+export const getManagedSchemeResponseOneConfigurationFeePaiseMax = 1000000000;
+
+export const getManagedSchemeResponseOneConfigurationTaxBpsMin = 0;
+export const getManagedSchemeResponseOneConfigurationTaxBpsMax = 10000;
+
+export const getManagedSchemeResponseOneConfigurationQuantityExclusiveMin = 0;
+export const getManagedSchemeResponseOneConfigurationQuantityMax = 1000000;
+
+export const getManagedSchemeResponseOneConfigurationSharePercentExclusiveMin = 0;
+export const getManagedSchemeResponseOneConfigurationSharePercentMax = 100;
+
+export const getManagedSchemeResponseOneConfigurationMaxAdoptersMax = 100000;
+
+export const getManagedSchemeResponseOneConfigurationSeasonMax = 120;
+
+export const getManagedSchemeResponseOneConfigurationQualityGradesMax = 2000;
+
+export const getManagedSchemeResponseOneConfigurationLossRulesMax = 4000;
+
+
+export const getManagedSchemeResponseOneConfigurationDeliveryFeePaiseMin = 0;
+export const getManagedSchemeResponseOneConfigurationDeliveryFeePaiseMax = 1000000000;
+
+export const getManagedSchemeResponseOneConfigurationDeliveryRegionsMax = 2000;
+
+export const getManagedSchemeResponseOneConfigurationFulfilmentPolicyMax = 4000;
+
+export const getManagedSchemeResponseOneConfigurationInclusionsMax = 4000;
+
+export const getManagedSchemeResponseOneConfigurationExclusionsMax = 4000;
+
+export const getManagedSchemeResponseOneConfigurationRisksMax = 4000;
+
+export const getManagedSchemeResponseOneConfigurationShortfallPolicyMax = 4000;
+
+export const getManagedSchemeResponseOneConfigurationCancellationPolicyMax = 4000;
+
+export const getManagedSchemeResponseOneConfigurationRenewalPolicyMax = 4000;
+
+export const getManagedSchemeResponseOneConfigurationAgreementVersionMax = 120;
+
+export const getManagedSchemeResponseOneConfigurationTermsMax = 20000;
+
+export const getManagedSchemeResponseOneConfigurationLegalReviewReferenceMax = 500;
+
+
+
+
+export const GetManagedSchemeResponse = zod.object({
+  "name": zod.string().min(getManagedSchemeResponseOneNameMin).max(getManagedSchemeResponseOneNameMax),
+  "configuration": zod.object({
+  "description": zod.string().max(getManagedSchemeResponseOneConfigurationDescriptionMax),
+  "species": zod.enum(['Mango', 'Guava', 'Coconut']),
+  "variety": zod.string().max(getManagedSchemeResponseOneConfigurationVarietyMax),
+  "farmId": zod.string().uuid().nullable(),
+  "treeIds": zod.array(zod.string().uuid()).max(getManagedSchemeResponseOneConfigurationTreeIdsMax),
+  "durationMonths": zod.number().int().min(1).max(getManagedSchemeResponseOneConfigurationDurationMonthsMax),
+  "feePaise": zod.number().int().min(getManagedSchemeResponseOneConfigurationFeePaiseMin).max(getManagedSchemeResponseOneConfigurationFeePaiseMax),
+  "taxBps": zod.number().int().min(getManagedSchemeResponseOneConfigurationTaxBpsMin).max(getManagedSchemeResponseOneConfigurationTaxBpsMax),
+  "allocationType": zod.enum(['fixed-quantity', 'harvest-share', 'exclusive-harvest', 'sale-proceeds']),
+  "quantity": zod.number().gt(getManagedSchemeResponseOneConfigurationQuantityExclusiveMin).max(getManagedSchemeResponseOneConfigurationQuantityMax).nullable(),
+  "unit": zod.enum(['kg', 'count']),
+  "sharePercent": zod.number().gt(getManagedSchemeResponseOneConfigurationSharePercentExclusiveMin).max(getManagedSchemeResponseOneConfigurationSharePercentMax),
+  "maxAdopters": zod.number().int().min(1).max(getManagedSchemeResponseOneConfigurationMaxAdoptersMax),
+  "enrollmentStart": zod.coerce.date().nullable(),
+  "enrollmentEnd": zod.coerce.date().nullable(),
+  "season": zod.string().max(getManagedSchemeResponseOneConfigurationSeasonMax),
+  "roundingRule": zod.enum(['down', 'nearest', 'up']),
+  "qualityGrades": zod.string().max(getManagedSchemeResponseOneConfigurationQualityGradesMax),
+  "lossRules": zod.string().max(getManagedSchemeResponseOneConfigurationLossRulesMax),
+  "fulfilmentMethods": zod.array(zod.enum(['pickup', 'delivery', 'sale-settlement'])).min(1),
+  "deliveryFeePaise": zod.number().int().min(getManagedSchemeResponseOneConfigurationDeliveryFeePaiseMin).max(getManagedSchemeResponseOneConfigurationDeliveryFeePaiseMax),
+  "deliveryRegions": zod.string().max(getManagedSchemeResponseOneConfigurationDeliveryRegionsMax),
+  "fulfilmentPolicy": zod.string().max(getManagedSchemeResponseOneConfigurationFulfilmentPolicyMax),
+  "inclusions": zod.string().max(getManagedSchemeResponseOneConfigurationInclusionsMax),
+  "exclusions": zod.string().max(getManagedSchemeResponseOneConfigurationExclusionsMax),
+  "risks": zod.string().max(getManagedSchemeResponseOneConfigurationRisksMax),
+  "shortfallPolicy": zod.string().max(getManagedSchemeResponseOneConfigurationShortfallPolicyMax),
+  "cancellationPolicy": zod.string().max(getManagedSchemeResponseOneConfigurationCancellationPolicyMax),
+  "renewalPolicy": zod.string().max(getManagedSchemeResponseOneConfigurationRenewalPolicyMax),
+  "agreementVersion": zod.string().max(getManagedSchemeResponseOneConfigurationAgreementVersionMax),
+  "terms": zod.string().max(getManagedSchemeResponseOneConfigurationTermsMax),
+  "legalReviewReference": zod.string().max(getManagedSchemeResponseOneConfigurationLegalReviewReferenceMax)
+})
+}).and(zod.object({
+  "id": zod.string().uuid(),
+  "version": zod.number().int().min(1),
+  "status": zod.enum(['draft', 'archived']),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+}))
+
+
+export const UpdateManagedSchemeParams = zod.object({
+  "schemeId": zod.coerce.string().uuid()
+})
+
+export const updateManagedSchemeBodyOneNameMin = 2;
+export const updateManagedSchemeBodyOneNameMax = 200;
+
+export const updateManagedSchemeBodyOneConfigurationDescriptionMax = 4000;
+
+export const updateManagedSchemeBodyOneConfigurationVarietyMax = 120;
+
+export const updateManagedSchemeBodyOneConfigurationTreeIdsMax = 500;
+
+export const updateManagedSchemeBodyOneConfigurationDurationMonthsMax = 120;
+
+export const updateManagedSchemeBodyOneConfigurationFeePaiseMin = 0;
+export const updateManagedSchemeBodyOneConfigurationFeePaiseMax = 1000000000;
+
+export const updateManagedSchemeBodyOneConfigurationTaxBpsMin = 0;
+export const updateManagedSchemeBodyOneConfigurationTaxBpsMax = 10000;
+
+export const updateManagedSchemeBodyOneConfigurationQuantityExclusiveMin = 0;
+export const updateManagedSchemeBodyOneConfigurationQuantityMax = 1000000;
+
+export const updateManagedSchemeBodyOneConfigurationSharePercentExclusiveMin = 0;
+export const updateManagedSchemeBodyOneConfigurationSharePercentMax = 100;
+
+export const updateManagedSchemeBodyOneConfigurationMaxAdoptersMax = 100000;
+
+export const updateManagedSchemeBodyOneConfigurationSeasonMax = 120;
+
+export const updateManagedSchemeBodyOneConfigurationQualityGradesMax = 2000;
+
+export const updateManagedSchemeBodyOneConfigurationLossRulesMax = 4000;
+
+
+export const updateManagedSchemeBodyOneConfigurationDeliveryFeePaiseMin = 0;
+export const updateManagedSchemeBodyOneConfigurationDeliveryFeePaiseMax = 1000000000;
+
+export const updateManagedSchemeBodyOneConfigurationDeliveryRegionsMax = 2000;
+
+export const updateManagedSchemeBodyOneConfigurationFulfilmentPolicyMax = 4000;
+
+export const updateManagedSchemeBodyOneConfigurationInclusionsMax = 4000;
+
+export const updateManagedSchemeBodyOneConfigurationExclusionsMax = 4000;
+
+export const updateManagedSchemeBodyOneConfigurationRisksMax = 4000;
+
+export const updateManagedSchemeBodyOneConfigurationShortfallPolicyMax = 4000;
+
+export const updateManagedSchemeBodyOneConfigurationCancellationPolicyMax = 4000;
+
+export const updateManagedSchemeBodyOneConfigurationRenewalPolicyMax = 4000;
+
+export const updateManagedSchemeBodyOneConfigurationAgreementVersionMax = 120;
+
+export const updateManagedSchemeBodyOneConfigurationTermsMax = 20000;
+
+export const updateManagedSchemeBodyOneConfigurationLegalReviewReferenceMax = 500;
+
+
+export const updateManagedSchemeBodyTwoReasonMin = 3;
+export const updateManagedSchemeBodyTwoReasonMax = 2000;
+
+
+
+export const UpdateManagedSchemeBody = zod.object({
+  "name": zod.string().min(updateManagedSchemeBodyOneNameMin).max(updateManagedSchemeBodyOneNameMax),
+  "configuration": zod.object({
+  "description": zod.string().max(updateManagedSchemeBodyOneConfigurationDescriptionMax),
+  "species": zod.enum(['Mango', 'Guava', 'Coconut']),
+  "variety": zod.string().max(updateManagedSchemeBodyOneConfigurationVarietyMax),
+  "farmId": zod.string().uuid().nullable(),
+  "treeIds": zod.array(zod.string().uuid()).max(updateManagedSchemeBodyOneConfigurationTreeIdsMax),
+  "durationMonths": zod.number().int().min(1).max(updateManagedSchemeBodyOneConfigurationDurationMonthsMax),
+  "feePaise": zod.number().int().min(updateManagedSchemeBodyOneConfigurationFeePaiseMin).max(updateManagedSchemeBodyOneConfigurationFeePaiseMax),
+  "taxBps": zod.number().int().min(updateManagedSchemeBodyOneConfigurationTaxBpsMin).max(updateManagedSchemeBodyOneConfigurationTaxBpsMax),
+  "allocationType": zod.enum(['fixed-quantity', 'harvest-share', 'exclusive-harvest', 'sale-proceeds']),
+  "quantity": zod.number().gt(updateManagedSchemeBodyOneConfigurationQuantityExclusiveMin).max(updateManagedSchemeBodyOneConfigurationQuantityMax).nullable(),
+  "unit": zod.enum(['kg', 'count']),
+  "sharePercent": zod.number().gt(updateManagedSchemeBodyOneConfigurationSharePercentExclusiveMin).max(updateManagedSchemeBodyOneConfigurationSharePercentMax),
+  "maxAdopters": zod.number().int().min(1).max(updateManagedSchemeBodyOneConfigurationMaxAdoptersMax),
+  "enrollmentStart": zod.coerce.date().nullable(),
+  "enrollmentEnd": zod.coerce.date().nullable(),
+  "season": zod.string().max(updateManagedSchemeBodyOneConfigurationSeasonMax),
+  "roundingRule": zod.enum(['down', 'nearest', 'up']),
+  "qualityGrades": zod.string().max(updateManagedSchemeBodyOneConfigurationQualityGradesMax),
+  "lossRules": zod.string().max(updateManagedSchemeBodyOneConfigurationLossRulesMax),
+  "fulfilmentMethods": zod.array(zod.enum(['pickup', 'delivery', 'sale-settlement'])).min(1),
+  "deliveryFeePaise": zod.number().int().min(updateManagedSchemeBodyOneConfigurationDeliveryFeePaiseMin).max(updateManagedSchemeBodyOneConfigurationDeliveryFeePaiseMax),
+  "deliveryRegions": zod.string().max(updateManagedSchemeBodyOneConfigurationDeliveryRegionsMax),
+  "fulfilmentPolicy": zod.string().max(updateManagedSchemeBodyOneConfigurationFulfilmentPolicyMax),
+  "inclusions": zod.string().max(updateManagedSchemeBodyOneConfigurationInclusionsMax),
+  "exclusions": zod.string().max(updateManagedSchemeBodyOneConfigurationExclusionsMax),
+  "risks": zod.string().max(updateManagedSchemeBodyOneConfigurationRisksMax),
+  "shortfallPolicy": zod.string().max(updateManagedSchemeBodyOneConfigurationShortfallPolicyMax),
+  "cancellationPolicy": zod.string().max(updateManagedSchemeBodyOneConfigurationCancellationPolicyMax),
+  "renewalPolicy": zod.string().max(updateManagedSchemeBodyOneConfigurationRenewalPolicyMax),
+  "agreementVersion": zod.string().max(updateManagedSchemeBodyOneConfigurationAgreementVersionMax),
+  "terms": zod.string().max(updateManagedSchemeBodyOneConfigurationTermsMax),
+  "legalReviewReference": zod.string().max(updateManagedSchemeBodyOneConfigurationLegalReviewReferenceMax)
+})
+}).and(zod.object({
+  "version": zod.number().int().min(1),
+  "reason": zod.string().min(updateManagedSchemeBodyTwoReasonMin).max(updateManagedSchemeBodyTwoReasonMax),
+  "status": zod.enum(['draft', 'archived'])
+}))
+
+export const updateManagedSchemeResponseOneNameMin = 2;
+export const updateManagedSchemeResponseOneNameMax = 200;
+
+export const updateManagedSchemeResponseOneConfigurationDescriptionMax = 4000;
+
+export const updateManagedSchemeResponseOneConfigurationVarietyMax = 120;
+
+export const updateManagedSchemeResponseOneConfigurationTreeIdsMax = 500;
+
+export const updateManagedSchemeResponseOneConfigurationDurationMonthsMax = 120;
+
+export const updateManagedSchemeResponseOneConfigurationFeePaiseMin = 0;
+export const updateManagedSchemeResponseOneConfigurationFeePaiseMax = 1000000000;
+
+export const updateManagedSchemeResponseOneConfigurationTaxBpsMin = 0;
+export const updateManagedSchemeResponseOneConfigurationTaxBpsMax = 10000;
+
+export const updateManagedSchemeResponseOneConfigurationQuantityExclusiveMin = 0;
+export const updateManagedSchemeResponseOneConfigurationQuantityMax = 1000000;
+
+export const updateManagedSchemeResponseOneConfigurationSharePercentExclusiveMin = 0;
+export const updateManagedSchemeResponseOneConfigurationSharePercentMax = 100;
+
+export const updateManagedSchemeResponseOneConfigurationMaxAdoptersMax = 100000;
+
+export const updateManagedSchemeResponseOneConfigurationSeasonMax = 120;
+
+export const updateManagedSchemeResponseOneConfigurationQualityGradesMax = 2000;
+
+export const updateManagedSchemeResponseOneConfigurationLossRulesMax = 4000;
+
+
+export const updateManagedSchemeResponseOneConfigurationDeliveryFeePaiseMin = 0;
+export const updateManagedSchemeResponseOneConfigurationDeliveryFeePaiseMax = 1000000000;
+
+export const updateManagedSchemeResponseOneConfigurationDeliveryRegionsMax = 2000;
+
+export const updateManagedSchemeResponseOneConfigurationFulfilmentPolicyMax = 4000;
+
+export const updateManagedSchemeResponseOneConfigurationInclusionsMax = 4000;
+
+export const updateManagedSchemeResponseOneConfigurationExclusionsMax = 4000;
+
+export const updateManagedSchemeResponseOneConfigurationRisksMax = 4000;
+
+export const updateManagedSchemeResponseOneConfigurationShortfallPolicyMax = 4000;
+
+export const updateManagedSchemeResponseOneConfigurationCancellationPolicyMax = 4000;
+
+export const updateManagedSchemeResponseOneConfigurationRenewalPolicyMax = 4000;
+
+export const updateManagedSchemeResponseOneConfigurationAgreementVersionMax = 120;
+
+export const updateManagedSchemeResponseOneConfigurationTermsMax = 20000;
+
+export const updateManagedSchemeResponseOneConfigurationLegalReviewReferenceMax = 500;
+
+
+
+
+export const UpdateManagedSchemeResponse = zod.object({
+  "name": zod.string().min(updateManagedSchemeResponseOneNameMin).max(updateManagedSchemeResponseOneNameMax),
+  "configuration": zod.object({
+  "description": zod.string().max(updateManagedSchemeResponseOneConfigurationDescriptionMax),
+  "species": zod.enum(['Mango', 'Guava', 'Coconut']),
+  "variety": zod.string().max(updateManagedSchemeResponseOneConfigurationVarietyMax),
+  "farmId": zod.string().uuid().nullable(),
+  "treeIds": zod.array(zod.string().uuid()).max(updateManagedSchemeResponseOneConfigurationTreeIdsMax),
+  "durationMonths": zod.number().int().min(1).max(updateManagedSchemeResponseOneConfigurationDurationMonthsMax),
+  "feePaise": zod.number().int().min(updateManagedSchemeResponseOneConfigurationFeePaiseMin).max(updateManagedSchemeResponseOneConfigurationFeePaiseMax),
+  "taxBps": zod.number().int().min(updateManagedSchemeResponseOneConfigurationTaxBpsMin).max(updateManagedSchemeResponseOneConfigurationTaxBpsMax),
+  "allocationType": zod.enum(['fixed-quantity', 'harvest-share', 'exclusive-harvest', 'sale-proceeds']),
+  "quantity": zod.number().gt(updateManagedSchemeResponseOneConfigurationQuantityExclusiveMin).max(updateManagedSchemeResponseOneConfigurationQuantityMax).nullable(),
+  "unit": zod.enum(['kg', 'count']),
+  "sharePercent": zod.number().gt(updateManagedSchemeResponseOneConfigurationSharePercentExclusiveMin).max(updateManagedSchemeResponseOneConfigurationSharePercentMax),
+  "maxAdopters": zod.number().int().min(1).max(updateManagedSchemeResponseOneConfigurationMaxAdoptersMax),
+  "enrollmentStart": zod.coerce.date().nullable(),
+  "enrollmentEnd": zod.coerce.date().nullable(),
+  "season": zod.string().max(updateManagedSchemeResponseOneConfigurationSeasonMax),
+  "roundingRule": zod.enum(['down', 'nearest', 'up']),
+  "qualityGrades": zod.string().max(updateManagedSchemeResponseOneConfigurationQualityGradesMax),
+  "lossRules": zod.string().max(updateManagedSchemeResponseOneConfigurationLossRulesMax),
+  "fulfilmentMethods": zod.array(zod.enum(['pickup', 'delivery', 'sale-settlement'])).min(1),
+  "deliveryFeePaise": zod.number().int().min(updateManagedSchemeResponseOneConfigurationDeliveryFeePaiseMin).max(updateManagedSchemeResponseOneConfigurationDeliveryFeePaiseMax),
+  "deliveryRegions": zod.string().max(updateManagedSchemeResponseOneConfigurationDeliveryRegionsMax),
+  "fulfilmentPolicy": zod.string().max(updateManagedSchemeResponseOneConfigurationFulfilmentPolicyMax),
+  "inclusions": zod.string().max(updateManagedSchemeResponseOneConfigurationInclusionsMax),
+  "exclusions": zod.string().max(updateManagedSchemeResponseOneConfigurationExclusionsMax),
+  "risks": zod.string().max(updateManagedSchemeResponseOneConfigurationRisksMax),
+  "shortfallPolicy": zod.string().max(updateManagedSchemeResponseOneConfigurationShortfallPolicyMax),
+  "cancellationPolicy": zod.string().max(updateManagedSchemeResponseOneConfigurationCancellationPolicyMax),
+  "renewalPolicy": zod.string().max(updateManagedSchemeResponseOneConfigurationRenewalPolicyMax),
+  "agreementVersion": zod.string().max(updateManagedSchemeResponseOneConfigurationAgreementVersionMax),
+  "terms": zod.string().max(updateManagedSchemeResponseOneConfigurationTermsMax),
+  "legalReviewReference": zod.string().max(updateManagedSchemeResponseOneConfigurationLegalReviewReferenceMax)
+})
+}).and(zod.object({
+  "id": zod.string().uuid(),
+  "version": zod.number().int().min(1),
+  "status": zod.enum(['draft', 'archived']),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+}))
+
+
+export const ListSchemeRevisionsParams = zod.object({
+  "schemeId": zod.coerce.string().uuid()
+})
+
+export const listSchemeRevisionsResponseOneNameMin = 2;
+export const listSchemeRevisionsResponseOneNameMax = 200;
+
+export const listSchemeRevisionsResponseOneConfigurationDescriptionMax = 4000;
+
+export const listSchemeRevisionsResponseOneConfigurationVarietyMax = 120;
+
+export const listSchemeRevisionsResponseOneConfigurationTreeIdsMax = 500;
+
+export const listSchemeRevisionsResponseOneConfigurationDurationMonthsMax = 120;
+
+export const listSchemeRevisionsResponseOneConfigurationFeePaiseMin = 0;
+export const listSchemeRevisionsResponseOneConfigurationFeePaiseMax = 1000000000;
+
+export const listSchemeRevisionsResponseOneConfigurationTaxBpsMin = 0;
+export const listSchemeRevisionsResponseOneConfigurationTaxBpsMax = 10000;
+
+export const listSchemeRevisionsResponseOneConfigurationQuantityExclusiveMin = 0;
+export const listSchemeRevisionsResponseOneConfigurationQuantityMax = 1000000;
+
+export const listSchemeRevisionsResponseOneConfigurationSharePercentExclusiveMin = 0;
+export const listSchemeRevisionsResponseOneConfigurationSharePercentMax = 100;
+
+export const listSchemeRevisionsResponseOneConfigurationMaxAdoptersMax = 100000;
+
+export const listSchemeRevisionsResponseOneConfigurationSeasonMax = 120;
+
+export const listSchemeRevisionsResponseOneConfigurationQualityGradesMax = 2000;
+
+export const listSchemeRevisionsResponseOneConfigurationLossRulesMax = 4000;
+
+
+export const listSchemeRevisionsResponseOneConfigurationDeliveryFeePaiseMin = 0;
+export const listSchemeRevisionsResponseOneConfigurationDeliveryFeePaiseMax = 1000000000;
+
+export const listSchemeRevisionsResponseOneConfigurationDeliveryRegionsMax = 2000;
+
+export const listSchemeRevisionsResponseOneConfigurationFulfilmentPolicyMax = 4000;
+
+export const listSchemeRevisionsResponseOneConfigurationInclusionsMax = 4000;
+
+export const listSchemeRevisionsResponseOneConfigurationExclusionsMax = 4000;
+
+export const listSchemeRevisionsResponseOneConfigurationRisksMax = 4000;
+
+export const listSchemeRevisionsResponseOneConfigurationShortfallPolicyMax = 4000;
+
+export const listSchemeRevisionsResponseOneConfigurationCancellationPolicyMax = 4000;
+
+export const listSchemeRevisionsResponseOneConfigurationRenewalPolicyMax = 4000;
+
+export const listSchemeRevisionsResponseOneConfigurationAgreementVersionMax = 120;
+
+export const listSchemeRevisionsResponseOneConfigurationTermsMax = 20000;
+
+export const listSchemeRevisionsResponseOneConfigurationLegalReviewReferenceMax = 500;
+
+
+
+
+export const ListSchemeRevisionsResponseItem = zod.object({
+  "name": zod.string().min(listSchemeRevisionsResponseOneNameMin).max(listSchemeRevisionsResponseOneNameMax),
+  "configuration": zod.object({
+  "description": zod.string().max(listSchemeRevisionsResponseOneConfigurationDescriptionMax),
+  "species": zod.enum(['Mango', 'Guava', 'Coconut']),
+  "variety": zod.string().max(listSchemeRevisionsResponseOneConfigurationVarietyMax),
+  "farmId": zod.string().uuid().nullable(),
+  "treeIds": zod.array(zod.string().uuid()).max(listSchemeRevisionsResponseOneConfigurationTreeIdsMax),
+  "durationMonths": zod.number().int().min(1).max(listSchemeRevisionsResponseOneConfigurationDurationMonthsMax),
+  "feePaise": zod.number().int().min(listSchemeRevisionsResponseOneConfigurationFeePaiseMin).max(listSchemeRevisionsResponseOneConfigurationFeePaiseMax),
+  "taxBps": zod.number().int().min(listSchemeRevisionsResponseOneConfigurationTaxBpsMin).max(listSchemeRevisionsResponseOneConfigurationTaxBpsMax),
+  "allocationType": zod.enum(['fixed-quantity', 'harvest-share', 'exclusive-harvest', 'sale-proceeds']),
+  "quantity": zod.number().gt(listSchemeRevisionsResponseOneConfigurationQuantityExclusiveMin).max(listSchemeRevisionsResponseOneConfigurationQuantityMax).nullable(),
+  "unit": zod.enum(['kg', 'count']),
+  "sharePercent": zod.number().gt(listSchemeRevisionsResponseOneConfigurationSharePercentExclusiveMin).max(listSchemeRevisionsResponseOneConfigurationSharePercentMax),
+  "maxAdopters": zod.number().int().min(1).max(listSchemeRevisionsResponseOneConfigurationMaxAdoptersMax),
+  "enrollmentStart": zod.coerce.date().nullable(),
+  "enrollmentEnd": zod.coerce.date().nullable(),
+  "season": zod.string().max(listSchemeRevisionsResponseOneConfigurationSeasonMax),
+  "roundingRule": zod.enum(['down', 'nearest', 'up']),
+  "qualityGrades": zod.string().max(listSchemeRevisionsResponseOneConfigurationQualityGradesMax),
+  "lossRules": zod.string().max(listSchemeRevisionsResponseOneConfigurationLossRulesMax),
+  "fulfilmentMethods": zod.array(zod.enum(['pickup', 'delivery', 'sale-settlement'])).min(1),
+  "deliveryFeePaise": zod.number().int().min(listSchemeRevisionsResponseOneConfigurationDeliveryFeePaiseMin).max(listSchemeRevisionsResponseOneConfigurationDeliveryFeePaiseMax),
+  "deliveryRegions": zod.string().max(listSchemeRevisionsResponseOneConfigurationDeliveryRegionsMax),
+  "fulfilmentPolicy": zod.string().max(listSchemeRevisionsResponseOneConfigurationFulfilmentPolicyMax),
+  "inclusions": zod.string().max(listSchemeRevisionsResponseOneConfigurationInclusionsMax),
+  "exclusions": zod.string().max(listSchemeRevisionsResponseOneConfigurationExclusionsMax),
+  "risks": zod.string().max(listSchemeRevisionsResponseOneConfigurationRisksMax),
+  "shortfallPolicy": zod.string().max(listSchemeRevisionsResponseOneConfigurationShortfallPolicyMax),
+  "cancellationPolicy": zod.string().max(listSchemeRevisionsResponseOneConfigurationCancellationPolicyMax),
+  "renewalPolicy": zod.string().max(listSchemeRevisionsResponseOneConfigurationRenewalPolicyMax),
+  "agreementVersion": zod.string().max(listSchemeRevisionsResponseOneConfigurationAgreementVersionMax),
+  "terms": zod.string().max(listSchemeRevisionsResponseOneConfigurationTermsMax),
+  "legalReviewReference": zod.string().max(listSchemeRevisionsResponseOneConfigurationLegalReviewReferenceMax)
+})
+}).and(zod.object({
+  "version": zod.number().int().min(1),
+  "status": zod.enum(['draft', 'archived']),
+  "recordedAt": zod.string(),
+  "reason": zod.string()
+}))
+export const ListSchemeRevisionsResponse = zod.array(ListSchemeRevisionsResponseItem)
+
+
 export const listManagedFarmsResponseItemsItemOneNameMin = 2;
 export const listManagedFarmsResponseItemsItemOneNameMax = 180;
 

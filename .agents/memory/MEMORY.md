@@ -1,3 +1,3 @@
-- [Product boundaries](product-boundaries.md) — Pick My Tree branding, full specification scope, concise mobile-OTP login and editable sample inventory.
+- [Product boundaries](product-boundaries.md) — Pick My Tree branding, full scope, yield-linked investment plans, concise mobile-OTP login and editable sample inventory.
 - [App Storage compatibility](app-storage-compatibility.md) — validate SDK upgrades against Replit sidecar uploads, not just TypeScript or bucket provisioning.
 - [Auth0 verification](auth0-verification.md) — authorization checks must preserve cookies and inspect sanitized callback errors, not just the final sign-in page.

@@ -205,6 +205,197 @@ export interface Tree {
   adoptionEligible?: boolean;
 }
 
+export type SchemeConfigurationSpecies = typeof SchemeConfigurationSpecies[keyof typeof SchemeConfigurationSpecies];
+
+
+export const SchemeConfigurationSpecies = {
+  Mango: 'Mango',
+  Guava: 'Guava',
+  Coconut: 'Coconut',
+} as const;
+
+export type SchemeConfigurationAllocationType = typeof SchemeConfigurationAllocationType[keyof typeof SchemeConfigurationAllocationType];
+
+
+export const SchemeConfigurationAllocationType = {
+  'fixed-quantity': 'fixed-quantity',
+  'harvest-share': 'harvest-share',
+  'exclusive-harvest': 'exclusive-harvest',
+  'sale-proceeds': 'sale-proceeds',
+} as const;
+
+export type SchemeConfigurationUnit = typeof SchemeConfigurationUnit[keyof typeof SchemeConfigurationUnit];
+
+
+export const SchemeConfigurationUnit = {
+  kg: 'kg',
+  count: 'count',
+} as const;
+
+export type SchemeConfigurationRoundingRule = typeof SchemeConfigurationRoundingRule[keyof typeof SchemeConfigurationRoundingRule];
+
+
+export const SchemeConfigurationRoundingRule = {
+  down: 'down',
+  nearest: 'nearest',
+  up: 'up',
+} as const;
+
+export type SchemeConfigurationFulfilmentMethodsItem = typeof SchemeConfigurationFulfilmentMethodsItem[keyof typeof SchemeConfigurationFulfilmentMethodsItem];
+
+
+export const SchemeConfigurationFulfilmentMethodsItem = {
+  pickup: 'pickup',
+  delivery: 'delivery',
+  'sale-settlement': 'sale-settlement',
+} as const;
+
+export interface SchemeConfiguration {
+  /** @maxLength 4000 */
+  description: string;
+  species: SchemeConfigurationSpecies;
+  /** @maxLength 120 */
+  variety: string;
+  /** @nullable */
+  farmId: string | null;
+  /** @maxItems 500 */
+  treeIds: string[];
+  /**
+     * @minimum 1
+     * @maximum 120
+     */
+  durationMonths: number;
+  /**
+     * @minimum 0
+     * @maximum 1000000000
+     */
+  feePaise: number;
+  /**
+     * @minimum 0
+     * @maximum 10000
+     */
+  taxBps: number;
+  allocationType: SchemeConfigurationAllocationType;
+  /**
+     * @maximum 1000000
+     * @exclusiveMinimum 0
+     * @nullable
+     */
+  quantity: number | null;
+  unit: SchemeConfigurationUnit;
+  /**
+     * @maximum 100
+     * @exclusiveMinimum 0
+     */
+  sharePercent: number;
+  /**
+     * @minimum 1
+     * @maximum 100000
+     */
+  maxAdopters: number;
+  /** @nullable */
+  enrollmentStart: string | null;
+  /** @nullable */
+  enrollmentEnd: string | null;
+  /** @maxLength 120 */
+  season: string;
+  roundingRule: SchemeConfigurationRoundingRule;
+  /** @maxLength 2000 */
+  qualityGrades: string;
+  /** @maxLength 4000 */
+  lossRules: string;
+  /** @minItems 1 */
+  fulfilmentMethods: SchemeConfigurationFulfilmentMethodsItem[];
+  /**
+     * @minimum 0
+     * @maximum 1000000000
+     */
+  deliveryFeePaise: number;
+  /** @maxLength 2000 */
+  deliveryRegions: string;
+  /** @maxLength 4000 */
+  fulfilmentPolicy: string;
+  /** @maxLength 4000 */
+  inclusions: string;
+  /** @maxLength 4000 */
+  exclusions: string;
+  /** @maxLength 4000 */
+  risks: string;
+  /** @maxLength 4000 */
+  shortfallPolicy: string;
+  /** @maxLength 4000 */
+  cancellationPolicy: string;
+  /** @maxLength 4000 */
+  renewalPolicy: string;
+  /** @maxLength 120 */
+  agreementVersion: string;
+  /** @maxLength 20000 */
+  terms: string;
+  /** @maxLength 500 */
+  legalReviewReference: string;
+}
+
+export interface SchemeEditorInput {
+  /**
+     * @minLength 2
+     * @maxLength 200
+     */
+  name: string;
+  configuration: SchemeConfiguration;
+}
+
+export type SchemeEditorUpdateStatus = typeof SchemeEditorUpdateStatus[keyof typeof SchemeEditorUpdateStatus];
+
+
+export const SchemeEditorUpdateStatus = {
+  draft: 'draft',
+  archived: 'archived',
+} as const;
+
+export type SchemeEditorUpdate = SchemeEditorInput & {
+  /** @minimum 1 */
+  version: number;
+  /**
+     * @minLength 3
+     * @maxLength 2000
+     */
+  reason: string;
+  status: SchemeEditorUpdateStatus;
+};
+
+export type ManagedSchemeStatus = typeof ManagedSchemeStatus[keyof typeof ManagedSchemeStatus];
+
+
+export const ManagedSchemeStatus = {
+  draft: 'draft',
+  archived: 'archived',
+} as const;
+
+export type ManagedScheme = SchemeEditorInput & {
+  id: string;
+  /** @minimum 1 */
+  version: number;
+  status: ManagedSchemeStatus;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type SchemeRevisionStatus = typeof SchemeRevisionStatus[keyof typeof SchemeRevisionStatus];
+
+
+export const SchemeRevisionStatus = {
+  draft: 'draft',
+  archived: 'archived',
+} as const;
+
+export type SchemeRevision = SchemeEditorInput & {
+  /** @minimum 1 */
+  version: number;
+  status: SchemeRevisionStatus;
+  recordedAt: string;
+  reason: string;
+};
+
 export interface Scheme {
   id: string;
   name: string;

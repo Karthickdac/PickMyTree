@@ -6,6 +6,71 @@ info:
 servers:
   - url: /api
 paths:
+  /v1/management/schemes:
+    get:
+      operationId: listManagedSchemes
+      responses:
+        "200":
+          description: Administrator-only scheme drafts and archived schemes
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/ManagedScheme" } }
+        "401": { $ref: "#/components/responses/Failure" }
+        "403": { $ref: "#/components/responses/Failure" }
+    post:
+      operationId: createManagedScheme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SchemeEditorInput" }
+      responses:
+        "201":
+          description: Saved scheme draft, never a published offer
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ManagedScheme" }
+        "400": { $ref: "#/components/responses/Failure" }
+        "403": { $ref: "#/components/responses/Failure" }
+  /v1/management/schemes/{schemeId}:
+    parameters:
+      - { name: schemeId, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      operationId: getManagedScheme
+      responses:
+        "200":
+          description: Saved administrator scheme configuration
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ManagedScheme" }
+        "404": { $ref: "#/components/responses/Failure" }
+    patch:
+      operationId: updateManagedScheme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SchemeEditorUpdate" }
+      responses:
+        "200":
+          description: New saved revision of the draft or archive status
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ManagedScheme" }
+        "400": { $ref: "#/components/responses/Failure" }
+        "409": { $ref: "#/components/responses/Failure" }
+  /v1/management/schemes/{schemeId}/revisions:
+    parameters:
+      - { name: schemeId, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      operationId: listSchemeRevisions
+      responses:
+        "200":
+          description: Append-only snapshots recorded for each saved revision
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/SchemeRevision" } }
+        "404": { $ref: "#/components/responses/Failure" }
   /v1/management/farms:
     get:
       operationId: listManagedFarms
@@ -499,6 +564,79 @@ components:
         images: { type: array, items: { $ref: "#/components/schemas/CatalogueImage" } }
         farmId: { type: string }
         adoptionEligible: { type: boolean }
+    SchemeConfiguration:
+      type: object
+      additionalProperties: false
+      required: [description, species, variety, farmId, treeIds, durationMonths, feePaise, taxBps, allocationType, quantity, unit, sharePercent, maxAdopters, enrollmentStart, enrollmentEnd, season, roundingRule, qualityGrades, lossRules, fulfilmentMethods, deliveryFeePaise, deliveryRegions, fulfilmentPolicy, inclusions, exclusions, risks, shortfallPolicy, cancellationPolicy, renewalPolicy, agreementVersion, terms, legalReviewReference]
+      properties:
+        description: { type: string, maxLength: 4000 }
+        species: { type: string, enum: [Mango, Guava, Coconut] }
+        variety: { type: string, maxLength: 120 }
+        farmId: { type: ["string", "null"], format: uuid }
+        treeIds: { type: array, maxItems: 500, uniqueItems: true, items: { type: string, format: uuid } }
+        durationMonths: { type: integer, minimum: 1, maximum: 120 }
+        feePaise: { type: integer, minimum: 0, maximum: 1000000000 }
+        taxBps: { type: integer, minimum: 0, maximum: 10000 }
+        allocationType: { type: string, enum: [fixed-quantity, harvest-share, exclusive-harvest, sale-proceeds] }
+        quantity: { type: ["number", "null"], exclusiveMinimum: 0, maximum: 1000000 }
+        unit: { type: string, enum: [kg, count] }
+        sharePercent: { type: number, exclusiveMinimum: 0, maximum: 100 }
+        maxAdopters: { type: integer, minimum: 1, maximum: 100000 }
+        enrollmentStart: { type: ["string", "null"], format: date }
+        enrollmentEnd: { type: ["string", "null"], format: date }
+        season: { type: string, maxLength: 120 }
+        roundingRule: { type: string, enum: [down, nearest, up] }
+        qualityGrades: { type: string, maxLength: 2000 }
+        lossRules: { type: string, maxLength: 4000 }
+        fulfilmentMethods: { type: array, minItems: 1, uniqueItems: true, items: { type: string, enum: [pickup, delivery, sale-settlement] } }
+        deliveryFeePaise: { type: integer, minimum: 0, maximum: 1000000000 }
+        deliveryRegions: { type: string, maxLength: 2000 }
+        fulfilmentPolicy: { type: string, maxLength: 4000 }
+        inclusions: { type: string, maxLength: 4000 }
+        exclusions: { type: string, maxLength: 4000 }
+        risks: { type: string, maxLength: 4000 }
+        shortfallPolicy: { type: string, maxLength: 4000 }
+        cancellationPolicy: { type: string, maxLength: 4000 }
+        renewalPolicy: { type: string, maxLength: 4000 }
+        agreementVersion: { type: string, maxLength: 120 }
+        terms: { type: string, maxLength: 20000 }
+        legalReviewReference: { type: string, maxLength: 500 }
+    SchemeEditorInput:
+      type: object
+      required: [name, configuration]
+      properties:
+        name: { type: string, minLength: 2, maxLength: 200 }
+        configuration: { $ref: "#/components/schemas/SchemeConfiguration" }
+    SchemeEditorUpdate:
+      allOf:
+        - { $ref: "#/components/schemas/SchemeEditorInput" }
+        - type: object
+          required: [version, reason, status]
+          properties:
+            version: { type: integer, minimum: 1 }
+            reason: { type: string, minLength: 3, maxLength: 2000 }
+            status: { type: string, enum: [draft, archived] }
+    ManagedScheme:
+      allOf:
+        - { $ref: "#/components/schemas/SchemeEditorInput" }
+        - type: object
+          required: [id, version, status, createdAt, updatedAt]
+          properties:
+            id: { type: string, format: uuid }
+            version: { type: integer, minimum: 1 }
+            status: { type: string, enum: [draft, archived] }
+            createdAt: { type: string }
+            updatedAt: { type: string }
+    SchemeRevision:
+      allOf:
+        - { $ref: "#/components/schemas/SchemeEditorInput" }
+        - type: object
+          required: [version, status, recordedAt, reason]
+          properties:
+            version: { type: integer, minimum: 1 }
+            status: { type: string, enum: [draft, archived] }
+            recordedAt: { type: string }
+            reason: { type: string }
     Scheme:
       type: object
       required: [id, name, version, feePaise, durationMonths, entitlement, disclosures]

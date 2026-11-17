@@ -9,6 +9,12 @@ Build everything in the supplied PICK A TREE specification, not only the MVP. Un
 
 **How to apply:** Track the full coverage plan and report partial delivery honestly.
 
+The platform also has investment plans whose return on investment is based on yield.
+
+**Why:** The user clarified: "It's also having investment plans, but return on investment is based on the yield." This expands the original specification's adoption-only scope.
+
+**How to apply:** Keep investment plans distinct from adoption-only plans. Define the actual payout and capital-repayment rules before implementing financial calculations; do not infer fixed or guaranteed returns from this requirement. Live investment offers and collections require appropriate legal/compliance review.
+
 The brand is **Pick My Tree**, renamed from PICK A TREE.
 
 **Why:** The user explicitly renamed the brand.

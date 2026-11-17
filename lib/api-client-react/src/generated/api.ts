@@ -41,6 +41,7 @@ import type {
   ListRecordsParams,
   ManagedFarm,
   ManagedFarmList,
+  ManagedScheme,
   ManagedTree,
   Module,
   PhoneAuthConfig,
@@ -51,6 +52,9 @@ import type {
   RecordPage,
   RecordUpdate,
   RequestFarmImageUpload201,
+  SchemeEditorInput,
+  SchemeEditorUpdate,
+  SchemeRevision,
   Tree,
   TreeDetail,
   TreeEditorInput,
@@ -84,6 +88,456 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getListManagedSchemesUrl = () => {
+
+
+
+
+  return `/api/v1/management/schemes`
+}
+
+export const listManagedSchemes = async ( options?: Parameters<typeof customFetch>[1]): Promise<ManagedScheme[]> => {
+
+  return customFetch<ManagedScheme[]>(getListManagedSchemesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListManagedSchemesQueryKey = () => {
+    return [
+    `/api/v1/management/schemes`
+    ] as const;
+    }
+
+
+export const getListManagedSchemesQueryOptions = <TData = Awaited<ReturnType<typeof listManagedSchemes>>, TError = ErrorType<FailureResponse>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedSchemes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListManagedSchemesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listManagedSchemes>>> = ({ signal }) => listManagedSchemes({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listManagedSchemes>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListManagedSchemesQueryResult = NonNullable<Awaited<ReturnType<typeof listManagedSchemes>>>
+export type ListManagedSchemesQueryError = ErrorType<FailureResponse>
+
+
+export function useListManagedSchemes<TData = Awaited<ReturnType<typeof listManagedSchemes>>, TError = ErrorType<FailureResponse>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedSchemes>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listManagedSchemes>>,
+          TError,
+          Awaited<ReturnType<typeof listManagedSchemes>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListManagedSchemes<TData = Awaited<ReturnType<typeof listManagedSchemes>>, TError = ErrorType<FailureResponse>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedSchemes>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listManagedSchemes>>,
+          TError,
+          Awaited<ReturnType<typeof listManagedSchemes>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListManagedSchemes<TData = Awaited<ReturnType<typeof listManagedSchemes>>, TError = ErrorType<FailureResponse>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedSchemes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useListManagedSchemes<TData = Awaited<ReturnType<typeof listManagedSchemes>>, TError = ErrorType<FailureResponse>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listManagedSchemes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListManagedSchemesQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateManagedSchemeUrl = () => {
+
+
+
+
+  return `/api/v1/management/schemes`
+}
+
+export const createManagedScheme = async (schemeEditorInput: SchemeEditorInput, options?: Parameters<typeof customFetch>[1]): Promise<ManagedScheme> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<ManagedScheme>(getCreateManagedSchemeUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(schemeEditorInput)
+  }
+);}
+
+
+
+
+
+export const getCreateManagedSchemeMutationKey = () => ['createManagedScheme'] as const;
+
+export const getCreateManagedSchemeMutationOptions = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createManagedScheme>>, TError,CreateManagedSchemeMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createManagedScheme>>, TError,CreateManagedSchemeMutationVariables, TContext> => {
+
+const mutationKey = getCreateManagedSchemeMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createManagedScheme>>, CreateManagedSchemeMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  createManagedScheme(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateManagedSchemeMutationResult = NonNullable<Awaited<ReturnType<typeof createManagedScheme>>>
+    export type CreateManagedSchemeMutationBody = BodyType<SchemeEditorInput>
+    export type CreateManagedSchemeMutationError = ErrorType<FailureResponse>
+    export type CreateManagedSchemeMutationVariables = {data: BodyType<SchemeEditorInput>}
+
+    export const useCreateManagedScheme = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createManagedScheme>>, TError,CreateManagedSchemeMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createManagedScheme>>,
+        TError,
+        CreateManagedSchemeMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateManagedSchemeMutationOptions(options), queryClient);
+    }
+
+export const getGetManagedSchemeUrl = (schemeId: string,) => {
+
+
+
+
+  return `/api/v1/management/schemes/${schemeId}`
+}
+
+export const getManagedScheme = async (schemeId: string, options?: Parameters<typeof customFetch>[1]): Promise<ManagedScheme> => {
+
+  return customFetch<ManagedScheme>(getGetManagedSchemeUrl(schemeId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetManagedSchemeQueryKey = (schemeId: string,) => {
+    return [
+    `/api/v1/management/schemes/${schemeId}`
+    ] as const;
+    }
+
+
+export const getGetManagedSchemeQueryOptions = <TData = Awaited<ReturnType<typeof getManagedScheme>>, TError = ErrorType<FailureResponse>>(schemeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getManagedScheme>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetManagedSchemeQueryKey(schemeId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getManagedScheme>>> = ({ signal }) => getManagedScheme(schemeId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: schemeId !== null && schemeId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getManagedScheme>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetManagedSchemeQueryResult = NonNullable<Awaited<ReturnType<typeof getManagedScheme>>>
+export type GetManagedSchemeQueryError = ErrorType<FailureResponse>
+
+
+export function useGetManagedScheme<TData = Awaited<ReturnType<typeof getManagedScheme>>, TError = ErrorType<FailureResponse>>(
+ schemeId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getManagedScheme>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getManagedScheme>>,
+          TError,
+          Awaited<ReturnType<typeof getManagedScheme>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetManagedScheme<TData = Awaited<ReturnType<typeof getManagedScheme>>, TError = ErrorType<FailureResponse>>(
+ schemeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getManagedScheme>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getManagedScheme>>,
+          TError,
+          Awaited<ReturnType<typeof getManagedScheme>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetManagedScheme<TData = Awaited<ReturnType<typeof getManagedScheme>>, TError = ErrorType<FailureResponse>>(
+ schemeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getManagedScheme>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetManagedScheme<TData = Awaited<ReturnType<typeof getManagedScheme>>, TError = ErrorType<FailureResponse>>(
+ schemeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getManagedScheme>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetManagedSchemeQueryOptions(schemeId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdateManagedSchemeUrl = (schemeId: string,) => {
+
+
+
+
+  return `/api/v1/management/schemes/${schemeId}`
+}
+
+export const updateManagedScheme = async (schemeId: string,
+    schemeEditorUpdate: SchemeEditorUpdate, options?: Parameters<typeof customFetch>[1]): Promise<ManagedScheme> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<ManagedScheme>(getUpdateManagedSchemeUrl(schemeId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(schemeEditorUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateManagedSchemeMutationKey = () => ['updateManagedScheme'] as const;
+
+export const getUpdateManagedSchemeMutationOptions = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateManagedScheme>>, TError,UpdateManagedSchemeMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateManagedScheme>>, TError,UpdateManagedSchemeMutationVariables, TContext> => {
+
+const mutationKey = getUpdateManagedSchemeMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateManagedScheme>>, UpdateManagedSchemeMutationVariables> = (props) => {
+          const {schemeId,data} = props ?? {};
+
+          return  updateManagedScheme(schemeId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateManagedSchemeMutationResult = NonNullable<Awaited<ReturnType<typeof updateManagedScheme>>>
+    export type UpdateManagedSchemeMutationBody = BodyType<SchemeEditorUpdate>
+    export type UpdateManagedSchemeMutationError = ErrorType<FailureResponse>
+    export type UpdateManagedSchemeMutationVariables = {schemeId: string;data: BodyType<SchemeEditorUpdate>}
+
+    export const useUpdateManagedScheme = <TError = ErrorType<FailureResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateManagedScheme>>, TError,UpdateManagedSchemeMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateManagedScheme>>,
+        TError,
+        UpdateManagedSchemeMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateManagedSchemeMutationOptions(options), queryClient);
+    }
+
+export const getListSchemeRevisionsUrl = (schemeId: string,) => {
+
+
+
+
+  return `/api/v1/management/schemes/${schemeId}/revisions`
+}
+
+export const listSchemeRevisions = async (schemeId: string, options?: Parameters<typeof customFetch>[1]): Promise<SchemeRevision[]> => {
+
+  return customFetch<SchemeRevision[]>(getListSchemeRevisionsUrl(schemeId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListSchemeRevisionsQueryKey = (schemeId: string,) => {
+    return [
+    `/api/v1/management/schemes/${schemeId}/revisions`
+    ] as const;
+    }
+
+
+export const getListSchemeRevisionsQueryOptions = <TData = Awaited<ReturnType<typeof listSchemeRevisions>>, TError = ErrorType<FailureResponse>>(schemeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSchemeRevisions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListSchemeRevisionsQueryKey(schemeId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listSchemeRevisions>>> = ({ signal }) => listSchemeRevisions(schemeId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: schemeId !== null && schemeId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listSchemeRevisions>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListSchemeRevisionsQueryResult = NonNullable<Awaited<ReturnType<typeof listSchemeRevisions>>>
+export type ListSchemeRevisionsQueryError = ErrorType<FailureResponse>
+
+
+export function useListSchemeRevisions<TData = Awaited<ReturnType<typeof listSchemeRevisions>>, TError = ErrorType<FailureResponse>>(
+ schemeId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSchemeRevisions>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listSchemeRevisions>>,
+          TError,
+          Awaited<ReturnType<typeof listSchemeRevisions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListSchemeRevisions<TData = Awaited<ReturnType<typeof listSchemeRevisions>>, TError = ErrorType<FailureResponse>>(
+ schemeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSchemeRevisions>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listSchemeRevisions>>,
+          TError,
+          Awaited<ReturnType<typeof listSchemeRevisions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListSchemeRevisions<TData = Awaited<ReturnType<typeof listSchemeRevisions>>, TError = ErrorType<FailureResponse>>(
+ schemeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSchemeRevisions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useListSchemeRevisions<TData = Awaited<ReturnType<typeof listSchemeRevisions>>, TError = ErrorType<FailureResponse>>(
+ schemeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSchemeRevisions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListSchemeRevisionsQueryOptions(schemeId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getListManagedFarmsUrl = () => {
 
