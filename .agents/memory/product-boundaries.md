@@ -33,6 +33,12 @@ Sign-in should be very simple: mobile number and OTP.
 
 **How to apply:** Use a managed identity provider that actually supports phone OTP and real SMS delivery; do not substitute email/password or a demo OTP. Replit-managed Clerk does not support SMS sign-in, as confirmed in official documentation during setup.
 
+Use Twilio as the SMS delivery provider behind Auth0.
+
+**Why:** The user selected “Set up Twilio (recommended)” when choosing how to enable mobile OTP delivery.
+
+**How to apply:** Prefer Auth0's native Twilio phone-provider configuration while keeping the existing mobile-OTP identity flow. A provider selection is not proof that an account, sender or working delivery has been configured.
+
 The Auth0 connection form observed here accepts only an unqualified, hyphenated tenant name. A regional `.us.auth0.com` tenant resolved successfully through its discovery endpoint, but adding `.us` to the form's subdomain field failed validation; omitting it reached an unrecognized tenant.
 
 **Why:** Repeated connection attempts cannot fix a regional-domain mismatch in the form.
