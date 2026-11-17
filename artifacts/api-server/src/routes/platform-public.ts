@@ -9,6 +9,7 @@ import { PlatformError } from "../lib/platform/access";
 import { isPublicFarm, isPublicTree, farmDTO, photos } from "../lib/platform/catalogue";
 import { currentApproval, treeOffers, offerFromApproval, capacityUsed } from "../lib/platform/adoption-eligibility";
 import { paymentAvailability } from "../lib/platform/razorpay";
+import { publishedSchemesForTree } from "../lib/platform/public-schemes";
 const router: IRouter = Router();
 
 router.get("/v1/readiness", async (_req, res): Promise<void> => {
@@ -57,9 +58,7 @@ router.get("/v1/public/trees/:id", async (req, res): Promise<void> => {
   const tree = (await treeInventory()).find(t => t.id === req.params.id || t.treeCode === req.params.id);
   if (!tree) throw new PlatformError(404, "This tree is not in the public directory.");
   const [record] = await db.select().from(workflowRecords).where(eq(workflowRecords.id, tree.id));
-  const offers = (await treeOffers(record!)).map(offerFromApproval);
-  res.json(GetPublicTreeResponse.parse({ tree, schemes: offers.map(o => ({ id: o.id, name: o.name, version: o.version,
-    feePaise: o.feePaise, durationMonths: o.durationMonths, entitlement: o.benefit, disclosures: [o.risks, o.shortfallPolicy, o.cancellationPolicy].join("\n\n") })) }));
+  res.json(GetPublicTreeResponse.parse({ tree, schemes: await publishedSchemesForTree(record!) }));
 });
 router.get("/v1/public/articles", async (_req, res): Promise<void> => {
   const articles = await db.select().from(workflowRecords).where(and(eq(workflowRecords.module, "articles"), eq(workflowRecords.status, "published")));

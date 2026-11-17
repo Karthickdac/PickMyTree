@@ -13,6 +13,7 @@ import { ErrorState, EmptyState, StatusPill } from '@/components/site/bits';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SchemeFields, newConfiguration } from '@/components/manage/scheme-fields';
+import { invalidateCatalogue } from '@/lib/manage';
 import { errorMessage, formatDate, formatPaise, humanize, useSeo } from '@/lib/brand';
 
 const nav: NavItem[] = [
@@ -51,7 +52,7 @@ function SchemeList() {
   return <>
     <AppHeading eyebrow="Your harvest offers" title="Customize schemes"><Link href="/manage/schemes/new" className={primary} data-testid="button-create-scheme"><Plus className="h-4 w-4" />New scheme</Link></AppHeading>
     <p className="-mt-4 mb-7 max-w-2xl text-sm leading-relaxed text-muted-foreground">Set your harvest benefits, pricing and fulfilment terms. Save drafts, review the purchase experience and keep a record of every revision.</p>
-    <div className="mb-6 flex flex-col gap-3 sm:flex-row"><Input aria-label="Search schemes" placeholder="Search name or species" value={search} onChange={e => setSearch(e.target.value)} /><select aria-label="Scheme status" className="h-10 rounded-md border border-input bg-card px-3 text-sm" value={filter} onChange={e => setFilter(e.target.value)}><option value="all">All schemes</option><option value="draft">Draft schemes</option><option value="approved">Approved schemes</option><option value="archived">Archived schemes</option></select></div>
+    <div className="mb-6 flex flex-col gap-3 sm:flex-row"><Input aria-label="Search schemes" placeholder="Search name or species" value={search} onChange={e => setSearch(e.target.value)} /><select aria-label="Scheme status" className="h-10 rounded-md border border-input bg-card px-3 text-sm" value={filter} onChange={e => setFilter(e.target.value)}><option value="all">All schemes</option><option value="draft">Draft schemes</option><option value="published">Published schemes</option><option value="approved">Approved schemes</option><option value="archived">Archived schemes</option></select></div>
     {create.isError && <p role="alert" className="mb-4 text-sm text-destructive">{errorMessage(create.error)}</p>}
     {query.isError ? <ErrorState message={errorMessage(query.error)} onRetry={() => query.refetch()} /> : query.isLoading ? <Skeleton className="h-64 rounded-2xl" /> : !items.length ? <EmptyState icon={<Leaf className="h-6 w-6" />} title="No schemes found" body="Create a scheme or change your search and status filter." /> : <div className="grid gap-4 xl:grid-cols-2">{items.map(s => <article key={s.id} className="rounded-2xl border border-border bg-card p-6 transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between gap-3"><div><StatusPill status={s.status} /><h2 className="mt-3 font-display text-2xl text-emerald">{s.name}</h2></div><p className="whitespace-nowrap text-lg font-semibold text-harvest">{formatPaise(s.configuration.feePaise)}</p></div>
@@ -60,7 +61,7 @@ function SchemeList() {
       <p className="mt-4 font-mono text-xs text-muted-foreground">Version {s.version} · Updated {formatDate(s.updatedAt)}</p>
       <div className="mt-5 flex flex-wrap gap-2"><Link href={`/manage/schemes/${s.id}`} className={primary} data-testid={`edit-scheme-${s.id}`}>{s.status === 'approved' ? 'View scheme' : 'Edit scheme'} <ArrowRight className="h-4 w-4" /></Link><Link href={`/manage/schemes/${s.id}/checkout-preview`} className={secondary}><Eye className="h-4 w-4" />Preview</Link><button type="button" onClick={() => duplicate(s)} disabled={create.isPending} className={secondary} aria-label={`Copy ${s.name}`}><Copy className="h-4 w-4" />Copy</button></div>
     </article>)}</div>}
-    <p className="mt-7 text-xs text-muted-foreground">Draft schemes are not published offers. Approval happens in <Link href="/manage/adoption-readiness" className="font-semibold underline">adoption readiness</Link>, together with tree verification and an accepting payment gateway.</p>
+    <p className="mt-7 text-xs text-muted-foreground">Publish a scheme to show its price and harvest benefits on assigned tree pages. Payment eligibility is checked separately in <Link href="/manage/adoption-readiness" className="font-semibold underline">adoption readiness</Link>.</p>
   </>;
 }
 
@@ -95,14 +96,14 @@ function SchemeEditor({ initial }: { initial?: ManagedScheme }) {
     window.addEventListener('beforeunload', unload); document.addEventListener('click', leave, true);
     return () => { window.removeEventListener('beforeunload', unload); document.removeEventListener('click', leave, true); };
   }, [dirty]);
-  async function save(status: 'draft' | 'archived' = 'draft') {
+  async function save(status: 'draft' | 'published' | 'archived' = saved?.status === 'published' ? 'published' : 'draft') {
     setMessage('');
     try {
-      const result = saved ? await update.mutateAsync({ schemeId: saved.id, data: { ...draft, version: saved.version, status, reason: status !== saved.status ? `${status === 'archived' ? 'Archived' : 'Restored'} scheme configuration` : reason } })
+      const result = saved ? await update.mutateAsync({ schemeId: saved.id, data: { ...draft, version: saved.version, status, reason: status !== saved.status ? status === 'published' ? 'Published scheme listing' : saved.status === 'published' && status === 'draft' ? 'Unpublished scheme listing' : `${status === 'archived' ? 'Archived' : 'Restored'} scheme configuration` : reason } })
         : await create.mutateAsync({ data: draft });
       setSaved(result); setDraft({ name: result.name, configuration: result.configuration }); setMessage(`Saved version ${result.version}.`);
       cache.setQueryData(getGetManagedSchemeQueryKey(result.id), result);
-      await Promise.all([cache.invalidateQueries({ queryKey: getListManagedSchemesQueryKey() }), cache.invalidateQueries({ queryKey: getListSchemeRevisionsQueryKey(result.id) }), cache.invalidateQueries({ queryKey: ['/api/v1/workspace/summary'] })]);
+      await Promise.all([cache.invalidateQueries({ queryKey: getListManagedSchemesQueryKey() }), cache.invalidateQueries({ queryKey: getListSchemeRevisionsQueryKey(result.id) }), cache.invalidateQueries({ queryKey: ['/api/v1/workspace/summary'] }), cache.invalidateQueries({ queryKey: ['/api/v1/management/adoption-readiness'] }), invalidateCatalogue(cache)]);
       if (!saved) navigate(`/manage/schemes/${result.id}`);
     } catch { /* Errors remain beside the save action. */ }
   }
@@ -127,6 +128,7 @@ function SchemeEditor({ initial }: { initial?: ManagedScheme }) {
     <Link href="/manage/schemes" className="mb-5 inline-flex items-center gap-2 text-sm text-muted-foreground"><ArrowLeft className="h-4 w-4" />All schemes</Link>
     <AppHeading eyebrow={saved ? `Version ${saved.version} · ${saved.status}` : 'New scheme'} title={saved?.name ?? 'Create your scheme'}>{saved && <Link href={`/manage/schemes/${saved.id}/checkout-preview`} className={secondary}><Eye className="h-4 w-4" />Preview saved scheme</Link>}</AppHeading>
     {archived && <p className="mb-5 rounded-xl bg-secondary p-4 text-sm">This scheme is archived. Restore it to make changes.</p>}
+    {saved && !locked && <p className="mb-5 rounded-xl border border-border bg-card p-4 text-sm">{saved.status === 'published' ? 'This scheme’s price and benefits are visible on its assigned tree pages. Saved changes update the published listing.' : 'Publish this saved scheme to show its price and benefits on its assigned tree pages.'} Publishing does not approve a tree inspection or enable payment.</p>}
     {approved && saved && <div className="mb-5 flex flex-col gap-3 rounded-xl border border-leaf/40 bg-secondary p-4 text-sm sm:flex-row sm:items-center sm:justify-between" data-testid="notice-approved"><span>Version {saved.version} is approved and read only. Customers accept exactly these terms. Copy it to a new draft to change anything, or archive it.</span><span className="flex shrink-0 gap-2"><button type="button" className={secondary} disabled={create.isPending} onClick={() => void copyDraft()} data-testid="button-copy-draft"><Copy className="h-4 w-4" />Copy to new draft</button><Link href="/manage/adoption-readiness" className={secondary}><ShieldCheck className="h-4 w-4" />Readiness</Link></span></div>}
     {initial && saved && initial.version !== saved.version && <div className="mb-4 rounded-xl border border-harvest p-4 text-sm">A different saved version is available. <button type="button" className="font-semibold underline" onClick={reload}>Load latest</button></div>}
     <form onSubmit={e => { e.preventDefault(); if (!locked) void save(); }} className="space-y-5">
@@ -136,7 +138,8 @@ function SchemeEditor({ initial }: { initial?: ManagedScheme }) {
       {(create.isError || update.isError) && <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">{errorMessage(create.error || update.error)}{saved && <button type="button" className="ml-2 underline" onClick={reload}>Reload saved version</button>}</div>}
       {message && <p role="status" className="text-sm font-medium text-leaf">{message}</p>}
       <div className="sticky bottom-3 z-20 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card/95 p-4 shadow-lg backdrop-blur">
-        {!locked && <button className={primary} disabled={busy} type="submit" data-testid="button-save-scheme"><Save className="h-4 w-4" />{busy ? 'Saving…' : 'Save scheme'}</button>}
+        {!locked && <button className={primary} disabled={busy} type="submit" data-testid="button-save-scheme"><Save className="h-4 w-4" />{busy ? 'Saving…' : saved?.status === 'published' ? 'Save & publish' : 'Save scheme'}</button>}
+        {saved && !locked && <button className={secondary} type="button" disabled={busy || dirty} onClick={() => void save(saved.status === 'published' ? 'draft' : 'published')} data-testid="button-publish-scheme">{saved.status === 'published' ? 'Unpublish scheme' : 'Publish scheme'}</button>}
         {saved && <button className={secondary} type="button" disabled={busy || dirty} onClick={() => void save(archived ? 'draft' : 'archived')}>{archived ? 'Restore scheme' : 'Archive scheme'}</button>}
         <span className="text-xs text-muted-foreground">{dirty ? 'Unsaved changes · save before archiving or previewing changes' : approved ? 'Approved configuration · read only' : 'Saved configuration'}</span>
       </div>

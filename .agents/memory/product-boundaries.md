@@ -68,3 +68,9 @@ The Auth0 connection form observed here accepts only an unqualified, hyphenated 
 **Why:** Repeated connection attempts cannot fix a regional-domain mismatch in the form.
 
 **How to apply:** Do not ask the user to repeat those two failed inputs. Use direct Auth0 application configuration with the verified issuer, or a connector only after regional support is established.
+
+Scheme publication is separate from permission to buy an adoption.
+
+**Why:** The user asked to publish the configured schemes without supplying additional farm photos. Showing the configured prices and benefits must not falsely assert an inspection, completed legal review or payment eligibility.
+
+**How to apply:** Permit published catalogue listings on their explicitly assigned, species/variety-compatible trees. Keep genuine farm/tree verification, immutable approved agreement terms and captured-payment checks separate. Do not label a published listing as an approved adoption contract.

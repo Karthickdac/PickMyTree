@@ -569,6 +569,7 @@ export type SchemeEditorUpdateStatus = typeof SchemeEditorUpdateStatus[keyof typ
 
 export const SchemeEditorUpdateStatus = {
   draft: 'draft',
+  published: 'published',
   archived: 'archived',
 } as const;
 
@@ -588,6 +589,7 @@ export type ManagedSchemeStatus = typeof ManagedSchemeStatus[keyof typeof Manage
 
 export const ManagedSchemeStatus = {
   draft: 'draft',
+  published: 'published',
   approved: 'approved',
   archived: 'archived',
 } as const;
@@ -606,6 +608,7 @@ export type SchemeRevisionStatus = typeof SchemeRevisionStatus[keyof typeof Sche
 
 export const SchemeRevisionStatus = {
   draft: 'draft',
+  published: 'published',
   approved: 'approved',
   archived: 'archived',
 } as const;

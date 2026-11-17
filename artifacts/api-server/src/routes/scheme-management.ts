@@ -8,7 +8,7 @@ import {
   ListSchemeRevisionsResponse,
 } from "@workspace/api-zod";
 import { actor, identify, PlatformError } from "../lib/platform/access";
-import { requireSchemeAdmin, schemeDTO, schemeSnapshot, validateSchemeConfiguration, validateSchemeReferences } from "../lib/platform/schemes";
+import { requireSchemeAdmin, schemeDTO, schemeSnapshot, validateSchemeConfiguration, validateSchemeReferences, validateSchemePublication } from "../lib/platform/schemes";
 
 const router: IRouter = Router();
 router.use("/v1/management/schemes", identify, (req, res, next) => {
@@ -60,6 +60,7 @@ router.patch("/v1/management/schemes/:schemeId", async (req, res): Promise<void>
   if (name.length < 2 || reason.length < 3) throw new PlatformError(400, "Enter a scheme name and a short reason for the change.");
   validateSchemeConfiguration(input.configuration);
   await validateSchemeReferences(input.configuration, input.status === "archived");
+  if (input.status === "published") validateSchemePublication(input.configuration);
   const changed = await db.transaction(async tx => {
     await tx.execute(sql`SELECT pg_advisory_xact_lock(73421891)`);
     const [before] = await tx.select().from(workflowRecords).where(and(eq(workflowRecords.id, schemeId), eq(workflowRecords.module, "schemes"))).for("update");
@@ -67,7 +68,7 @@ router.patch("/v1/management/schemes/:schemeId", async (req, res): Promise<void>
     schemeDTO(before);
     if (before.status === "approved" && input.status !== "archived") throw new PlatformError(409, "Approved terms are immutable. Copy this scheme to create a new draft, or revoke its approval before editing.");
     if (before.version !== input.version) throw new PlatformError(409, "This scheme changed in another session. Reload before saving; your changes have not been written.");
-    if (before.status === "archived" && input.status === "archived") {
+    if (before.status === "archived" && input.status !== "draft") {
       throw new PlatformError(409, "Restore this scheme before editing it.");
     }
     if (before.status === "archived" || input.status === "archived") {

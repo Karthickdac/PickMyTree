@@ -13,7 +13,7 @@ export function requireSchemeAdmin(a: Actor): void {
 
 export function schemeDTO(row: WorkflowRecord) {
   // Legacy or approved records must not be silently converted into editable drafts.
-  if (!["draft", "approved", "archived"].includes(row.status) || !row.data.configuration) {
+  if (!["draft", "published", "approved", "archived"].includes(row.status) || !row.data.configuration) {
     throw new PlatformError(409, "This scheme cannot be edited as a draft. Its existing record must be reviewed separately.");
   }
   return GetManagedSchemeResponse.parse({
@@ -26,6 +26,21 @@ export function schemeDTO(row: WorkflowRecord) {
 export function schemeSnapshot(row: WorkflowRecord): Record<string, unknown> {
   const { name, configuration, version, status } = schemeDTO(row);
   return { name, configuration, version, status };
+}
+
+// Publication approves public catalogue content, not physical inspections,
+// signed contracts or eligibility to collect payment.
+export function validateSchemePublication(c: SchemeConfiguration): void {
+  validateSchemeConfiguration(c);
+  if (!c.description.trim() || c.feePaise < 100 || !c.farmId || !c.treeIds.length) {
+    throw new PlatformError(400, "Publishing requires a description, a price of at least ₹1, a farm and assigned trees.");
+  }
+}
+
+export function schemeBenefit(c: SchemeConfiguration): string {
+  return c.allocationType === "fixed-quantity" ? `${c.quantity} ${c.unit} across ${c.durationMonths} months` :
+    c.allocationType === "exclusive-harvest" ? "Full harvest of the assigned tree" :
+      `${c.sharePercent}% of eligible harvest${c.allocationType === "sale-proceeds" ? " sale proceeds" : ""}`;
 }
 
 export function validateSchemeConfiguration(c: SchemeConfiguration): void {

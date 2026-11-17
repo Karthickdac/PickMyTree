@@ -470,7 +470,7 @@ export const ListManagedSchemesResponseItem = zod.object({
 }).and(zod.object({
   "id": zod.string().uuid(),
   "version": zod.number().int().min(1),
-  "status": zod.enum(['draft', 'approved', 'archived']),
+  "status": zod.enum(['draft', 'published', 'approved', 'archived']),
   "createdAt": zod.string(),
   "updatedAt": zod.string()
 }))
@@ -677,7 +677,7 @@ export const CreateManagedSchemeResponse = zod.object({
 }).and(zod.object({
   "id": zod.string().uuid(),
   "version": zod.number().int().min(1),
-  "status": zod.enum(['draft', 'approved', 'archived']),
+  "status": zod.enum(['draft', 'published', 'approved', 'archived']),
   "createdAt": zod.string(),
   "updatedAt": zod.string()
 }))
@@ -788,7 +788,7 @@ export const GetManagedSchemeResponse = zod.object({
 }).and(zod.object({
   "id": zod.string().uuid(),
   "version": zod.number().int().min(1),
-  "status": zod.enum(['draft', 'approved', 'archived']),
+  "status": zod.enum(['draft', 'published', 'approved', 'archived']),
   "createdAt": zod.string(),
   "updatedAt": zod.string()
 }))
@@ -902,7 +902,7 @@ export const UpdateManagedSchemeBody = zod.object({
 }).and(zod.object({
   "version": zod.number().int().min(1),
   "reason": zod.string().min(updateManagedSchemeBodyTwoReasonMin).max(updateManagedSchemeBodyTwoReasonMax),
-  "status": zod.enum(['draft', 'archived'])
+  "status": zod.enum(['draft', 'published', 'archived'])
 }))
 
 export const updateManagedSchemeResponseOneNameMin = 2;
@@ -1006,7 +1006,7 @@ export const UpdateManagedSchemeResponse = zod.object({
 }).and(zod.object({
   "id": zod.string().uuid(),
   "version": zod.number().int().min(1),
-  "status": zod.enum(['draft', 'approved', 'archived']),
+  "status": zod.enum(['draft', 'published', 'approved', 'archived']),
   "createdAt": zod.string(),
   "updatedAt": zod.string()
 }))
@@ -1116,7 +1116,7 @@ export const ListSchemeRevisionsResponseItem = zod.object({
 })
 }).and(zod.object({
   "version": zod.number().int().min(1),
-  "status": zod.enum(['draft', 'approved', 'archived']),
+  "status": zod.enum(['draft', 'published', 'approved', 'archived']),
   "recordedAt": zod.string(),
   "reason": zod.string()
 }))

@@ -824,7 +824,7 @@ components:
           properties:
             version: { type: integer, minimum: 1 }
             reason: { type: string, minLength: 3, maxLength: 2000 }
-            status: { type: string, enum: [draft, archived] }
+            status: { type: string, enum: [draft, published, archived] }
     ManagedScheme:
       allOf:
         - { $ref: "#/components/schemas/SchemeEditorInput" }
@@ -833,7 +833,7 @@ components:
           properties:
             id: { type: string, format: uuid }
             version: { type: integer, minimum: 1 }
-            status: { type: string, enum: [draft, approved, archived] }
+            status: { type: string, enum: [draft, published, approved, archived] }
             createdAt: { type: string }
             updatedAt: { type: string }
     SchemeRevision:
@@ -843,7 +843,7 @@ components:
           required: [version, status, recordedAt, reason]
           properties:
             version: { type: integer, minimum: 1 }
-            status: { type: string, enum: [draft, approved, archived] }
+            status: { type: string, enum: [draft, published, approved, archived] }
             recordedAt: { type: string }
             reason: { type: string }
     Scheme:

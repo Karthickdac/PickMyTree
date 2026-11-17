@@ -11,6 +11,7 @@ export type ManagedSchemeStatus = typeof ManagedSchemeStatus[keyof typeof Manage
 
 export const ManagedSchemeStatus = {
   draft: 'draft',
+  published: 'published',
   approved: 'approved',
   archived: 'archived',
 } as const;

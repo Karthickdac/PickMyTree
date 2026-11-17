@@ -7,6 +7,8 @@ import schemes from "../src/routes/scheme-management";
 import workspace from "../src/routes/platform-workspace";
 import { PlatformError } from "../src/lib/platform/errors";
 import type { SchemeConfiguration } from "../src/lib/platform/schemes";
+import { publishedSchemesForTree } from "../src/lib/platform/public-schemes";
+import { treeOffers } from "../src/lib/platform/adoption-eligibility";
 
 // Isolated loopback harness only: no test identity or bypass is added to the app.
 const run = randomUUID(), farmId = randomUUID(), treeId = randomUUID();
@@ -96,7 +98,21 @@ try {
   await request(`/v1/workspace/schemes/records/${created.id}`, "PATCH", { version: 4, status: "approved", reason: "Attempted bypass" }, 409);
   console.log("PASS archive/restore, retained versions and blocked approval/generic-editor bypasses");
   assert.equal((await db.select().from(workflowRecords).where(eq(workflowRecords.id, created.id)))[0]!.status, "draft");
-  console.log("Four verification groups passed. No commercial activation or live payments occurred.");
+  const published = await request(`/v1/management/schemes/${created.id}`, "PATCH", { ...body, version: 4, status: "published", reason: "Publish the configured catalogue price" });
+  assert.equal(published.status, "published");
+  const tree = (await db.select().from(workflowRecords).where(eq(workflowRecords.id, treeId)))[0]!;
+  const listings = await publishedSchemesForTree(tree);
+  assert.equal(listings.length, 1); assert.equal(listings[0]!.id, created.id);
+  assert.equal(listings[0]!.feePaise, 1488800);
+  assert.equal((await treeOffers(tree)).length, 0);
+  await request(`/v1/management/schemes/${created.id}`, "PATCH", { ...body, version: published.version, status: "published" }, 403, "customer");
+  const hidden = await request(`/v1/management/schemes/${created.id}`, "PATCH", { ...body, version: published.version, status: "draft", reason: "Unpublish the catalogue listing" });
+  assert.equal((await publishedSchemesForTree(tree)).length, 0);
+  const republished = await request(`/v1/management/schemes/${created.id}`, "PATCH", { ...body, version: hidden.version, status: "published", reason: "Republish the catalogue listing" });
+  await request(`/v1/management/schemes/${created.id}`, "PATCH", { ...body, version: republished.version, status: "archived", reason: "Archive the published catalogue listing" });
+  assert.equal((await publishedSchemesForTree(tree)).length, 0);
+  console.log("PASS publish/unpublish/republish/archive, correct public scheme IDs and prices, and unchanged purchase-verification gates");
+  console.log("Five verification groups passed. No commercial activation or live payments occurred.");
 } finally {
   await db.delete(auditEvents).where(inArray(auditEvents.recordId, ids));
   await db.delete(workflowRecords).where(inArray(workflowRecords.id, ids));

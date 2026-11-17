@@ -89,7 +89,7 @@ export function AdoptPage() {
 
 export function TreeDetailPage() {
   const { id = '' } = useParams<{ id: string }>();
-  const { data, isLoading, isError, error, refetch } = useGetPublicTree(id, { query: { enabled: !!id, queryKey: getGetPublicTreeQueryKey(id) } });
+  const { data, isLoading, isError, error, refetch } = useGetPublicTree(id, { query: { enabled: !!id, queryKey: getGetPublicTreeQueryKey(id), staleTime: 15000, refetchInterval: 30000 } });
   const checkout = useGetAdoptionCheckout(id, { query: { enabled: !!id, retry: false, queryKey: getGetAdoptionCheckoutQueryKey(id) } });
   useSeo(data ? `${data.tree.name} (${data.tree.treeCode})` : 'Tree detail', data ? `${data.tree.species} · ${data.tree.variety} at ${data.tree.farmName}. Inspection, scheme and disclosures.` : 'Verified tree listing on Pick My Tree.');
 
