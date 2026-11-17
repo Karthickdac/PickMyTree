@@ -9,11 +9,11 @@ Build everything in the supplied PICK A TREE specification, not only the MVP. Un
 
 **How to apply:** Track the full coverage plan and report partial delivery honestly.
 
-The platform also has investment plans whose return on investment is based on yield. The owner will configure them manually as normal schemes, with capital repayment defined separately for each plan. Checkout must collect payments for investment plans as well as adoption purchases.
+The commercial model is tree adoption with harvest entitlements, not direct investment. One scheme gives a fixed quantity of yield; another gives the tree's full yield. The full yield can be delivered or sold, with the sale money sent to the customer. The owner will configure these as normal schemes, and checkout must support both.
 
-**Why:** The user clarified that investment plans are included, then said: "The investment plans can be configured as a normal scheme plan. I'll configure that manually. I just want you to remove the (no investment) related content". They also confirmed checkout should collect investment-plan payments. This overrides the original specification's adoption-only restriction.
+**Why:** The user initially used investment/ROI terminology, then clarified: "This is not direct investment, this part of tree adoption, one scheme will give fixed size of yield and another one give full yield of that tree, either deliver the full yield or will sell the yield and send that money to customer". They also said they will configure the schemes manually and asked to remove the blanket "no investment" content. The harvest-entitlement clarification supersedes the earlier standalone-investment interpretation.
 
-**How to apply:** Remove blanket "not an investment" and "no returns" statements from public copy. Use the normal scheme configuration rather than inventing a separate investment-plan type or ROI calculator. Do not require the owner to define an automated payout formula for this copy change. Keep plan-specific risks and legal-review notices; do not infer fixed or guaranteed returns. Confirm payment-provider eligibility for investment collections before enabling live charges.
+**How to apply:** Use normal scheme configuration for fixed-quantity and full-harvest entitlements, with delivery or sale-proceeds settlement as applicable. Do not invent a separate investment-plan type or ROI calculator, and do not restore blanket "not an investment"/"no returns" copy. Distinguish the initial purchase payment from later payments of harvest-sale proceeds. Keep scheme-specific terms, deductions, risks and legal-review notices. Describe the actual model, including the cash-settlement option, when confirming payment-provider eligibility; do not infer its legal classification from the label.
 
 Checkout should be very smooth and easy to pay.
 
