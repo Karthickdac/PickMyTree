@@ -21,6 +21,12 @@ Checkout should be very smooth and easy to pay.
 
 **How to apply:** Minimize required fields and repeated sign-in, show the scheme and full payable amount before payment, support the connected provider's available payment methods, and preserve progress on failed payments. Confirm purchases only after server-side payment verification; keep scheme terms and risks visible.
 
+The user wants Razorpay as the payment gateway, not Shopify.
+
+**Why:** The user said: "No need of Shopify. Just integrate razor pay payment gateway".
+
+**How to apply:** Do not add Shopify or substitute another gateway without the user's approval. Do not treat the physical harvest as permission to disregard this explicit provider choice.
+
 The brand is **Pick My Tree**, renamed from PICK A TREE.
 
 **Why:** The user explicitly renamed the brand.
