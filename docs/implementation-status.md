@@ -26,7 +26,7 @@ Auth0 application display name still needs to match Pick My Tree.
 - Initial scoped operations document editor, field metadata and reasoned optimistic-lock transitions.
 - Abuse limits, secure headers, cross-site mutation checks and protected API routes.
 - No automatic first-admin grant. An explicitly configured `PLATFORM_OWNER_PHONE`
-  can bootstrap owner access only after that exact number completes real SMS verification.
+  can bootstrap Super Admin access only after that exact number completes real SMS verification.
 - Farm/tree catalogue CRUD with optimistic version checks, scoped access and audit history.
 - Archive/restore visibility without deleting records; permanent tree codes and sample markers.
 - One explicitly requested sample farm with six editable trees and five persistent illustrative photos.

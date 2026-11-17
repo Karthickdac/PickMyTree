@@ -2,6 +2,15 @@ import { PlatformError } from "./errors";
 
 export type MobileIdentity = { subject: string; phone: string };
 
+// Only for the private owner allowlist. Auth0 identities must remain verified
+// E.164 numbers; Indian owner configuration may use its local mobile format.
+export function normalizeOwnerPhone(value: string | undefined): string | undefined {
+  const phone = value?.replace(/[\s()-]/g, "");
+  if (!phone) return undefined;
+  if (/^[6-9]\d{9}$/.test(phone)) return `+91${phone}`;
+  return /^\+[1-9]\d{6,14}$/.test(phone) ? phone : undefined;
+}
+
 // These inputs must only come from the Auth0 SDK's validated callback context.
 // An SMS OTP is one factor, not privileged-role MFA.
 export function verifiedMobileIdentity(

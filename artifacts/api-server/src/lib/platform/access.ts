@@ -3,7 +3,7 @@ import { and, eq, or, sql, type SQL } from "drizzle-orm";
 import { db, platformUsers, roleGrants, workflowRecords } from "@workspace/db";
 import type { ModuleDefinition } from "./modules";
 import { PlatformError } from "./errors";
-import { hasRecentMfa } from "./mobile-identity";
+import { hasRecentMfa, normalizeOwnerPhone } from "./mobile-identity";
 export { PlatformError } from "./errors";
 export type Actor = {
   id: string; authId: string; displayName: string; profile: Record<string, unknown>;
@@ -28,14 +28,15 @@ export const identify: RequestHandler = async (req, _res, next) => {
     if (!user) [user] = await db.select().from(platformUsers).where(eq(platformUsers.authId, authId));
   }
   if (!user) throw new PlatformError(500, "Could not initialize your profile.");
-  // Explicit owner allowlist, never "first visitor becomes admin". The configured
-  // number must first complete Auth0's real SMS verification.
-  const ownerPhone = process.env.PLATFORM_OWNER_PHONE?.replace(/[\s()-]/g, "");
-  if (ownerPhone && /^\+[1-9]\d{6,14}$/.test(ownerPhone) && identity.phone === ownerPhone) {
+   // Explicit owner allowlist, never "first visitor becomes admin". The configured
+   // number must first complete Auth0's real SMS verification. Never trust the
+   // editable contact phone in the user's profile for this decision.
+   const ownerPhone = normalizeOwnerPhone(process.env.PLATFORM_OWNER_PHONE);
+   if (ownerPhone && identity.phone === ownerPhone) {
     const { auditEvents } = await import("@workspace/db");
     await db.transaction(async tx => {
-      const granted = await tx.insert(roleGrants).values({ userId: user!.id, role: "administrator", scope: "*", grantedBy: user!.id, reason: "Project-owner verified mobile allowlist" }).onConflictDoNothing().returning();
-      if (granted.length) await tx.insert(auditEvents).values({ actorId: user!.id, action: "owner-access-granted", module: "access", reason: "Verified the explicitly configured project-owner mobile number" });
+       const granted = await tx.insert(roleGrants).values({ userId: user!.id, role: "super-administrator", scope: "*", grantedBy: user!.id, reason: "Project-owner verified mobile allowlist" }).onConflictDoNothing().returning();
+       if (granted.length) await tx.insert(auditEvents).values({ actorId: user!.id, action: "owner-access-granted", module: "access", reason: "Verified the explicitly configured project-owner mobile number", after: { role: "super-administrator", scope: "*" } });
     });
   }
   const grants = await db.select({ role: roleGrants.role, scope: roleGrants.scope }).from(roleGrants).where(eq(roleGrants.userId, user.id));
