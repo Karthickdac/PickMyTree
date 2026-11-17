@@ -9,11 +9,11 @@ Build everything in the supplied PICK A TREE specification, not only the MVP. Un
 
 **How to apply:** Track the full coverage plan and report partial delivery honestly.
 
-The platform also has investment plans whose return on investment is based on yield. The owner will configure them manually as normal schemes, with capital repayment defined separately for each plan.
+The platform also has investment plans whose return on investment is based on yield. The owner will configure them manually as normal schemes, with capital repayment defined separately for each plan. Checkout must collect payments for investment plans as well as adoption purchases.
 
-**Why:** The user clarified that investment plans are included, then said: "The investment plans can be configured as a normal scheme plan. I'll configure that manually. I just want you to remove the (no investment) related content". This overrides the original specification's adoption-only restriction.
+**Why:** The user clarified that investment plans are included, then said: "The investment plans can be configured as a normal scheme plan. I'll configure that manually. I just want you to remove the (no investment) related content". They also confirmed checkout should collect investment-plan payments. This overrides the original specification's adoption-only restriction.
 
-**How to apply:** Remove blanket "not an investment" and "no returns" statements from public copy. Use the normal scheme configuration rather than inventing a separate investment-plan type or ROI calculator. Do not require the owner to define an automated payout formula for this copy change. Keep plan-specific risks and legal-review notices; do not infer fixed or guaranteed returns.
+**How to apply:** Remove blanket "not an investment" and "no returns" statements from public copy. Use the normal scheme configuration rather than inventing a separate investment-plan type or ROI calculator. Do not require the owner to define an automated payout formula for this copy change. Keep plan-specific risks and legal-review notices; do not infer fixed or guaranteed returns. Confirm payment-provider eligibility for investment collections before enabling live charges.
 
 Checkout should be very smooth and easy to pay.
 
