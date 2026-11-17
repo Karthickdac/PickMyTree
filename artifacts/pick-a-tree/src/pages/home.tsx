@@ -18,7 +18,7 @@ function Hero() {
   return (
     <section ref={ref} className="relative min-h-[calc(100dvh-72px)] overflow-hidden bg-emerald">
       <motion.div style={{ y }} className="absolute inset-0">
-        <img src={IMAGES.heroOrchard} alt="Illustrative mango orchard at golden hour" className="animate-slowzoom h-full w-full object-cover" />
+        <img src={IMAGES.heroOrchard} alt="Mango orchard imagery at golden hour" className="animate-slowzoom h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-[hsl(160_62%_8%/0.55)] via-[hsl(160_62%_10%/0.25)] to-[hsl(160_62%_9%/0.92)]" />
       </motion.div>
       <motion.div style={{ opacity: fade }} className="relative z-10 mx-auto flex min-h-[calc(100dvh-72px)] max-w-7xl flex-col justify-end px-5 pb-28 pt-16 md:px-8 md:pb-32">
@@ -35,7 +35,7 @@ function Hero() {
         <motion.div initial={false} animate={{ opacity: 1, y: 0 }}
           className="mt-10 grid gap-8 border-t border-ivory/20 pt-8 md:grid-cols-12">
           <p className="text-lg leading-relaxed text-ivory/85 md:col-span-6 md:text-xl">
-            Choose one coded mango, guava or coconut tree on a registered Tamil Nadu farm. See its photos, its farm and its season, and check each tree's own availability.
+            Explore coded mango, guava and coconut trees in Tamil Nadu. Discover each farm, its trees and its season, and check each tree's availability.
           </p>
           <div className="flex flex-wrap items-start gap-3 md:col-span-6 md:justify-end">
             <Link href="/adopt" className="group inline-flex items-center gap-2 rounded-full bg-harvest px-7 py-4 font-semibold text-ivory transition-transform hover:-translate-y-0.5" data-testid="link-hero-adopt">
@@ -46,7 +46,7 @@ function Hero() {
             </Link>
           </div>
         </motion.div>
-        <p className="mt-8 text-[11px] text-ivory/55">Illustrative imagery — not a registered Pick My Tree farm or tree</p>
+        <p className="mt-8 text-[11px] text-ivory/55">Species & orchard imagery</p>
       </motion.div>
     </section>
   );
@@ -72,16 +72,15 @@ function LiveCatalogue() {
   const trees = useListPublicTrees({});
   const farm = farms.data?.[0];
   const list = (trees.data ?? []).slice(0, 4);
-  const anySample = !!farm?.isSample || list.some((t) => t.isSample);
   return (
     <Section className="py-16 md:py-24">
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
         <Reveal>
           <Eyebrow>On the farm now</Eyebrow>
-          <h2 className="mt-4 max-w-3xl text-4xl font-light leading-tight text-emerald md:text-6xl">Meet a registered farm, <em className="text-harvest">tree by tree</em>.</h2>
+          <h2 className="mt-4 max-w-3xl text-4xl font-light leading-tight text-emerald md:text-6xl">Discover the farm, <em className="text-harvest">tree by tree</em>.</h2>
         </Reveal>
         <Reveal delay={0.1} className="max-w-sm">
-          <p className="text-muted-foreground">Every tree below carries its own permanent code. {anySample && 'Listings marked Sample data are test records that show how the catalogue works and cannot be adopted.'}</p>
+          <p className="text-muted-foreground">Explore each tree’s variety, farm and growing season. Availability and scheme terms are shown on its profile.</p>
         </Reveal>
       </div>
 
@@ -120,7 +119,7 @@ function LiveCatalogue() {
               <Link href={`/adopt/${t.id}`} className="group block overflow-hidden rounded-[1.5rem] border border-border bg-card transition-all hover:-translate-y-1 hover:border-leaf hover:shadow-lg" data-testid={`card-home-tree-${t.id}`}>
                 <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
                   {(t.images?.[0]?.url ?? t.image) ? <img src={t.images?.[0]?.url ?? t.image} alt={t.images?.[0]?.name ?? t.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    : <img src={SPECIES.find((s) => s.key === t.species)?.image ?? IMAGES.heroOrchard} alt="Illustrative species image" className="h-full w-full object-cover opacity-80" />}
+                    : <img src={SPECIES.find((s) => s.key === t.species)?.image ?? IMAGES.heroOrchard} alt="Species imagery" className="h-full w-full object-cover opacity-80" />}
                   {t.isSample && <SampleBadge className="absolute left-3 top-3 bg-card/90" />}
                 </div>
                 <div className="flex items-end justify-between gap-3 p-5">
@@ -179,7 +178,7 @@ function Species() {
           <Reveal key={s.key} delay={i * 0.1} className={i === 0 ? 'md:col-span-6 md:row-span-2' : 'md:col-span-6'}>
             <Link href={`/adopt?species=${s.key}`} className="group block h-full" data-testid={`link-species-${s.key.toLowerCase()}`}>
               <div className="relative h-full overflow-hidden rounded-[2rem] bg-emerald">
-                <IllustrativeImage src={s.image} alt={`Illustrative ${s.key} tree`} labelPosition="top-left"
+                <IllustrativeImage src={s.image} alt={`${s.key} species imagery`} labelPosition="top-left"
                   className={i === 0 ? 'aspect-[4/5] md:aspect-auto md:h-full md:min-h-[640px]' : 'aspect-[16/10]'}
                   imgClassName="transition-transform duration-[1.2s] group-hover:scale-105" />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[hsl(160_62%_8%/0.9)] via-transparent to-transparent" />
@@ -242,7 +241,7 @@ function Promises() {
     <Section>
       <div className="grid gap-12 lg:grid-cols-12">
         <Reveal className="lg:col-span-5">
-          <IllustrativeImage src={IMAGES.harvestHands} alt="Illustrative harvest basket and balance" className="aspect-[4/5] rounded-[2rem] shadow-xl" />
+          <IllustrativeImage src={IMAGES.harvestHands} alt="Harvest basket and balance imagery" className="aspect-[4/5] rounded-[2rem] shadow-xl" />
         </Reveal>
         <div className="lg:col-span-7 lg:pl-6">
           <Reveal>
@@ -268,7 +267,7 @@ function Promises() {
 function Region() {
   return (
     <section className="relative">
-      <IllustrativeImage src={IMAGES.farmLandscape} alt="Illustrative farm landscape between Madurai and Dindigul" className="h-[70vh] min-h-[460px]" />
+      <IllustrativeImage src={IMAGES.farmLandscape} alt="Orchard landscape imagery" className="h-[70vh] min-h-[460px]" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[hsl(160_62%_8%/0.85)] via-[hsl(160_62%_8%/0.4)] to-transparent" />
       <div className="absolute inset-0 mx-auto flex max-w-7xl items-center px-5 md:px-8">
         <Reveal className="max-w-xl text-ivory">

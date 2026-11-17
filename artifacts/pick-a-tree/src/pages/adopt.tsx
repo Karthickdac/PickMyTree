@@ -10,7 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { cn } from '@/lib/utils';
 
 export function AdoptPage() {
-  useSeo('Adopt a Tree', 'Browse inspected and approved productive trees available for adoption in the Madurai–Dindigul region.');
+  useSeo('Adopt a Tree', 'Explore tree profiles, farms and growing seasons in the Madurai–Dindigul region.');
   const search = useSearch();
   const initialSpecies = new URLSearchParams(search).get('species') ?? '';
   const [species, setSpecies] = useState(initialSpecies);
@@ -25,8 +25,8 @@ export function AdoptPage() {
 
   return (
     <>
-      <PageHero eyebrow="Adoption catalogue" title={<>Every tree here was <em className="text-harvest">walked to</em>.</>}
-        lede="Every listed tree has a permanent code on a registered farm. Records marked Sample data are test listings that show how the catalogue works; they cannot be adopted." />
+      <PageHero eyebrow="Tree catalogue" title={<>Find your tree. <em className="text-harvest">Follow its story</em>.</>}
+        lede="Explore mango, guava and coconut trees by farm and variety. Each profile shows its details and availability." />
       <Section className="pt-10">
         <div className="sticky top-[72px] z-20 -mx-5 mb-10 flex flex-col gap-3 bg-background/90 px-5 py-4 backdrop-blur-md md:mx-0 md:flex-row md:items-center md:rounded-full md:border md:border-border md:px-3 md:py-2">
           <div className="relative flex-1">
@@ -57,7 +57,7 @@ export function AdoptPage() {
                       <div className="flex h-full items-center justify-center"><TreeDeciduous className="h-16 w-16 text-leaf/50" strokeWidth={1} /></div>
                     )}
                     <div className="absolute left-3 top-3 flex flex-wrap gap-2"><StatusPill status={t.status} className="bg-card/90" />{t.isSample && <SampleBadge className="bg-card/90" />}</div>
-                    {t.images?.[0]?.isIllustrative && <span className="absolute bottom-3 left-3 rounded-full bg-card/85 px-2 py-0.5 text-[10px] text-soil">Illustrative photo</span>}
+                    {t.images?.[0]?.isIllustrative && <span className="absolute bottom-3 left-3 rounded-full bg-card/85 px-2 py-0.5 text-[10px] text-soil">Species image</span>}
                   </div>
                   <div className="mt-4 flex items-start justify-between gap-3">
                     <div>
@@ -93,7 +93,7 @@ export function TreeDetailPage() {
   const { data: readiness } = useGetReadiness();
   useSeo(data ? `${data.tree.name} (${data.tree.treeCode})` : 'Tree detail', data ? `${data.tree.species} · ${data.tree.variety} at ${data.tree.farmName}. Inspection, scheme and disclosures.` : 'Verified tree listing on Pick My Tree.');
 
-  if (isLoading) return <Section><Skeleton className="h-10 w-48" /><div className="mt-8 grid gap-10 lg:grid-cols-2"><Skeleton className="aspect-square rounded-[2rem]" /><div className="space-y-4"><Skeleton className="h-14 w-3/4" /><Skeleton className="h-24 w-full" /><Skeleton className="h-40 w-full" /></div></div></Section>;
+  if (isLoading) return <Section><Skeleton className="h-6 w-32" /><div className="mt-6 grid items-start gap-6 md:grid-cols-[280px_minmax(0,1fr)]"><Skeleton className="h-52 w-full rounded-2xl" /><div className="space-y-4"><Skeleton className="h-10 w-3/4" /><Skeleton className="h-16 w-full" /><Skeleton className="h-32 w-full" /></div></div></Section>;
   if (isError || !data) {
     return (
       <Section>
@@ -113,24 +113,23 @@ export function TreeDetailPage() {
 
   return (
     <>
-      <Section className="pb-8 pt-10">
+      <Section className="pb-6 pt-6 md:pb-6 md:pt-6">
         <Link href="/adopt" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-emerald" data-testid="link-back"><ArrowLeft className="h-4 w-4" /> Catalogue</Link>
-        <div className="mt-8 grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-6">
+        <div className="mt-6 grid items-start gap-6 md:grid-cols-[280px_minmax(0,1fr)] lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-8">
+          <div className="w-full max-w-sm">
             <TreeGallery images={tree.images ?? []} fallback={tree.image} name={tree.name} species={tree.species} />
           </div>
-          <div className="lg:col-span-6">
+          <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-3"><span className="font-mono text-sm text-harvest" data-testid="text-tree-code">{tree.treeCode}</span><StatusPill status={tree.status} />{tree.isSample && <SampleBadge />}</div>
-            {tree.isSample && <p className="mt-3 text-sm text-soil" data-testid="text-sample-note">Sample data: a test listing used to demonstrate the catalogue. It is not available to adopt or purchase.</p>}
-            <h1 className="mt-4 text-5xl font-light leading-none text-emerald md:text-6xl" data-testid="text-tree-name">{tree.name}</h1>
-            <p className="mt-6 text-lg leading-relaxed text-muted-foreground">{tree.description}</p>
-            <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border">
+            <h1 className="mt-3 text-3xl font-light leading-tight text-emerald lg:text-4xl" data-testid="text-tree-name">{tree.name}</h1>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{tree.description}</p>
+            <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-3">
               {facts.map(([k, v]) => (
-                <div key={k} className="bg-card p-4"><dt className="eyebrow text-[10px] text-muted-foreground">{k}</dt><dd className="mt-1.5 font-medium">{v}</dd></div>
+                <div key={k} className="bg-card p-3"><dt className="eyebrow text-[10px] text-muted-foreground">{k}</dt><dd className="mt-1 text-sm font-medium">{v}</dd></div>
               ))}
             </dl>
             {tree.productiveAssessment && (
-              <div className="mt-6 rounded-2xl bg-secondary/70 p-5">
+              <div className="mt-4 rounded-2xl bg-secondary/70 p-4">
                 <p className="flex items-center gap-2 font-semibold text-emerald"><Leaf className="h-4 w-4" /> Productive-stage assessment</p>
                 <p className="mt-2 text-sm leading-relaxed text-foreground/80">{tree.productiveAssessment}</p>
               </div>
@@ -138,11 +137,11 @@ export function TreeDetailPage() {
           </div>
         </div>
       </Section>
-      <Section className="pt-8">
+      <Section className="pb-10 pt-4 md:pb-12 md:pt-4">
         <Eyebrow>Adoption schemes</Eyebrow>
-        <h2 className="mt-4 text-4xl font-light text-emerald">Read everything before anything.</h2>
+        <h2 className="mt-2 text-2xl font-light text-emerald md:text-3xl">Choose your harvest scheme</h2>
         {schemes.length === 0 ? (
-          <EmptyState className="mt-8" icon={<CalendarCheck className="h-6 w-6" />} title="No approved scheme yet." body="This tree is verified, but its scheme terms are still under review. Nothing can be reserved until a versioned scheme is approved." />
+          <div className="mt-4 flex items-start gap-3 rounded-2xl border border-border bg-card p-4"><CalendarCheck className="mt-0.5 h-5 w-5 shrink-0 text-leaf" /><div><p className="font-medium text-emerald">Scheme terms awaiting approval</p><p className="mt-1 text-sm text-muted-foreground">Adoption opens after tree verification, scheme approval and payment setup.</p></div></div>
         ) : (
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
             {schemes.map((s) => (
@@ -163,10 +162,10 @@ export function TreeDetailPage() {
             ))}
           </div>
         )}
-        <div className="mt-8">
+        <div className="mt-4">
           <AvailabilityNote>
             <span data-testid="text-adoption-availability">{tree.isSample
-              ? <><strong>Sample tree.</strong> Sample listings cannot be adopted or purchased.</>
+              ? <><strong>Adoption unavailable.</strong> Tree verification and approved scheme terms are required before purchase.</>
               : schemes.length === 0
                 ? <><strong>Adoption terms not configured for this tree.</strong> Nothing can be reserved until approved terms are attached.</>
                 : tree.adoptionEligible && readiness?.adoptionsOpen
@@ -185,20 +184,20 @@ function TreeGallery({ images, fallback, name, species }: { images: CatalogueIma
   const current = images[Math.min(active, images.length - 1)];
   if (!current) {
     return fallback
-      ? <img src={fallback} alt={name} className="aspect-[4/5] w-full rounded-[2rem] object-cover shadow-xl" data-testid="img-tree" />
-      : <IllustrativeImage src={SPECIES.find((s) => s.key === species)?.image ?? IMAGES.heroOrchard} alt="Illustrative species image" className="aspect-[4/5] rounded-[2rem] shadow-xl" />;
+      ? <img src={fallback} alt={name} className="h-48 w-full rounded-2xl object-cover shadow-sm sm:h-56 lg:h-60" data-testid="img-tree" />
+      : <IllustrativeImage src={SPECIES.find((s) => s.key === species)?.image ?? IMAGES.heroOrchard} alt="Species imagery" className="h-48 rounded-2xl shadow-sm sm:h-56 lg:h-60" />;
   }
   return (
     <div>
       <div className="relative">
-        <img src={current.url} alt={current.name} className="aspect-[4/5] w-full rounded-[2rem] object-cover shadow-xl" data-testid="img-tree" />
-        {current.isIllustrative && <span className="absolute bottom-4 left-4 rounded-full bg-card/85 px-3 py-1 text-[11px] text-soil">Illustrative photo</span>}
+        <img src={current.url} alt={current.name} className="h-48 w-full rounded-2xl object-cover shadow-sm sm:h-56 lg:h-60" data-testid="img-tree" />
+        {current.isIllustrative && <span className="absolute bottom-4 left-4 rounded-full bg-card/85 px-3 py-1 text-[11px] text-soil">Species image</span>}
       </div>
       {images.length > 1 && (
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+        <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
           {images.map((img, i) => (
             <button key={img.id} type="button" onClick={() => setActive(i)} aria-label={`Show photo ${i + 1}`} aria-pressed={i === active}
-              className={cn('h-16 w-20 shrink-0 overflow-hidden rounded-xl border-2 transition-opacity', i === active ? 'border-harvest' : 'border-transparent opacity-70 hover:opacity-100')} data-testid={`button-photo-${i}`}>
+              className={cn('h-12 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition-opacity', i === active ? 'border-harvest' : 'border-transparent opacity-70 hover:opacity-100')} data-testid={`button-photo-${i}`}>
               <img src={img.url} alt="" className="h-full w-full object-cover" />
             </button>
           ))}

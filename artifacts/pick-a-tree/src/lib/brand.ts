@@ -8,7 +8,7 @@ import harvestHands from '@assets/generated_images/harvest-hands.jpg';
 
 export const IMAGES = { heroOrchard, mango, guava, coconut, farmLandscape, harvestHands };
 
-export const ILLUSTRATIVE_LABEL = 'Illustrative imagery — not a registered Pick My Tree farm or tree';
+export const ILLUSTRATIVE_LABEL = 'Species & orchard imagery';
 
 export const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 

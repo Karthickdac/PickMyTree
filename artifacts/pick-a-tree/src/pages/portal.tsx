@@ -65,7 +65,7 @@ function Overview({ name }: { name: string }) {
   return (
     <>
       <AppHeading eyebrow="Your portal" title={<>Vanakkam, <em className="text-harvest">{name}</em>.</>} />
-      {me && canManageFarms(me.roles) && <div className="mb-8"><AvailabilityNote>You hold a farm-management role. <Link href="/manage/farms" className="font-semibold underline underline-offset-4" data-testid="link-portal-manage">Open Manage farms</Link> to edit farms, trees and photos.</AvailabilityNote></div>}
+      {me && canManageFarms(me.roles) && <div className="mb-8"><AvailabilityNote><Link href="/manage/farms" className="font-semibold underline underline-offset-4" data-testid="link-portal-manage">Manage farms, trees and photos</Link>{me.roles.some(role => ['administrator', 'super-administrator'].includes(role)) && <><span className="mx-3">·</span><Link href="/manage/schemes" className="font-semibold underline underline-offset-4" data-testid="link-portal-schemes">Customize schemes</Link></>}</AvailabilityNote></div>}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {tiles.map(([label, n, href]) => (
           <Link key={label} href={href} className="rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-leaf" data-testid={`link-tile-${label.toLowerCase().replace(/\s/g, '-')}`}>

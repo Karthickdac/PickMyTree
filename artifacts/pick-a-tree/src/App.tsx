@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Route, Switch, useLocation, Router as WouterRouter, Link } from 'wouter';
+import { Route, Switch, useLocation, Router as WouterRouter, Link, Redirect } from 'wouter';
 import { Lock } from 'lucide-react';
 import { getGetMeQueryKey, useGetMe } from '@workspace/api-client-react';
 import { ErrorBoundary } from '@/components/error-boundary';
@@ -18,6 +18,7 @@ import SignInPage from '@/pages/sign-in';
 import PortalPage from '@/pages/portal';
 import WorkspacePage from '@/pages/workspace';
 import { ManageFarmDetailPage, ManageFarmsPage } from '@/pages/manage';
+import { SchemesPage, SchemeEditorPage, SchemeCheckoutPreviewPage } from '@/pages/schemes';
 import { basePath, errorStatus } from '@/lib/brand';
 
 const queryClient = new QueryClient({
@@ -74,10 +75,14 @@ function Router() {
         <Route path="/portal"><RequireSession><PortalPage /></RequireSession></Route>
         <Route path="/portal/:section"><RequireSession><PortalPage /></RequireSession></Route>
         <Route path="/workspace"><RequireSession><WorkspacePage /></RequireSession></Route>
+        <Route path="/workspace/schemes"><RequireSession><Redirect to="/manage/schemes" /></RequireSession></Route>
         <Route path="/workspace/:module"><RequireSession><WorkspacePage /></RequireSession></Route>
         <Route path="/manage"><RequireSession><ManageFarmsPage /></RequireSession></Route>
         <Route path="/manage/farms"><RequireSession><ManageFarmsPage /></RequireSession></Route>
         <Route path="/manage/farms/:id"><RequireSession><ManageFarmDetailPage /></RequireSession></Route>
+        <Route path="/manage/schemes"><RequireSession><SchemesPage /></RequireSession></Route>
+        <Route path="/manage/schemes/:id/checkout-preview"><RequireSession><SchemeCheckoutPreviewPage /></RequireSession></Route>
+        <Route path="/manage/schemes/:id"><RequireSession><SchemeEditorPage /></RequireSession></Route>
         <Route><Public><NotFound /></Public></Route>
       </Switch>
     </RoutedErrorBoundary>

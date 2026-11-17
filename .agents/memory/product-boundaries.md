@@ -33,11 +33,11 @@ The brand is **Pick My Tree**, renamed from PICK A TREE.
 
 **How to apply:** Use Pick My Tree for visible branding and copy; retain the original specification's requirements.
 
-The user said: "no more prelaunch. it should be ready to add the farms. add one farm with test data and trees,images that we can edit and upload".
+The user wants usable farm administration with persistent photo uploads, no prelaunch messaging, and no customer-facing development labels. Keep one editable farm, a few trees and a few editable schemes.
 
-**Why:** The user wants usable farm administration, not an informational waiting page.
+**Why:** After initially asking for test inventory, the user superseded that presentation: "Remove sample text and sample items. Now the system should be ready with production data. Keep one farm, few trees, few schemes. I can edit and update that later. But nowhere I should see the test or sample those kind of words".
 
-**How to apply:** Provide real editing and persistent uploads. Clearly distinguish the explicitly requested sample inventory from real operating farms without global prelaunch banners.
+**How to apply:** Use ordinary catalogue names and concise, accurate availability notices instead of sample/test/demo labels. Removing development wording must not fabricate inspections, farm authority, legal approval, real-tree photo evidence or payment readiness.
 
 The login page must not have lengthy content.
 

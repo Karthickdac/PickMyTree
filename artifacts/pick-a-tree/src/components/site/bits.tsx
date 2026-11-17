@@ -104,7 +104,7 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
 }
 
 export function SampleBadge({ className }: { className?: string }) {
-  return <span className={cn('inline-flex items-center rounded-full border border-harvest/40 bg-harvest/12 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-soil', className)} data-testid="badge-sample-data">Sample data</span>;
+  return <span className={cn('inline-flex items-center rounded-full border border-harvest/40 bg-harvest/12 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-soil', className)} data-testid="badge-verification-pending">Verification pending</span>;
 }
 
 export function StatusPill({ status, className }: { status: string; className?: string }) {

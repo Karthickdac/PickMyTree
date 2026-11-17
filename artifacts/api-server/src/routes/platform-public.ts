@@ -12,8 +12,8 @@ const router: IRouter = Router();
 router.get("/v1/readiness", (_req, res) => {
   res.json(GetReadinessResponse.parse({
     adoptionsOpen: false,
-    message: "Browse the farm and tree directory. Sample listings are marked. Payment is available only when a tree has approved adoption terms and a connected checkout.",
-    gates: ["Real farm authority and verified tree evidence", "Approved scheme terms and harvest remedies", "Connected and tested payment gateway", "Complete commercial and fulfilment workflows"],
+    message: "Explore farms, trees and growing seasons. Payment is available only after tree verification, approved scheme terms and a connected checkout.",
+    gates: ["Real farm authority and verified tree evidence", "Approved scheme terms and harvest remedies", "Connected and verified payment gateway", "Complete commercial and fulfilment workflows"],
   }));
 });
 router.get("/v1/public/farms", async (_req, res): Promise<void> => {

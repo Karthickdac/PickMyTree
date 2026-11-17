@@ -90,7 +90,7 @@ export function ImageManager({ images, onChange, onPendingChange, disabled, idPr
           <li key={img.id} className="group relative overflow-hidden rounded-2xl border border-border bg-card" data-testid={`card-${idPrefix}-image-${img.id}`}>
             <img src={img.url} alt={img.name} className="aspect-[4/3] w-full object-cover" />
             {i === 0 && <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-emerald px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ivory"><Star className="h-3 w-3" />Cover</span>}
-            {img.isIllustrative && <span className="absolute right-2 top-2 rounded-full bg-card/90 px-2 py-0.5 font-mono text-[10px] uppercase text-soil">Illustrative</span>}
+            {img.isIllustrative && <span className="absolute right-2 top-2 rounded-full bg-card/90 px-2 py-0.5 font-mono text-[10px] uppercase text-soil">Species / orchard image</span>}
             <div className="flex items-center justify-between gap-1 border-t border-border p-1.5">
               <button type="button" disabled={disabled || i === 0} onClick={() => move(i, -1)} aria-label={`Move ${img.name} earlier`} className="rounded-lg p-2 text-emerald hover:bg-secondary disabled:opacity-30" data-testid={`button-${idPrefix}-image-left-${img.id}`}><ArrowLeft className="h-4 w-4" /></button>
               {i !== 0 && <button type="button" disabled={disabled} onClick={() => onChange([img, ...images.filter((x) => x.id !== img.id)])} className="rounded-lg px-2 py-1 text-xs font-medium text-emerald hover:bg-secondary" data-testid={`button-${idPrefix}-image-cover-${img.id}`}>Make cover</button>}

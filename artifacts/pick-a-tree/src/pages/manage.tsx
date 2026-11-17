@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useLocation, useParams } from 'wouter';
-import { AlertTriangle, Archive, ArrowLeft, CheckCircle2, ClipboardList, ExternalLink, FlaskConical, ImageOff, Loader2, Lock, MapPin, Pencil, Plus, RefreshCw, Sprout, Tractor, TreeDeciduous } from 'lucide-react';
+import { AlertTriangle, Archive, ArrowLeft, CheckCircle2, ClipboardList, ExternalLink, ImageOff, Loader2, Lock, MapPin, Pencil, Plus, RefreshCw, Sprout, Tractor, TreeDeciduous } from 'lucide-react';
 import {
   getGetMeQueryKey, getListManagedTreesQueryKey, useCreateManagedFarm, useCreateManagedTree, useGetMe, useListManagedFarms, useListManagedTrees,
   useUpdateManagedFarm, useUpdateManagedTree,
@@ -27,7 +27,9 @@ const NAV: NavItem[] = [
 ];
 
 function ManageShell({ children }: { children: ReactNode }) {
-  return <AppShell nav={NAV} zone="Farm management" footerLink={<Link href="/farms" className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-harvest hover:bg-sidebar-accent" data-testid="link-public-farms">View public farms <ExternalLink className="h-3.5 w-3.5" /></Link>}>{children}</AppShell>;
+  const { data: me } = useGetMe();
+  const navigation = me?.roles.some(r => ['administrator', 'super-administrator'].includes(r)) ? [NAV[0], { href: '/manage/schemes', label: 'Customize schemes', icon: ClipboardList }, ...NAV.slice(1)] : NAV;
+  return <AppShell nav={navigation} zone="Farm management" footerLink={<Link href="/farms" className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-harvest hover:bg-sidebar-accent" data-testid="link-public-farms">View public farms <ExternalLink className="h-3.5 w-3.5" /></Link>}>{children}</AppShell>;
 }
 
 function RoleGuidance() {
@@ -46,7 +48,7 @@ function RoleGuidance() {
 }
 
 function SampleTag({ className }: { className?: string }) {
-  return <span className={cn('inline-flex items-center gap-1 rounded-full border border-harvest/40 bg-harvest/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-soil', className)} data-testid="badge-sample"><FlaskConical className="h-3 w-3" />Sample data</span>;
+  return <span className={cn('inline-flex items-center gap-1 rounded-full border border-harvest/40 bg-harvest/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-soil', className)} data-testid="badge-details-pending"><ClipboardList className="h-3 w-3" />Details pending</span>;
 }
 
 function Field({ label, hint, error, htmlFor, children, required }: { label: string; hint?: string; error?: string; htmlFor: string; children: ReactNode; required?: boolean }) {
@@ -278,7 +280,7 @@ function FarmDetail({ farm, reloadFarm }: { farm: ManagedFarm; reloadFarm: () =>
         <div>
           <div className="flex flex-wrap items-center gap-2"><StatusPill status={farm.status} />{farm.isSample && <SampleTag />}<span className="font-mono text-xs text-muted-foreground">v{farm.version}</span></div>
           <h1 className="mt-3 text-4xl font-light text-emerald md:text-5xl" data-testid="text-app-title">{farm.name}</h1>
-          {farm.isSample && <p className="mt-2 max-w-xl text-sm text-muted-foreground">This is sample test data. You can edit it freely; the Sample label is permanent and shown publicly.</p>}
+          {farm.isSample && <p className="mt-2 max-w-xl text-sm text-muted-foreground">Update the farm details and upload your photos here. Verification is required before adoption can open.</p>}
         </div>
         {farm.status === 'listed' && <Link href="/farms" className="inline-flex items-center gap-1.5 text-sm font-medium text-leaf hover:underline" data-testid="link-view-public">See it publicly <ExternalLink className="h-3.5 w-3.5" /></Link>}
       </div>

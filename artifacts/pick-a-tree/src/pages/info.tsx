@@ -28,7 +28,7 @@ export function HowItWorksPage() {
   return (
     <>
       <PageHero eyebrow="ADOPT • GROW • HARVEST" title={<>From one tree to <em className="text-harvest">one honest harvest</em>.</>}
-        lede="The whole journey, including the parts that are not yet live. We mark what is waiting on approvals so you never mistake a plan for a promise." image={IMAGES.mango} imageAlt="Illustrative mangoes" />
+        lede="Choose a tree, review its scheme and follow the harvest. Each step shows its availability and any approvals still required." image={IMAGES.mango} imageAlt="Mango species imagery" />
       <Section>
         <div className="grid gap-16 lg:grid-cols-12">
           <div className="lg:col-span-4"><Eyebrow>The journey</Eyebrow><h2 className="mt-4 text-4xl font-light text-emerald">Nine steps, each one recorded.</h2>
@@ -58,8 +58,8 @@ export function FarmsPage() {
   const { data: farms, isLoading, isError, error, refetch } = useListPublicFarms();
   return (
     <>
-      <PageHero eyebrow="Farm partners" title={<>A farm is listed when its <em className="text-harvest">paperwork is real</em>.</>}
-        lede="Each partner farm needs verified owner or operator authority, a signed agreement and mapped zones before any of its trees can appear." image={IMAGES.farmLandscape} imageAlt="Illustrative farm landscape" />
+      <PageHero eyebrow="Our farms" title={<>Meet the farms behind <em className="text-harvest">your harvest</em>.</>}
+        lede="Explore farm profiles, growing regions and individually coded trees. Owner authority and tree details must be verified before adoption opens." image={IMAGES.farmLandscape} imageAlt="Orchard landscape" />
       <Section>
         {isError ? <ErrorState message={errorMessage(error)} onRetry={() => refetch()} /> : isLoading ? (
           <div className="grid gap-6 md:grid-cols-2">{[0, 1].map((i) => <Skeleton key={i} className="h-72 rounded-[2rem]" />)}</div>
@@ -67,13 +67,13 @@ export function FarmsPage() {
           <div className="grid gap-8 md:grid-cols-2">
             {farms.map((f) => (
               <article key={f.id} className="overflow-hidden rounded-[2rem] border border-border bg-card" data-testid={`card-farm-${f.id}`}>
-                {(f.images?.[0]?.url ?? f.image) && <div className="relative"><img src={f.images?.[0]?.url ?? f.image} alt={f.images?.[0]?.name ?? f.name} className="aspect-[16/9] w-full object-cover" />{f.images?.[0]?.isIllustrative && <span className="absolute bottom-3 left-3 rounded-full bg-card/85 px-2 py-0.5 text-[10px] text-soil">Illustrative photo</span>}</div>}
+                {(f.images?.[0]?.url ?? f.image) && <div className="relative"><img src={f.images?.[0]?.url ?? f.image} alt={f.images?.[0]?.name ?? f.name} className="aspect-[16/9] w-full object-cover" />{f.images?.[0]?.isIllustrative && <span className="absolute bottom-3 left-3 rounded-full bg-card/85 px-2 py-0.5 text-[10px] text-soil">Orchard image</span>}</div>}
                 {f.images && f.images.length > 1 && <div className="flex gap-1.5 overflow-x-auto px-7 pt-4">{f.images.slice(1, 6).map((img) => <img key={img.id} src={img.url} alt={img.name} className="h-14 w-20 shrink-0 rounded-lg object-cover" />)}</div>}
                 <div className="p-7">
                   <div className="flex flex-wrap items-center gap-2"><p className="flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-4 w-4" />{f.location ? `${f.location}, ` : ''}{f.district}</p>{f.isSample && <SampleBadge />}</div>
                   <h3 className="mt-2 font-display text-3xl text-emerald">{f.name}</h3>
                   <p className="mt-3 leading-relaxed text-muted-foreground">{f.description}</p>
-                  {f.isSample && <p className="mt-3 text-sm text-soil">Sample data: a test farm record showing how listings work. Its trees cannot be adopted.</p>}
+                  {f.isSample && <p className="mt-3 text-sm text-soil">Farm details and visit arrangements are subject to confirmation.</p>}
                   <div className="mt-5 flex flex-wrap items-center gap-4 font-mono text-xs text-muted-foreground">{f.areaAcres !== undefined && <span>{f.areaAcres} acres</span>}{f.treeCount !== undefined && <span>{f.treeCount} listed trees</span>}<Link href="/adopt" className="font-sans text-sm font-semibold text-emerald underline underline-offset-4" data-testid={`link-farm-trees-${f.id}`}>Browse trees</Link></div>
                   {f.practices && f.practices.length > 0 && <div className="mt-5 flex flex-wrap gap-2">{f.practices.map((p) => <span key={p} className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-emerald">{p}</span>)}</div>}
                 </div>
@@ -114,7 +114,7 @@ export function PassportPage() {
   return (
     <>
       <PageHero eyebrow="Tree Passport" title={<>A tree&rsquo;s life, <em className="text-harvest">on the record</em>.</>}
-        lede="Every adopted tree gets a private Passport. It contains only evidence captured by people on the farm — never generated or staged media." image={IMAGES.coconut} imageAlt="Illustrative coconut palm" />
+        lede="Every adopted tree gets a private Passport. It contains only evidence captured by people on the farm — never generated or staged media." image={IMAGES.coconut} imageAlt="Coconut palm imagery" />
       <Section>
         <div className="grid gap-px overflow-hidden rounded-[2rem] border border-border bg-border md:grid-cols-2">
           {rows.map(([t, d], i) => (
@@ -127,7 +127,7 @@ export function PassportPage() {
         </div>
         <div className="mt-10 flex flex-col items-start gap-5 rounded-[2rem] bg-emerald p-8 text-ivory md:flex-row md:items-center">
           <QrCode className="h-12 w-12 text-harvest" strokeWidth={1.25} />
-          <p className="flex-1 text-lg">Passports become available in your portal once an adoption is active. Sample Passports will not use invented trees.</p>
+          <p className="flex-1 text-lg">Your tree’s Passport becomes available in your portal once its adoption is active.</p>
           <Link href="/sign-in" className="rounded-full bg-harvest px-6 py-3 font-semibold" data-testid="link-passport-signup">Mobile sign-in</Link>
         </div>
       </Section>
@@ -137,7 +137,7 @@ export function PassportPage() {
 
 export function TransparencyPage() {
   useSeo('Transparency Centre', 'What Pick My Tree will and will not claim, and the gates that must be closed before launch.');
-  const will = ['Show estimates and actual measured quantities separately', 'Record crop losses, rejects and retentions with reasons', 'Keep immutable versions of every scheme you accept', 'Correct mistakes with visible, dated correction entries', 'Label illustrative imagery clearly, everywhere'];
+  const will = ['Show estimates and actual measured quantities separately', 'Record crop losses, rejects and retentions with reasons', 'Keep immutable versions of every scheme you accept', 'Correct mistakes with visible, dated correction entries', 'Distinguish species imagery from verified tree photographs'];
   const wont = ['Promise a yield, a return or a resale value', 'Transfer land or tree title', 'Publish generated photos as field evidence', 'List a farm or tree before it is verified', 'Make Nourish a condition of core care'];
   return (
     <>
@@ -216,7 +216,7 @@ export function NourishPage() {
   return (
     <>
       <PageHero eyebrow="Nourish · optional" title={<>Extra care, only when <em className="text-harvest">you say yes</em>.</>}
-        lede="Core care is always funded by your adoption. Nourish is a separate, optional recommendation from a qualified agronomist — itemised, explained, and entirely yours to decline." image={IMAGES.guava} imageAlt="Illustrative guava" />
+        lede="Core care is always funded by your adoption. Nourish is a separate, optional recommendation from a qualified agronomist — itemised, explained, and entirely yours to decline." image={IMAGES.guava} imageAlt="Guava species imagery" />
       <Section>
         <div className="grid gap-12 lg:grid-cols-2">
           <Steps items={[
@@ -242,7 +242,7 @@ export function GiftPage() {
   return (
     <>
       <PageHero eyebrow="Gift a tree" title={<>A gift that <em className="text-harvest">fruits next summer</em>.</>}
-        lede="Weddings, naming ceremonies, anniversaries, remembrance. Tell us the occasion and we will come back with what is genuinely possible — no instant checkout until gifting operations are approved." image={IMAGES.harvestHands} imageAlt="Illustrative harvest basket" />
+        lede="Weddings, naming ceremonies, anniversaries, remembrance. Tell us the occasion and we will come back with what is genuinely possible — no instant checkout until gifting operations are approved." image={IMAGES.harvestHands} imageAlt="Harvest basket imagery" />
       <Section>
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
@@ -286,7 +286,7 @@ const FAQS = [
   ['Can I adopt a tree today?', 'Not yet. Adoption opens only after real trees are verified, schemes and legal terms are approved, and a payment provider is connected. You can leave an enquiry now.'],
   ['What if my tree has a poor season?', 'Each scheme will state, before you pay, how losses, shortfalls and remedies are handled. We record actual measured quantities and do not promise yields.'],
   ['Where are the farms?', 'The first region is the Madurai–Dindigul belt in Tamil Nadu. Farms are named publicly only after verification.'],
-  ['Are the photos on this website real?', 'Images on public pages are illustrative and labelled so. Real tree photos will appear only on verified listings and in your private Passport.'],
+  ['Do the images show my individual tree?', 'Images labelled Species image or Orchard image show a species or setting, not evidence of an individual tree. Verified tree photos belong on the tree profile and in its private Passport. Farm managers can upload and replace catalogue images.'],
   ['Is Nourish required?', 'Never. It is optional extra care, and declining has no effect on core care or your harvest share.'],
   ['Can I visit my tree?', 'Farm visits are being considered but are not offered yet. You can register interest through the contact form.'],
 ];
@@ -363,5 +363,5 @@ export function LegalPage({ kind }: { kind: 'privacy' | 'terms' }) {
 }
 
 export function IllustrativeBanner() {
-  return <IllustrativeImage src={IMAGES.heroOrchard} alt="Illustrative orchard" className="h-40 rounded-2xl" />;
+  return <IllustrativeImage src={IMAGES.heroOrchard} alt="Orchard imagery" className="h-40 rounded-2xl" />;
 }

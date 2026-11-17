@@ -16,7 +16,7 @@ export default function SignInPage() {
   return (
     <div className="grid min-h-[100dvh] lg:grid-cols-2">
       <div className="relative hidden lg:block">
-        <IllustrativeImage src={IMAGES.heroOrchard} alt="Illustrative orchard" className="absolute inset-0" />
+        <IllustrativeImage src={IMAGES.heroOrchard} alt="Orchard imagery" className="absolute inset-0" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[hsl(160_62%_8%/0.9)] to-transparent" />
         <p className="absolute bottom-16 left-10 right-10 font-display text-5xl font-light leading-tight text-ivory">Your Tree.<br /><em className="text-harvest">Your Harvest.</em><br />Your Nature.</p>
       </div>
