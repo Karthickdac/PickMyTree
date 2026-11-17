@@ -18,3 +18,8 @@ expertMode = true
 [postMerge]
 path = "scripts/post-merge.sh"
 timeoutMs = 20000
+
+[userenv]
+
+[userenv.shared]
+AUTH0_ISSUER_BASE_URL = "https://dev-dqqe23r66l08tgf8.us.auth0.com"
