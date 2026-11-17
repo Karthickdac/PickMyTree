@@ -33,6 +33,8 @@ export const listManagedSchemesResponseOneConfigurationSharePercentMax = 100;
 
 export const listManagedSchemesResponseOneConfigurationMaxAdoptersMax = 100000;
 
+export const listManagedSchemesResponseOneConfigurationEnrollmentStartRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const listManagedSchemesResponseOneConfigurationEnrollmentEndRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
 export const listManagedSchemesResponseOneConfigurationSeasonMax = 120;
 
 export const listManagedSchemesResponseOneConfigurationQualityGradesMax = 2000;
@@ -84,8 +86,8 @@ export const ListManagedSchemesResponseItem = zod.object({
   "unit": zod.enum(['kg', 'count']),
   "sharePercent": zod.number().gt(listManagedSchemesResponseOneConfigurationSharePercentExclusiveMin).max(listManagedSchemesResponseOneConfigurationSharePercentMax),
   "maxAdopters": zod.number().int().min(1).max(listManagedSchemesResponseOneConfigurationMaxAdoptersMax),
-  "enrollmentStart": zod.coerce.date().nullable(),
-  "enrollmentEnd": zod.coerce.date().nullable(),
+  "enrollmentStart": zod.string().regex(listManagedSchemesResponseOneConfigurationEnrollmentStartRegExp).nullable(),
+  "enrollmentEnd": zod.string().regex(listManagedSchemesResponseOneConfigurationEnrollmentEndRegExp).nullable(),
   "season": zod.string().max(listManagedSchemesResponseOneConfigurationSeasonMax),
   "roundingRule": zod.enum(['down', 'nearest', 'up']),
   "qualityGrades": zod.string().max(listManagedSchemesResponseOneConfigurationQualityGradesMax),
@@ -139,6 +141,8 @@ export const createManagedSchemeBodyConfigurationSharePercentMax = 100;
 
 export const createManagedSchemeBodyConfigurationMaxAdoptersMax = 100000;
 
+export const createManagedSchemeBodyConfigurationEnrollmentStartRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const createManagedSchemeBodyConfigurationEnrollmentEndRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
 export const createManagedSchemeBodyConfigurationSeasonMax = 120;
 
 export const createManagedSchemeBodyConfigurationQualityGradesMax = 2000;
@@ -189,8 +193,8 @@ export const CreateManagedSchemeBody = zod.object({
   "unit": zod.enum(['kg', 'count']),
   "sharePercent": zod.number().gt(createManagedSchemeBodyConfigurationSharePercentExclusiveMin).max(createManagedSchemeBodyConfigurationSharePercentMax),
   "maxAdopters": zod.number().int().min(1).max(createManagedSchemeBodyConfigurationMaxAdoptersMax),
-  "enrollmentStart": zod.coerce.date().nullable(),
-  "enrollmentEnd": zod.coerce.date().nullable(),
+  "enrollmentStart": zod.string().regex(createManagedSchemeBodyConfigurationEnrollmentStartRegExp).nullable(),
+  "enrollmentEnd": zod.string().regex(createManagedSchemeBodyConfigurationEnrollmentEndRegExp).nullable(),
   "season": zod.string().max(createManagedSchemeBodyConfigurationSeasonMax),
   "roundingRule": zod.enum(['down', 'nearest', 'up']),
   "qualityGrades": zod.string().max(createManagedSchemeBodyConfigurationQualityGradesMax),
@@ -236,6 +240,8 @@ export const createManagedSchemeResponseOneConfigurationSharePercentMax = 100;
 
 export const createManagedSchemeResponseOneConfigurationMaxAdoptersMax = 100000;
 
+export const createManagedSchemeResponseOneConfigurationEnrollmentStartRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const createManagedSchemeResponseOneConfigurationEnrollmentEndRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
 export const createManagedSchemeResponseOneConfigurationSeasonMax = 120;
 
 export const createManagedSchemeResponseOneConfigurationQualityGradesMax = 2000;
@@ -287,8 +293,8 @@ export const CreateManagedSchemeResponse = zod.object({
   "unit": zod.enum(['kg', 'count']),
   "sharePercent": zod.number().gt(createManagedSchemeResponseOneConfigurationSharePercentExclusiveMin).max(createManagedSchemeResponseOneConfigurationSharePercentMax),
   "maxAdopters": zod.number().int().min(1).max(createManagedSchemeResponseOneConfigurationMaxAdoptersMax),
-  "enrollmentStart": zod.coerce.date().nullable(),
-  "enrollmentEnd": zod.coerce.date().nullable(),
+  "enrollmentStart": zod.string().regex(createManagedSchemeResponseOneConfigurationEnrollmentStartRegExp).nullable(),
+  "enrollmentEnd": zod.string().regex(createManagedSchemeResponseOneConfigurationEnrollmentEndRegExp).nullable(),
   "season": zod.string().max(createManagedSchemeResponseOneConfigurationSeasonMax),
   "roundingRule": zod.enum(['down', 'nearest', 'up']),
   "qualityGrades": zod.string().max(createManagedSchemeResponseOneConfigurationQualityGradesMax),
@@ -345,6 +351,8 @@ export const getManagedSchemeResponseOneConfigurationSharePercentMax = 100;
 
 export const getManagedSchemeResponseOneConfigurationMaxAdoptersMax = 100000;
 
+export const getManagedSchemeResponseOneConfigurationEnrollmentStartRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const getManagedSchemeResponseOneConfigurationEnrollmentEndRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
 export const getManagedSchemeResponseOneConfigurationSeasonMax = 120;
 
 export const getManagedSchemeResponseOneConfigurationQualityGradesMax = 2000;
@@ -396,8 +404,8 @@ export const GetManagedSchemeResponse = zod.object({
   "unit": zod.enum(['kg', 'count']),
   "sharePercent": zod.number().gt(getManagedSchemeResponseOneConfigurationSharePercentExclusiveMin).max(getManagedSchemeResponseOneConfigurationSharePercentMax),
   "maxAdopters": zod.number().int().min(1).max(getManagedSchemeResponseOneConfigurationMaxAdoptersMax),
-  "enrollmentStart": zod.coerce.date().nullable(),
-  "enrollmentEnd": zod.coerce.date().nullable(),
+  "enrollmentStart": zod.string().regex(getManagedSchemeResponseOneConfigurationEnrollmentStartRegExp).nullable(),
+  "enrollmentEnd": zod.string().regex(getManagedSchemeResponseOneConfigurationEnrollmentEndRegExp).nullable(),
   "season": zod.string().max(getManagedSchemeResponseOneConfigurationSeasonMax),
   "roundingRule": zod.enum(['down', 'nearest', 'up']),
   "qualityGrades": zod.string().max(getManagedSchemeResponseOneConfigurationQualityGradesMax),
@@ -454,6 +462,8 @@ export const updateManagedSchemeBodyOneConfigurationSharePercentMax = 100;
 
 export const updateManagedSchemeBodyOneConfigurationMaxAdoptersMax = 100000;
 
+export const updateManagedSchemeBodyOneConfigurationEnrollmentStartRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const updateManagedSchemeBodyOneConfigurationEnrollmentEndRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
 export const updateManagedSchemeBodyOneConfigurationSeasonMax = 120;
 
 export const updateManagedSchemeBodyOneConfigurationQualityGradesMax = 2000;
@@ -508,8 +518,8 @@ export const UpdateManagedSchemeBody = zod.object({
   "unit": zod.enum(['kg', 'count']),
   "sharePercent": zod.number().gt(updateManagedSchemeBodyOneConfigurationSharePercentExclusiveMin).max(updateManagedSchemeBodyOneConfigurationSharePercentMax),
   "maxAdopters": zod.number().int().min(1).max(updateManagedSchemeBodyOneConfigurationMaxAdoptersMax),
-  "enrollmentStart": zod.coerce.date().nullable(),
-  "enrollmentEnd": zod.coerce.date().nullable(),
+  "enrollmentStart": zod.string().regex(updateManagedSchemeBodyOneConfigurationEnrollmentStartRegExp).nullable(),
+  "enrollmentEnd": zod.string().regex(updateManagedSchemeBodyOneConfigurationEnrollmentEndRegExp).nullable(),
   "season": zod.string().max(updateManagedSchemeBodyOneConfigurationSeasonMax),
   "roundingRule": zod.enum(['down', 'nearest', 'up']),
   "qualityGrades": zod.string().max(updateManagedSchemeBodyOneConfigurationQualityGradesMax),
@@ -559,6 +569,8 @@ export const updateManagedSchemeResponseOneConfigurationSharePercentMax = 100;
 
 export const updateManagedSchemeResponseOneConfigurationMaxAdoptersMax = 100000;
 
+export const updateManagedSchemeResponseOneConfigurationEnrollmentStartRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const updateManagedSchemeResponseOneConfigurationEnrollmentEndRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
 export const updateManagedSchemeResponseOneConfigurationSeasonMax = 120;
 
 export const updateManagedSchemeResponseOneConfigurationQualityGradesMax = 2000;
@@ -610,8 +622,8 @@ export const UpdateManagedSchemeResponse = zod.object({
   "unit": zod.enum(['kg', 'count']),
   "sharePercent": zod.number().gt(updateManagedSchemeResponseOneConfigurationSharePercentExclusiveMin).max(updateManagedSchemeResponseOneConfigurationSharePercentMax),
   "maxAdopters": zod.number().int().min(1).max(updateManagedSchemeResponseOneConfigurationMaxAdoptersMax),
-  "enrollmentStart": zod.coerce.date().nullable(),
-  "enrollmentEnd": zod.coerce.date().nullable(),
+  "enrollmentStart": zod.string().regex(updateManagedSchemeResponseOneConfigurationEnrollmentStartRegExp).nullable(),
+  "enrollmentEnd": zod.string().regex(updateManagedSchemeResponseOneConfigurationEnrollmentEndRegExp).nullable(),
   "season": zod.string().max(updateManagedSchemeResponseOneConfigurationSeasonMax),
   "roundingRule": zod.enum(['down', 'nearest', 'up']),
   "qualityGrades": zod.string().max(updateManagedSchemeResponseOneConfigurationQualityGradesMax),
@@ -668,6 +680,8 @@ export const listSchemeRevisionsResponseOneConfigurationSharePercentMax = 100;
 
 export const listSchemeRevisionsResponseOneConfigurationMaxAdoptersMax = 100000;
 
+export const listSchemeRevisionsResponseOneConfigurationEnrollmentStartRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const listSchemeRevisionsResponseOneConfigurationEnrollmentEndRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
 export const listSchemeRevisionsResponseOneConfigurationSeasonMax = 120;
 
 export const listSchemeRevisionsResponseOneConfigurationQualityGradesMax = 2000;
@@ -719,8 +733,8 @@ export const ListSchemeRevisionsResponseItem = zod.object({
   "unit": zod.enum(['kg', 'count']),
   "sharePercent": zod.number().gt(listSchemeRevisionsResponseOneConfigurationSharePercentExclusiveMin).max(listSchemeRevisionsResponseOneConfigurationSharePercentMax),
   "maxAdopters": zod.number().int().min(1).max(listSchemeRevisionsResponseOneConfigurationMaxAdoptersMax),
-  "enrollmentStart": zod.coerce.date().nullable(),
-  "enrollmentEnd": zod.coerce.date().nullable(),
+  "enrollmentStart": zod.string().regex(listSchemeRevisionsResponseOneConfigurationEnrollmentStartRegExp).nullable(),
+  "enrollmentEnd": zod.string().regex(listSchemeRevisionsResponseOneConfigurationEnrollmentEndRegExp).nullable(),
   "season": zod.string().max(listSchemeRevisionsResponseOneConfigurationSeasonMax),
   "roundingRule": zod.enum(['down', 'nearest', 'up']),
   "qualityGrades": zod.string().max(listSchemeRevisionsResponseOneConfigurationQualityGradesMax),

@@ -54,10 +54,16 @@ export interface SchemeConfiguration {
      * @maximum 100000
      */
   maxAdopters: number;
-  /** @nullable */
-  enrollmentStart: Date | null;
-  /** @nullable */
-  enrollmentEnd: Date | null;
+  /**
+     * @nullable
+     * @pattern ^\d{4}-\d{2}-\d{2}$
+     */
+  enrollmentStart: string | null;
+  /**
+     * @nullable
+     * @pattern ^\d{4}-\d{2}-\d{2}$
+     */
+  enrollmentEnd: string | null;
   /** @maxLength 120 */
   season: string;
   roundingRule: SchemeConfigurationRoundingRule;

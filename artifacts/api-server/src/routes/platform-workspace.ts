@@ -48,6 +48,7 @@ router.post("/v1/workspace/:module/records", async (req, res): Promise<void> => 
   const { module } = ListRecordsParams.parse(req.params), body = CreateRecordBody.parse(req.body);
   const a = actor(req), m = moduleByKey(module);
   if (!m || !a.grants.some(g => m.createRoles.includes(g.role))) throw new PlatformError(403, "You cannot create records in this area.");
+  if (m.key === "schemes") throw new PlatformError(409, "Use Customize schemes to create a versioned scheme draft.");
   staffMutation(a, m);
   const data = validateData(m, body.data);
   if (m.key === "tickets" && data.resolution !== undefined) throw new PlatformError(400, "Resolution is reserved for the support workflow.");
@@ -64,6 +65,7 @@ router.patch("/v1/workspace/:module/records/:id", async (req, res): Promise<void
   const { module, id } = UpdateRecordParams.parse(req.params), body = UpdateRecordBody.parse(req.body);
   const a = actor(req), m = moduleByKey(module);
   if (!m || !a.grants.some(g => m.roles.includes(g.role))) throw new PlatformError(403, "You cannot access this area.");
+  if (m.key === "schemes") throw new PlatformError(409, "Use Customize schemes to edit drafts. Commercial approval is not available through this generic editor.");
   const changed = await db.transaction(async tx => {
     const [before] = await tx.select().from(workflowRecords).where(and(eq(workflowRecords.id, id), eq(workflowRecords.module, m.key), visibleScope(a, m))).for("update");
     if (!before) throw new PlatformError(404, "Record not found.");

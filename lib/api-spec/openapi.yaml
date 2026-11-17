@@ -582,8 +582,8 @@ components:
         unit: { type: string, enum: [kg, count] }
         sharePercent: { type: number, exclusiveMinimum: 0, maximum: 100 }
         maxAdopters: { type: integer, minimum: 1, maximum: 100000 }
-        enrollmentStart: { type: ["string", "null"], format: date }
-        enrollmentEnd: { type: ["string", "null"], format: date }
+        enrollmentStart: { type: ["string", "null"], pattern: '^\d{4}-\d{2}-\d{2}$' }
+        enrollmentEnd: { type: ["string", "null"], pattern: '^\d{4}-\d{2}-\d{2}$' }
         season: { type: string, maxLength: 120 }
         roundingRule: { type: string, enum: [down, nearest, up] }
         qualityGrades: { type: string, maxLength: 2000 }
