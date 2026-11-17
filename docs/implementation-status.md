@@ -11,10 +11,11 @@ Managed Clerk was initially provisioned but official Replit documentation
 confirms that it does not support SMS/phone sign-in. Auth0's official Express OIDC
 SDK now owns code/PKCE/state/nonce validation, encrypted secure-cookie sessions,
 SMS-only identity checks and sign-out. The regional tenant is used directly.
-The login page is deliberately concise. The callback URL has been accepted
-by the authorization flow. Auth0 currently rejects
-the request because the SMS connection is not enabled for the application.
-The SMS connection, phone provider and real OTP delivery still require verification.
+The login page is deliberately concise. The callback URL is accepted and
+the disabled-SMS-connection error is resolved. Twilio setup has been reported
+complete, but Universal Login still shows email/password. Its Authentication
+Profile must use Identifier First for Passwordless SMS. Real SMS delivery and
+completed OTP sign-in remain unverified.
 
 ## Delivered foundations, not completed milestones
 
@@ -40,7 +41,7 @@ The SMS connection, phone provider and real OTP delivery still require verificat
 | Coverage | Current state | Remaining acceptance |
 |---|---|---|
 | C01 Public website | Refined homepage/navigation, real directory APIs, labelled sample inventory | CMS page/banner workflows, real approved inventory, SEO/accessibility verification |
-| C02 Customer accounts/portal | Auth0 SMS-only sessions, accepted callback and configured owner-phone allowlist | Enable application SMS connection and verify delivery, onboarding and commercial records |
+| C02 Customer accounts/portal | Auth0 SMS-only sessions, accepted callback and configured owner-phone allowlist | Enable Identifier First and verify SMS login, onboarding and commercial records |
 | C03 Farm/tree inventory | Editable scoped farm/tree catalogue, sample inventory and persistent public photos | Dedicated normalized inventory, private evidence/inspection approval, identity audits/reassignment |
 | C04 Schemes | Commercial draft editor | Approved immutable versions, eligibility and legally approved formulas |
 | C05 Commerce | Explicitly unavailable | Reservation/payment/refund/contract/invoice ledgers and provider verification |
